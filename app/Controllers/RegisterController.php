@@ -75,8 +75,27 @@ class RegisterController extends BaseController
                 'errors' => [
                     'is_unique' => 'Já existe um cadastro com o email informado.',
                 ]
-            ]// 'password'      => 'required|min_length[4]|max_length[50]',
-            // 'confirmpassword'  => 'matches[password]'
+            ],
+            'password'  => [
+                'rules' => [
+                    'required',
+                    'min_length[8]',
+                    'max_length[50]'
+                ],
+                'errors' => [
+                    'required' => 'Senha obrigatória.',
+                    'min_length' => 'Senha muito curta. Min: 8',
+                    'max_length' => 'Senha muito longa. Max : 50',
+                ]
+            ],
+            'confirmpassword'  => [
+                'rules' => [
+                    'matches[password]'
+                ],
+                'errors' => [
+                    'matches' => 'Senha de confirmação dever idêntica.'
+                ]
+            ]
         ];
         // var_dump($this->validate($rules));
         // print_r($this->request->getPostGet());exit;
@@ -85,7 +104,7 @@ class RegisterController extends BaseController
             $data = [
                 'name'     => $this->request->getVar('name'),
                 'email'    => $this->request->getVar('email'),
-                // 'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT)
+                'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT)
             ];
             
             if ($model->save($data)) {
@@ -132,8 +151,11 @@ class RegisterController extends BaseController
         } else {
             $validation = $this->validator;
             // echo "estes";
-            if ($validation->hasError('email')) {
-                echo $validation->getError('email');
+            if ($validation->hasError('password')) {
+                print_r($validation->getErrors('password'));
+            }
+            if ($validation->hasError('confirmpassword')) {
+                print_r($validation->getErrors('confirmpassword'));
             }
             // print_r($this->validator);
             exit;
