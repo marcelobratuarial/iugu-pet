@@ -114,6 +114,41 @@
             Iugu.setup()
             
             jQuery(function($) {
+                $("#email").on("blur", function(e) {
+                    var form = $(this);
+                    e.preventDefault()
+                    // Seu código para continuar a submissão
+                    // Ex: form.submit();
+                    var url = '<?= base_url('/check-cEmail') ?>';
+                    // var lb = $(this).parent('div').find(".custom-control-label")
+                    // var data = $(form).serializeArray()
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            'email': $("#email").val()
+                        },
+                        // fail: errPost,
+                        success: function (response) {
+                            console.log(response)
+                            // lb.text(response)
+                            // $(".custom-control-label").text(text);
+                            // $('#imgPreview').attr('src', '');
+                            // $('#imgPreview').slideUp(200);
+                            // $(".remove-image").slideUp(100);
+                            // $('#noImageBox').slideDown(250);
+                            // $("#upload-box").slideDown(500);
+                        },
+                        dataType: 'json',
+                        // headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    });
+                    if ($(this).is(":checked") ) {
+                        // console
+                    }
+                })
+
+
+
                 $('#payment-form').submit(function(evt) {
                     evt.preventDefault()
                     var form = $(this);
@@ -126,13 +161,42 @@
                             // form.get(0).submit();
                         }
                         
-                        // Seu código para continuar a submissão
-                        // Ex: form.submit();
+                        
                     }
                     
                     Iugu.createPaymentToken(this, tokenResponseHandler);
                     return false;
                 });
+                $("#registerForm").on("submit", function(e) {
+                    var form = $(this);
+                    e.preventDefault()
+                    // Seu código para continuar a submissão
+                    // Ex: form.submit();
+                    var url = '<?= base_url('/register') ?>';
+                    // var lb = $(this).parent('div').find(".custom-control-label")
+                    var data = $(form).serializeArray()
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        // fail: errPost,
+                        success: function (response) {
+                            console.log(response)
+                            // lb.text(response)
+                            // $(".custom-control-label").text(text);
+                            // $('#imgPreview').attr('src', '');
+                            // $('#imgPreview').slideUp(200);
+                            // $(".remove-image").slideUp(100);
+                            // $('#noImageBox').slideDown(250);
+                            // $("#upload-box").slideDown(500);
+                        },
+                        dataType: 'json',
+                        // headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    });
+                    if ($(this).is(":checked") ) {
+                        // console
+                    }
+                })
             });
             $.each($(".planPrice"), function(i, p) {
                 var unformatted = $(p).text()

@@ -53,7 +53,7 @@
             <div class="row d-flex justify-content-center pt-5">
                 <div class="col-md-8">
                     <h3>Cadastrar agora</h3>
-                    <form action="">
+                    <form method="POST" id="registerForm" action="">
                         <div class="row">
                             <div class="col">
                                 <div class="mt-10">
@@ -64,7 +64,7 @@
 
                         <div class="input-group-icon mt-10">
                             <div class="icon"><i class="fa fa-at" aria-hidden="true"></i></div>
-                            <input type="email" name="EMAIL" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'" required class="single-input">
+                            <input type="email" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'" required class="single-input">
                         </div>
                         <div class="row">
                             <div class="col">
@@ -87,7 +87,7 @@
                             </div>
                             <div class="col">
                                 <div class="mt-10">
-                                    <input type="text" name="complemento" placeholder="Complemento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Complemento'" required class="single-input">
+                                    <input type="text" name="complemento" placeholder="Complemento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Complemento'" class="single-input">
                                 </div>
                             </div>
 
@@ -98,7 +98,7 @@
                                 <div class="input-group-icon mt-10">
                                     <div class="icon"><i class="fa fa-plane" aria-hidden="true"></i></div>
                                     <div class="form-select" id="default-select">
-                                        <select>
+                                        <select name="estado">
                                             <option value=" 1">Estado</option>
                                             <option value="1">Minas Gerais</option>
                                             <option value="1">Curitiba</option>
@@ -112,7 +112,7 @@
                                 <div class="input-group-icon mt-10">
                                     <div class="icon"><i class="fa fa-plane" aria-hidden="true"></i></div>
                                     <div class="form-select" id="default-select">
-                                        <select>
+                                        <select name="cidade">
                                             <option value=" 1">Cidade</option>
                                             <option value="1">Belo Horizonte</option>
                                             <option value="1">Rio de Janeiro</option>
@@ -139,7 +139,7 @@
                         <div class="row">
                             <div class="col-6 mt-10">
                                 <div class="default-select">
-                                    <select>
+                                    <select name="pet_raca">
                                         <option value="1">Raça</option>
                                         <option value="1">Chiuaua</option>
                                         <option value="1">York Shire</option>
@@ -157,7 +157,7 @@
                         
 
                         <hr />
-                        <button class="genric-btn success circle arrow">Continuar<span class="lnr lnr-arrow-right"></span></button>
+                        <button type="submit" class="registerBtn genric-btn success circle arrow">Continuar<span class="lnr lnr-arrow-right"></span></button>
                     </form>
                     <hr>
                     <form id="payment-form" target="_blank" action="" method="POST">

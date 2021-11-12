@@ -5,8 +5,8 @@ namespace App\Controllers;
 class Home extends BaseController
 {
     private $payload;
-    private $baseApi;
-    private $requestURL;
+    public $baseApi;
+    public $requestURL;
     protected $k;
     
     public function __construct () {
