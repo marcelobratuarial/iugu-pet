@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'v4.1.4',
-        'version' => '4.1.4.0',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => NULL,
+        'reference' => '69297b0e5d616635567e61f6a70e2e68c947ed10',
         'name' => 'codeigniter4/appstarter',
         'dev' => true,
     ),
     'versions' => array(
         'codeigniter4/appstarter' => array(
-            'pretty_version' => 'v4.1.4',
-            'version' => '4.1.4.0',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => NULL,
+            'reference' => '69297b0e5d616635567e61f6a70e2e68c947ed10',
             'dev_requirement' => false,
         ),
         'codeigniter4/framework' => array(
@@ -45,6 +45,15 @@
             'aliases' => array(),
             'reference' => '271d384d216e5e5c468a6b28feedf95d49f83b35',
             'dev_requirement' => true,
+        ),
+        'firebase/php-jwt' => array(
+            'pretty_version' => 'v5.5.1',
+            'version' => '5.5.1.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../firebase/php-jwt',
+            'aliases' => array(),
+            'reference' => '83b609028194aa042ea33b5af2d41a7427de80e6',
+            'dev_requirement' => false,
         ),
         'kint-php/kint' => array(
             'pretty_version' => '3.3',

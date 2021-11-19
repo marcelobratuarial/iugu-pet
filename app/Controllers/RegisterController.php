@@ -5,7 +5,7 @@ namespace App\Controllers;
 use CodeIgniter\Controller;
 
 use App\Models\UserModel;
-
+use CodeIgniter\API\ResponseTrait;
 
 use App\Controllers\Home;
 
@@ -15,6 +15,8 @@ use App\Controllers\Home;
 
 class RegisterController extends BaseController
 {
+    use ResponseTrait;
+
     public $requestUrl;
     public function __construct () {
         $a = new Home();
@@ -93,7 +95,7 @@ class RegisterController extends BaseController
                     'matches[password]'
                 ],
                 'errors' => [
-                    'matches' => 'Senha de confirmação dever idêntica.'
+                    'matches' => 'Senha de confirmação deve ser idêntica.'
                 ]
             ]
         ];
@@ -108,6 +110,9 @@ class RegisterController extends BaseController
             ];
             
             if ($model->save($data)) {
+                $dbID = $model->insertID();
+                $nu = $model->find($dbID);
+                
                 $iuguData = [
                     "email" => $this->request->getVar('email'),
                     "name" => $this->request->getVar('name'),
@@ -143,8 +148,82 @@ class RegisterController extends BaseController
                ];
                
             //    echo $a->baseApi;
-               $r = $a->doRequest($this->requestUrl, $args);
-               print_r($r);exit;
+                $r = $a->doRequest($this->requestUrl, $args);
+                $rr = json_decode($r, true);
+                if(isset($rr["errors"])) {
+                    $model->delete($dbID);
+                    echo json_encode($rr);
+                    exit;
+                }
+
+                // print_r($rr);exit;
+
+                $email = \Config\Services::email();
+                $config['mailType'] = 'html';
+                $config['SMTPTimeout'] = '20';
+                $config['protocol'] = 'smtp';
+                // $config['CRLF'] = "\r\n";
+                $config['newline'] = "\r\n";
+                $config['SMTPHost'] = $_SERVER['SMTP_HOST'];
+                $config['SMTPUser'] = $_SERVER['SMTP_USER'];
+                $config['SMTPPass'] = $_SERVER['SMTP_PASS'];
+                $config['SMTPPort'] = $_SERVER['SMTP_PORT'];
+                $config['SMTPCrypto'] = $_SERVER['SMTP_CRYPTO'];
+                $email->initialize($config);
+
+                $email->setSubject('Confirmação de cadastro');
+                $email->setFrom('contato@brasilbeneficios.club', "Site");
+                $email->setTo($this->request->getVar('email'), $this->request->getVar('name'));
+                $email->setCC('marcelo.denis@agenciabrasildigital.com.br', "Marcelo Dênis");
+                // $email->setCC('marcelodmdo@gmail.com', "Marcelo Dênis");
+
+                $vCod = $this->getVCode();
+                $conf = [
+                    'name' => $this->request->getVar('name'),
+                    'code' => $vCod
+                ];
+                $message = view('mail/codConfirm', $conf);
+		
+                $email->setMessage($message);
+                
+                try {
+                    $s = $email->send();
+                    if($s) {
+                        unset($nu);
+
+                        $nu = [
+                            "id" => $dbID,
+                            "confirmation"=>$vCod, 
+                            "code_sent" => 1
+                        ];
+
+                        // print_r($nu);
+                        $model->save($nu);
+                        
+                        // var_dump($a);exit;
+                        $cm = 'Um código de verificação foi enviado para <strong>'.$this->request->getVar('email').'</strong>.<br>';
+                        $cm .= 'Para continuar, acesse sua caixa de entrada e siga as instruções.';
+                        echo json_encode(["message" => "success", "error" => false, "custom_message"=>$cm]);
+                    } else {
+                        unset($nu);
+
+                        $nu = [
+                            "id" => $dbID,
+                            "code_sent" => 0
+                        ];
+
+                        // print_r($nu);
+                        $model->save($nu);
+                        
+                        throw new \Exception("Não enviado: MAIL");
+                    }
+                    
+                } catch (\Exception $e) {
+                    echo json_encode(['message'=>$e->getMessage(), 'error' => true]);
+                }
+
+
+                // print_r($r);exit;
             };
 
             // return redirect()->to('/login');
@@ -162,5 +241,12 @@ class RegisterController extends BaseController
             // print_r($data['validation']);
             // echo view('user_register', $data);
         }
+    }
+
+    public function getVCode() {
+        $p1 = rand(100,999);
+        $p2 = rand(100,999);
+        $p = $p1.' '.$p2;
+        return $p;
     }
 }

@@ -21,7 +21,8 @@ $routes->setDefaultController('Home');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
-$routes->setAutoRoute(true);
+// $routes->setAutoRoute(true);
+$routes->setAutoRoute(false);
 
 /*
  * --------------------------------------------------------------------
@@ -31,11 +32,15 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
+$routes->post('/logar', 'Logar::signin');
+
+$routes->get('/mailteste', 'Home::mailTeste');
 $routes->get('/', 'Home::index');
 $routes->get('/services', 'Home::services');
 $routes->get('/assinar/(:any)', 'Home::assinar/$1');
 // $routes->get('/api', 'Home::api');
 $routes->post('/api', 'Home::api');
+
 $routes->post('/register', 'RegisterController::store');
 $routes->post('/check-cEmail', 'RegisterController::checkCustomerMail');
 // $routes->post('/api', 'Home::index');

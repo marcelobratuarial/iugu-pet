@@ -32,152 +32,195 @@
 </div>
 
 <div class="container">
-    <div class="row">
+    <div class="row checkoutPage">
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
-            <div class="row d-flex justify-content-center pt-5">
-                <div class="col-md-6">
-                    <h3>Já tem um cadastro?</h3>
-                    <form action="">
+            <div class="row d-flex optChecked justify-content-center pt-5">
+                <div class="col-md-8">
+                    <div class="form-check d-flex align-items-center form-lg form-check-inline">
+                        <input checked class="form-check-input" type="radio" name="login_cadastro" data-rf="loginForm" id="logar" value="option1">
+                        <label class="form-check-label" for="logar"><h3 style="margin-bottom: 0">Já tem um cadastro?</h3></label>
+                    </div>
+                    
+                    <form method="POST" id="loginForm" action="">
                         <div class="mt-10">
-                            <input type="text" name="username" placeholder="Nome de usuário" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome de usuário'" required class="single-input">
+                            <input type="email" name="email" placeholder="Nome de usuário" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome de usuário'" required class="single-input">
                         </div>
                         <div class="mt-10">
                             <input type="password" name="password" placeholder="Senha" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Senha'" required class="single-input">
                         </div>
                         <hr />
-                        <button class="genric-btn success circle arrow">Login<span class="lnr lnr-arrow-right"></span></button>
+                        <button type="submit" class="logitBtn genric-btn success circle arrow">Continuar<span class="lnr lnr-arrow-right"></span></button>
+                        <!-- <button class="genric-btn success circle arrow">Login<span class="lnr lnr-arrow-right"></span></button> -->
                     </form>
                 </div>
 
             </div>
             <div class="row d-flex justify-content-center pt-5">
                 <div class="col-md-8">
-                    <h3>Cadastrar agora</h3>
-                    <form method="POST" id="registerForm" action="">
-                        <div class="boxDados">
-                            <hr>
-                            <h4>Dados</h4>
-                            <div class="row">
-                                <div class="col">
-                                    <div class="mt-10">
-                                        <input type="text" name="name" placeholder="Nome completo" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome completo'" required class="single-input">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="input-group-icon mt-10">
-                                <div class="icon"><i class="fa fa-at" aria-hidden="true"></i></div>
-                                <input type="email" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'" required class="single-input">
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <div class="input-group-icon mt-10">
-                                        <div class="icon"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div>
-                                        <input type="text" name="address" placeholder="Endereço" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Endereço'" required class="single-input">
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="mt-10">
-                                        <input type="text" name="number" placeholder="nº" onfocus="this.placeholder = ''" onblur="this.placeholder = 'nº'" required class="single-input">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-8">
-                                    <div class="mt-10">
-                                        <input type="text" name="bairro" placeholder="Bairro" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Bairro'" required class="single-input">
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="mt-10">
-                                        <input type="text" name="complemento" placeholder="Complemento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Complemento'" class="single-input">
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-                                <div class="col-5">
-                                    <div class="input-group-icon mt-10">
-                                        <div class="icon"><i class="fa fa-plane" aria-hidden="true"></i></div>
-                                        <div class="form-select" id="default-select">
-                                            <select name="estado">
-                                                <option value=" 1">Estado</option>
-                                                <option value="1">Minas Gerais</option>
-                                                <option value="1">Curitiba</option>
-                                                <option value="1">São Paulo</option>
-                                                <option value="1">Rio de Janeiro</option>
-                                            </select>
+                    <div class="form-check d-flex align-items-center form-lg form-check-inline">
+                        <input class="form-check-input" type="radio" name="login_cadastro" data-rf="registerForm" id="cadastrar" value="1">
+                        <label class="form-check-label" for="cadastrar"><h3 style="margin-bottom: 0">Cadastrar agora</h3></label>
+                    </div>
+                    <div class="dataBox">
+                        <form method="POST" id="registerForm" action="">
+                            <div class="boxDados">
+                                <hr>
+                                <h4>Dados</h4>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mt-10">
+                                            <input type="text" name="name" placeholder="Nome completo" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome completo'" required class="single-input">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-7">
-                                    <div class="input-group-icon mt-10">
-                                        <div class="icon"><i class="fa fa-plane" aria-hidden="true"></i></div>
-                                        <div class="form-select" id="default-select">
-                                            <select name="cidade">
-                                                <option value=" 1">Cidade</option>
-                                                <option value="1">Belo Horizonte</option>
-                                                <option value="1">Rio de Janeiro</option>
-                                                <option value="1">São Paulo</option>
+
+                                <div class="input-group-icon mt-10">
+                                    <div class="icon"><i class="fa fa-at" aria-hidden="true"></i></div>
+                                    <input type="email" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'" required class="single-input">
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="input-group-icon mt-10">
+                                            <div class="icon"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div>
+                                            <input type="text" name="address" placeholder="Endereço" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Endereço'" required class="single-input">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="mt-10">
+                                            <input type="text" name="number" placeholder="nº" onfocus="this.placeholder = ''" onblur="this.placeholder = 'nº'" required class="single-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="mt-10">
+                                            <input type="text" name="bairro" placeholder="Bairro" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Bairro'" required class="single-input">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mt-10">
+                                            <input type="text" name="complemento" placeholder="Complemento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Complemento'" class="single-input">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-5">
+                                        <div class="input-group-icon mt-10">
+                                            <div class="icon"><i class="ti ti-map-alt" aria-hidden="true"></i></div>
+                                            <div class="form-select" id="default-select">
+                                                <select name="estado">
+                                                    <option value=" 1">Estado</option>
+                                                    <option value="1">Minas Gerais</option>
+                                                    <option value="1">Curitiba</option>
+                                                    <option value="1">São Paulo</option>
+                                                    <option value="1">Rio de Janeiro</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-7">
+                                        <div class="input-group-icon mt-10">
+                                            <div class="icon"><i class="ti ti-map" aria-hidden="true"></i></div>
+                                            <div class="form-select" id="default-select">
+                                                <select name="cidade">
+                                                    <option value=" 1">Cidade</option>
+                                                    <option value="1">Belo Horizonte</option>
+                                                    <option value="1">Rio de Janeiro</option>
+                                                    <option value="1">São Paulo</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h4>Dados do Pet</h4>
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="mt-10">
+                                            <input type="text" name="pet_name" placeholder="Nome" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome'" required class="single-input">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mt-10">
+                                            <input type="text" name="pet_nasc" placeholder="Nascimento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nascimento'" required class="single-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 mt-10">
+                                        <div class="default-select">
+                                            <select name="pet_raca">
+                                                <option value="1">Raça</option>
+                                                <option value="1">Chiuaua</option>
+                                                <option value="1">York Shire</option>
+                                                <option value="1">Pastor Alemão</option>
+                                                <option value="1">Fila Brasileiro</option>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mt-10">
+                                            <input type="text" name="pet_peso" placeholder="Peso KG" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Peso KG'" required class="single-input">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <hr>
-                            <h4>Dados do Pet</h4>
-                            <div class="row">
-                                <div class="col-8">
-                                    <div class="mt-10">
-                                        <input type="text" name="pet_name" placeholder="Nome" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome'" required class="single-input">
+                            <div class="boxPass">
+                                <hr>
+                                <h4>Criar senha</h4>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="mt-10">
+                                            <input type="password" name="password" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" required class="single-input">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col">
-                                    <div class="mt-10">
-                                        <input type="text" name="pet_nasc" placeholder="Nascimento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nascimento'" required class="single-input">
+                                    <div class="col-6">
+                                        <div class="mt-10">
+                                            <input type="password" name="confirmpassword" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" class="single-input">
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-6 mt-10">
-                                    <div class="default-select">
-                                        <select name="pet_raca">
-                                            <option value="1">Raça</option>
-                                            <option value="1">Chiuaua</option>
-                                            <option value="1">York Shire</option>
-                                            <option value="1">Pastor Alemão</option>
-                                            <option value="1">Fila Brasileiro</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="mt-10">
-                                        <input type="text" name="pet_peso" placeholder="Peso KG" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Peso KG'" required class="single-input">
-                                    </div>
-                                </div>
+                            dib
+
+                            <hr />
+                            <button type="submit" class="registerBtn genric-btn success circle arrow">Continuar<span class="lnr lnr-arrow-right"></span></button>
+                        </form>
+                    </div>
+                    
+                    <div class="verBox">
+                        <hr>
+                        <div class="row mt-10">
+                            <div class="col-md-12">
+                                <h5>Quase pronto!</h5>
+                                <p class="custom-message">
+                                </p>
                             </div>
                         </div>
-                        <div class="boxPass">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="mt-10">
-                                        <input type="password" name="password" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" required class="single-input">
-                                    </div>
+                        <h4 style="margin-bottom: 0">Código de verificação</h4>
+                                
+                        <form method="POST" id="verForm" action="">
+                            
+                            <div class="row mt-10">
+                                <div class="col-md-6">
+                                    <input type="text" name="confp1" required class="single-input">
                                 </div>
-                                <div class="col-6">
-                                    <div class="mt-10">
-                                        <input type="password" name="confirmpassword" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" class="single-input">
-                                    </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="confp2" required class="single-input">
                                 </div>
-
+                                
                             </div>
-                        </div>
-                        
-
-                        <hr />
-                        <button type="submit" class="registerBtn genric-btn success circle arrow">Continuar<span class="lnr lnr-arrow-right"></span></button>
-                    </form>
+                            
+                            <hr />
+                            <button type="submit" class="logitBtn genric-btn success circle arrow">Continuar<span class="lnr lnr-arrow-right"></span></button>
+                            <!-- <button class="genric-btn success circle arrow">Login<span class="lnr lnr-arrow-right"></span></button> -->
+                        </form>
+                    </div>
+                    
+                    
                     <hr>
                     <form id="payment-form" target="_blank" action="" method="POST">
                         <div class="usable-creditcard-form">

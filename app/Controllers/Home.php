@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Controllers;
+use CodeIgniter\API\ResponseTrait;
+use App\Models\UserModel;
 
 class Home extends BaseController
 {
+    use ResponseTrait;
     private $payload;
     public $baseApi;
     public $requestURL;
@@ -36,8 +39,23 @@ class Home extends BaseController
         // print_r(json_decode($r, true));exit;
         return view('home', ["plans" => $planos]);
     }
+    public function mailTeste() {
+        $conf = [
+            'name' => "marcelo",
+            'code' => '132 123'
+        ];
+        return view("mail/codConfirm", $conf);
+    }
     public function assinar($id)
     {
+        // // parent::Controller();
+        session();
+        // echo "<pre>";print_r($a->get("name"));exit;
+        if(isset($_SESSION['email'])) {
+            echo "<pre>";
+            print_r($_SESSION);
+            echo "</pre>";
+        }
         $args = [];
         $this->requestURL = $this->baseApi . "plans/".$id;
         $args["m"] = "GET";
@@ -50,6 +68,7 @@ class Home extends BaseController
         //     $args["pl"] = json_encode($rdata->payload);
         // }
         $plano = $this->doRequest($this->requestURL, $args);
+        
         $args = [];
         $args["m"] = "GET";
         $this->requestURL = $this->baseApi . "customers";

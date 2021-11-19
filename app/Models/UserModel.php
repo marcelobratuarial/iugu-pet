@@ -7,10 +7,13 @@ class UserModel extends Model
 {
     protected $table = 'customers';
     protected $primaryKey = 'id';
+    protected $protectFields = ['password'];
     protected $allowedFields = [
       'name',
       'email',
       'password',
+      'confirmation',
+      'code_sent',
       'created_at'
     ];
 }
