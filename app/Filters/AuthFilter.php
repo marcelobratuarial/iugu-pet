@@ -27,8 +27,13 @@ class AuthFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
+        helper('cookie');
+        // var_dump(get_cookie("jwtteste"));
+        $token = get_cookie("jwtteste");
+        // echo $token;
         
         $key = getenv('JWT_SECRET');
+        /* DEFAULT 
         $header = $request->getHeader("Authorization");
         $token = null;
  
@@ -37,7 +42,7 @@ class AuthFilter implements FilterInterface
             if (preg_match('/Bearer\s(\S+)/', $header, $matches)) {
                 $token = $matches[1];
             }
-        }
+        } */
  
         // check if token is null or empty
         if(is_null($token) || empty($token)) {

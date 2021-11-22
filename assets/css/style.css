@@ -1226,30 +1226,30 @@ h3 {
 
 @media (max-width: 767px) {
   /* line 220, ../../Arafath/CL/january 2020/240. Animal/HTML/scss/_header.scss */
-  .header-area .main-header-area.sticky {
+  /* .header-area .main-header-area.sticky {
     padding: 10px 10px;
-  }
+  } */
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
   /* line 220, ../../Arafath/CL/january 2020/240. Animal/HTML/scss/_header.scss */
-  .header-area .main-header-area.sticky {
+  /* .header-area .main-header-area.sticky {
     padding: 10px 10px;
-  }
+  } */
 }
 
 @media (min-width: 992px) and (max-width: 1200px) {
   /* line 220, ../../Arafath/CL/january 2020/240. Animal/HTML/scss/_header.scss */
-  .header-area .main-header-area.sticky {
+  /* .header-area .main-header-area.sticky {
     padding: 10px 20px;
-  }
+  } */
 }
 
 @media (min-width: 1200px) and (max-width: 1500px) {
   /* line 220, ../../Arafath/CL/january 2020/240. Animal/HTML/scss/_header.scss */
-  .header-area .main-header-area.sticky {
+  /* .header-area .main-header-area.sticky {
     padding: 10px 20px;
-  }
+  } */
 }
 
 /* line 246, ../../Arafath/CL/january 2020/240. Animal/HTML/scss/_header.scss */
@@ -1259,7 +1259,7 @@ h3 {
 
 /* line 252, ../../Arafath/CL/january 2020/240. Animal/HTML/scss/_header.scss */
 .header-area .header-top_area {
-  padding: 19px 0;
+  /* padding: 19px 0; */
   background: #000;
 }
 
@@ -6572,15 +6572,15 @@ h6 {
   min-height: 0;
   height: 0;
   opacity: 0;
-  transition: all 0.8s ease-in-out;
+  transition: all 0.4s ease-out;
 }
 .checkoutPage .optChecked #loginForm {
   /* display: block; */
   max-height: 500px;
   height: auto;
-  min-height: 200px;
+  min-height: 100px;
   opacity: 1;
-  transition: all 0.8s ease-in-out;
+  transition: all 0.8s ease-in;
 }
 .checkoutPage .verBox {
   /* display: none; */
@@ -6589,7 +6589,7 @@ h6 {
   min-height: 0;
   height: 0;
   opacity: 0;
-  transition: all 0.8s ease-in-out;
+  transition: all 0.4s ease-out;
 }
 .checkoutPage .dataBox, 
 .checkoutPage .dataBox.hide,
@@ -6601,7 +6601,7 @@ h6 {
   min-height: 0;
   height: 0;
   opacity: 0;
-  transition: all 0.8s ease-in-out;
+  transition: all 0.4s ease-out;
 }
 .checkoutPage .verBox.show {
   /* display: none; */
@@ -6609,12 +6609,12 @@ h6 {
   height: auto;
   min-height: 100px;
   opacity: 1;
-  transition: all 0.8s ease-in-out;
+  transition: all 0.8s ease-in;
 }
 .checkoutPage .optChecked .dataBox {
   max-height: 800px;
   height: auto;
-  min-height: 200px;
+  min-height: 100px;
   opacity: 1;
-  transition: all 0.8s ease-in-out;
+  transition: all 0.8s ease-in;
 }

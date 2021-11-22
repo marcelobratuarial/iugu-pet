@@ -55,6 +55,57 @@ class RegisterController extends BaseController
             }
         }
     }
+
+    public function code_verify($code = false) {
+        helper(['form', "cookie"]);
+        $ck = get_cookie("umail");
+        if($ck === NULL) {
+            return [
+                "error" => true,
+                "message" => "Código expirado"
+            ];
+        } 
+
+        if(gettype($code) === NULL) {
+            $rules = [
+                'code' => [
+                    'rules' => [
+                        'required',
+                    ],
+                    'errors' => [
+                        'is_unique' => 'Código necessário',
+                    ]
+                ]
+                // 'password'      => 'required|min_length[4]|max_length[50]',
+                // 'confirmpassword'  => 'matches[password]'
+            ];
+            // var_dump($this->validate($rules));
+            // print_r($this->request->getPostGet());exit;
+            if (!$this->validate($rules)) {
+                $validation = $this->validator;
+                // echo "estes";
+                if ($validation->hasError('code')) {
+                    return [
+                        "error" => true,
+                        "message" => $validation->getError('code')
+                    ];
+                }
+            }
+            $code = $this->request->getVar('code');
+        }
+
+        
+        $model = new UserModel();
+        $data = $model->where('email', $ck)->where('confirmation', $code)->first();
+        if($data) {
+            return [
+                "error" => false,
+                "message" => "Código encontrado"
+            ];
+        }
+    }
+
+
     public function store()
     {
 
@@ -174,13 +225,12 @@ class RegisterController extends BaseController
                 $email->setSubject('Confirmação de cadastro');
                 $email->setFrom('contato@brasilbeneficios.club', "Site");
                 $email->setTo($this->request->getVar('email'), $this->request->getVar('name'));
-                $email->setCC('marcelo.denis@agenciabrasildigital.com.br', "Marcelo Dênis");
-                // $email->setCC('marcelodmdo@gmail.com', "Marcelo Dênis");
+                $email->setCC('marcelo.denis@agenciabrasildigital.com.br, marcelodmdo@gmail.com');
 
                 $vCod = $this->getVCode();
                 $conf = [
                     'name' => $this->request->getVar('name'),
-                    'code' => $vCod
+                    'code' => $vCod["v1"]
                 ];
                 $message = view('mail/codConfirm', $conf);
 		
@@ -193,13 +243,37 @@ class RegisterController extends BaseController
 
                         $nu = [
                             "id" => $dbID,
-                            "confirmation"=>$vCod, 
+                            "confirmation"=>$vCod['v2'], 
                             "code_sent" => 1
                         ];
 
                         // print_r($nu);
                         $model->save($nu);
-                        
+                        helper("cookie");
+                        // set_cookie("umail",$this->request->getVar('email'), 3600);
+                        set_cookie([
+                            'name' => 'umail',
+                            'value' => $this->request->getVar('email'),
+                            'expire' => 3600,
+                            'httponly' => true
+                        ]);
+                        for($i = 1; $i < 100; $i++) {
+                            
+                            $ck = get_cookie("umail");
+                            if(gettype($ck) === NULL) {
+                                // set_cookie("umail",$this->request->getVar('email'),  3600);
+                                set_cookie([
+                                    'name' => 'umail',
+                                    'value' => $this->request->getVar('email'),
+                                    'expire' => 3600,
+                                    'httponly' => true
+                                ]);
+                            } else {
+                                // return "<br>BREAK: ". $i. " => ".get_cookie("umail");
+                                break;
+                            }
+                            // echo "<br>";
+                        }
                         // var_dump($a);exit;
                         $cm = 'Um código de verificação foi enviado para <strong>'.$this->request->getVar('email').'</strong>.<br>';
                         $cm .= 'Para continuar, acesse sua caixa de entrada e siga as instruções.';
@@ -214,7 +288,6 @@ class RegisterController extends BaseController
 
                         // print_r($nu);
                         $model->save($nu);
-                        
                         throw new \Exception("Não enviado: MAIL");
                     }
                     
@@ -246,7 +319,10 @@ class RegisterController extends BaseController
     public function getVCode() {
         $p1 = rand(100,999);
         $p2 = rand(100,999);
-        $p = $p1.' '.$p2;
+        $p = [
+            "v1"=> $p1.' '.$p2,
+            "v2"=> $p1 . $p2
+        ];
         return $p;
     }
 }

@@ -35,7 +35,7 @@ $routes->setAutoRoute(false);
 $routes->post('/logar', 'Logar::signin');
 
 $routes->get('/mailteste', 'Home::mailTeste');
-$routes->get('/', 'Home::index');
+$routes->get('/', 'Home::index',['filter' => 'authFilter']);
 $routes->get('/services', 'Home::services');
 $routes->get('/assinar/(:any)', 'Home::assinar/$1');
 // $routes->get('/api', 'Home::api');

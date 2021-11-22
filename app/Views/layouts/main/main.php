@@ -167,16 +167,60 @@
                     Iugu.createPaymentToken(this, tokenResponseHandler);
                     return false;
                 });
+                // $(document).scroll(function() {
+                //     console.log("ref", $(".bradcam_text").offset().top)
+                //     console.log("ref2", $(".checkoutPage > div > .row:nth(0)").offset().top)
+                //     console.log("bradcam_area ", $(".bradcam_area").outerHeight(true))
+                //     console.log("header", $("header").outerHeight(true))
+                // })
                 $(".checkoutPage .form-check-input").on("click", function(e){
                     // console.log($(this).data("rf"))
-                    $(".checkoutPage > div > .row").removeClass("optChecked")
-                    $(this).closest(".row").addClass("optChecked")
 
-                    // var ref = $("#"+$(this).data("rf")).offset().top
-                    // var html = $("html").scrollTop()
-                    // var position = html+ref
-                    // console.log(ref-html)
-                    // console.warn(html-ref)
+                    const that = this
+                    // var ref
+                    // var html
+                    var p = new Promise(function(resolve) {
+                        $(".checkoutPage > div > .row").removeClass("optChecked").not($(that).closest(".row"))
+                        // console.log($(that).closest(".row").find("form:first"))
+                        $(that).closest(".row").addClass("optChecked")
+                        // console.log($(".checkoutPage > div > .row:first"))
+                        // ref = $(".bradcam_text").offset().top //$("#"+$(this).data("rf")).offset().top
+                        // console.log("ref", ref)
+                        setTimeout(() => {
+                            resolve("OK")
+                        }, 200);
+                    })
+                    
+                    p.then(() => {
+                        var ref1 = $(".bradcam_area").outerHeight(true)
+                        var ref2 = $("header").outerHeight(true)
+                        var diff = ref1 + ref2
+                        var ref = $(that).closest(".row").offset().top
+                        var f = (ref + 180) - diff
+                        // console.log(ref1)
+                        // console.log(ref2)
+                        // console.log(diff)
+                        // console.log(ref)
+                        // console.log(f)
+                        var s = 0
+                        if($(this).data("rf") == "registerForm") {
+                            s = s + 33
+                        } else {
+                            console.warn("nao");
+                        }
+                            
+
+                        $("html").animate({
+                            scrollTop: f - s
+                        }, 350);
+                        // console.log("ref", ref)
+                        // console.warn("html", html)
+                    }).then(() => {
+                        // console.log($(that).closest(".row").find("form:first input:first"))
+                        $(that).closest(".row").find("form:first input:first").focus()
+                    })
+
+                    
                     // const el = document.querySelector("#"+$(this).data("rf"));
                     // console.log(el)
                     // get scroll position in px
@@ -193,9 +237,7 @@
                     //         - container.offset().top 
                     //         + (container.scrollTop() + 280);
                     
-                    // $("html").animate({
-                    //     scrollTop: position
-                    // }, 350);
+                    
                     // e.target.scrollIntoView(true)
                     /*console.log($("#"+$(this).data("rf")).offset().top)
                     console.log($("#"+$(this).data("rf")))
@@ -250,10 +292,37 @@
                         success: function (response) {
                             console.log(response)
                             if(!response.error) {
-                                $(".verBox").addClass("show")
-                                $(".dataBox").addClass("hide")
-                                $(".custom-message").html(response.custom_message)
-                                $("html").animate({scrollTop: 340}, 350);
+                                
+                                var p = new Promise(function(resolve) {
+                                    $(".verBox").addClass("show")
+                                    $(".dataBox").addClass("hide")
+                                    $(".custom-message").html(response.custom_message)
+                                    // $("html").animate({scrollTop: 340}, 350);
+                                    setTimeout(() => {
+                                        resolve("OK")
+                                    }, 200);
+                                })
+                                p.then(() => {
+                                    $(".dataBox.hide").slideUp(200)
+                                    var ref1 = $(".bradcam_area").outerHeight(true)
+                                    var ref2 = $("header").outerHeight(true)
+                                    var diff = ref1 + ref2
+                                    var ref = $(".verBox").offset().top
+                                    var f = (ref + 180) - diff
+                                    
+
+                                    $("html").animate({
+                                        scrollTop: f
+                                    }, 350);
+                                }).then(() => {
+                                    setTimeout(() => {
+                                        $(".checkoutPage .form-check-input").addClass("disabled")
+                                        $(".checkoutPage .form-check-input").attr("disabled", true)
+                                        $(".verBox").find("form:first input:first").focus()    
+                                    }, 360);
+                                    
+                                })
+
                             }
                             // lb.text(response)
                             // $(".custom-control-label").text(text);

@@ -215,12 +215,18 @@
                             </div>
                             
                             <hr />
-                            <button type="submit" class="logitBtn genric-btn success circle arrow">Continuar<span class="lnr lnr-arrow-right"></span></button>
+                            <button type="submit" class="logitBtn genric-btn success circle arrow">Confirmar<span class="lnr lnr-arrow-right"></span></button>
                             <!-- <button class="genric-btn success circle arrow">Login<span class="lnr lnr-arrow-right"></span></button> -->
                         </form>
                     </div>
                     
                     
+                    
+                </div>
+
+            </div>
+            <div class="row d-flex justify-content-center pt-5">
+                <div class="col-md-8">
                     <hr>
                     <form id="payment-form" target="_blank" action="" method="POST">
                         <div class="usable-creditcard-form">
@@ -259,7 +265,6 @@
 
                     </form>
                 </div>
-
             </div>
         </div>
         <div class="col">
