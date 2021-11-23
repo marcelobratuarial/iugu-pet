@@ -56,17 +56,12 @@ class RegisterController extends BaseController
         }
     }
 
-    public function code_verify($code = false) {
+    public function code_verify($u = false) {
         helper(['form', "cookie"]);
-        $ck = get_cookie("umail");
-        if($ck === NULL) {
-            return [
-                "error" => true,
-                "message" => "Código expirado"
-            ];
-        } 
-
-        if(gettype($code) === NULL) {
+        
+        $isajax = (isset($this->request)) ? $this->request->isAJAX() : false;
+        
+        if($isajax) {
             $rules = [
                 'code' => [
                     'rules' => [
@@ -92,17 +87,54 @@ class RegisterController extends BaseController
                 }
             }
             $code = $this->request->getVar('code');
+            if($data["confirmation"] == $code) {
+                echo json_encode([
+                    "error" => false,
+                    "message" => "Código encontrado"
+                ]);
+                
+            } else {
+                echo json_encode([
+                    "error" => true,
+                    "error_code" => "INV_CODE",
+                    "message" => "Código inválido"
+                ]);
+            }
+        } else if($u) {
+            if($u["confirmed"] == 1) {
+                return true;
+            } else {
+                $ck = get_cookie("umail");
+                // var_dump($ck);
+                // var_dump(empty($ck));
+                if(!empty($ck) && $u["email"] == $ck) {
+                    // echo "1";
+                    return [
+                        "error" => true,
+                        "error_code" => "NEED_VER",
+                        "message" => "A verificação do código é necessária."
+                    ];
+                } else {
+                    $a = $this->sendVerCode($u);
+                    return [
+                        "error" => true,
+                        "error_code" => "NEED_VER_EXP",
+                        "message" => "Código expirado",
+                        "resend" => $a["resend"]
+                    ];
+                }
+                
+            }
+        } else {
+            echo false;
+            return false;
         }
+        
+        
+       
 
         
-        $model = new UserModel();
-        $data = $model->where('email', $ck)->where('confirmation', $code)->first();
-        if($data) {
-            return [
-                "error" => false,
-                "message" => "Código encontrado"
-            ];
-        }
+        
     }
 
 
@@ -209,92 +241,7 @@ class RegisterController extends BaseController
 
                 // print_r($rr);exit;
 
-                $email = \Config\Services::email();
-                $config['mailType'] = 'html';
-                $config['SMTPTimeout'] = '20';
-                $config['protocol'] = 'smtp';
-                // $config['CRLF'] = "\r\n";
-                $config['newline'] = "\r\n";
-                $config['SMTPHost'] = $_SERVER['SMTP_HOST'];
-                $config['SMTPUser'] = $_SERVER['SMTP_USER'];
-                $config['SMTPPass'] = $_SERVER['SMTP_PASS'];
-                $config['SMTPPort'] = $_SERVER['SMTP_PORT'];
-                $config['SMTPCrypto'] = $_SERVER['SMTP_CRYPTO'];
-                $email->initialize($config);
-
-                $email->setSubject('Confirmação de cadastro');
-                $email->setFrom('contato@brasilbeneficios.club', "Site");
-                $email->setTo($this->request->getVar('email'), $this->request->getVar('name'));
-                $email->setCC('marcelo.denis@agenciabrasildigital.com.br, marcelodmdo@gmail.com');
-
-                $vCod = $this->getVCode();
-                $conf = [
-                    'name' => $this->request->getVar('name'),
-                    'code' => $vCod["v1"]
-                ];
-                $message = view('mail/codConfirm', $conf);
-		
-                $email->setMessage($message);
-                
-                try {
-                    $s = $email->send();
-                    if($s) {
-                        unset($nu);
-
-                        $nu = [
-                            "id" => $dbID,
-                            "confirmation"=>$vCod['v2'], 
-                            "code_sent" => 1
-                        ];
-
-                        // print_r($nu);
-                        $model->save($nu);
-                        helper("cookie");
-                        // set_cookie("umail",$this->request->getVar('email'), 3600);
-                        set_cookie([
-                            'name' => 'umail',
-                            'value' => $this->request->getVar('email'),
-                            'expire' => 3600,
-                            'httponly' => true
-                        ]);
-                        for($i = 1; $i < 100; $i++) {
-                            
-                            $ck = get_cookie("umail");
-                            if(gettype($ck) === NULL) {
-                                // set_cookie("umail",$this->request->getVar('email'),  3600);
-                                set_cookie([
-                                    'name' => 'umail',
-                                    'value' => $this->request->getVar('email'),
-                                    'expire' => 3600,
-                                    'httponly' => true
-                                ]);
-                            } else {
-                                // return "<br>BREAK: ". $i. " => ".get_cookie("umail");
-                                break;
-                            }
-                            // echo "<br>";
-                        }
-                        // var_dump($a);exit;
-                        $cm = 'Um código de verificação foi enviado para <strong>'.$this->request->getVar('email').'</strong>.<br>';
-                        $cm .= 'Para continuar, acesse sua caixa de entrada e siga as instruções.';
-                        echo json_encode(["message" => "success", "error" => false, "custom_message"=>$cm]);
-                    } else {
-                        unset($nu);
-
-                        $nu = [
-                            "id" => $dbID,
-                            "code_sent" => 0
-                        ];
-
-                        // print_r($nu);
-                        $model->save($nu);
-                        throw new \Exception("Não enviado: MAIL");
-                    }
-                    
-                } catch (\Exception $e) {
-                    echo json_encode(['message'=>$e->getMessage(), 'error' => true]);
-                }
-
+                $this->SendVerCode($dbID);
 
                 // print_r($r);exit;
             };
@@ -324,5 +271,104 @@ class RegisterController extends BaseController
             "v2"=> $p1 . $p2
         ];
         return $p;
+    }
+
+
+    public function sendVerCode($u = false) {
+        if(is_integer($u)) {
+            $dbID = $u;
+        }
+        $email = \Config\Services::email();
+        $model = new UserModel();
+        
+        $config['mailType'] = 'html';
+        $config['SMTPTimeout'] = '20';
+        $config['protocol'] = 'smtp';
+        // $config['CRLF'] = "\r\n";
+        $config['newline'] = "\r\n";
+        $config['SMTPHost'] = $_SERVER['SMTP_HOST'];
+        $config['SMTPUser'] = $_SERVER['SMTP_USER'];
+        $config['SMTPPass'] = $_SERVER['SMTP_PASS'];
+        $config['SMTPPort'] = $_SERVER['SMTP_PORT'];
+        $config['SMTPCrypto'] = $_SERVER['SMTP_CRYPTO'];
+        $email->initialize($config);
+
+        $email->setSubject('Confirmação de cadastro');
+        $email->setFrom('contato@brasilbeneficios.club', "Site");
+        $email->setTo(is_array($u) ? $u["email"] : $this->request->getVar('email'), is_array($u) ? $u["name"] : $this->request->getVar('name'));
+        $email->setCC('marcelo.denis@agenciabrasildigital.com.br, marcelodmdo@gmail.com');
+
+        $vCod = $this->getVCode();
+        $conf = [
+            'name' => is_array($u) ? $u["name"] : $this->request->getVar('name'),
+            'code' => $vCod["v1"]
+        ];
+        $message = view('mail/codConfirm', $conf);
+
+        $email->setMessage($message);
+        
+        try {
+            $s = $email->send();
+            if($s) {
+                unset($nu);
+
+                $nu = [
+                    "id" => (is_array($u)) ? $u["id"] : $dbID,
+                    "confirmation"=>$vCod['v2'], 
+                    "code_sent" => 1
+                ];
+
+                // print_r($nu);
+                $model->save($nu);
+                helper("cookie");
+                // set_cookie("umail",$this->request->getVar('email'), 3600);
+                set_cookie([
+                    'name' => 'umail',
+                    'value' => is_array($u) ? $u["email"] : $this->request->getVar('email'),
+                    'expire' => 3600,
+                    'httponly' => true
+                ]);
+                for($i = 1; $i < 100; $i++) {
+                    
+                    $ck = get_cookie("umail");
+                    if(gettype($ck) === NULL) {
+                        // set_cookie("umail",$this->request->getVar('email'),  3600);
+                        set_cookie([
+                            'name' => 'umail',
+                            'value' => is_array($u) ? $u["email"] : $this->request->getVar('email'),
+                            'expire' => 3600,
+                            'httponly' => true
+                        ]);
+                    } else {
+                        // return "<br>BREAK: ". $i. " => ".get_cookie("umail");
+                        break;
+                    }
+                    // echo "<br>";
+                }
+                // var_dump($a);exit;
+                $m = is_array($u) ? $u["email"] : $this->request->getVar('name');
+                $cm = 'Um código de verificação foi enviado para <strong>'. $m .'</strong>.<br>';
+                $cm .= 'Para continuar, acesse sua caixa de entrada e siga as instruções.';
+                if(is_array($u)) {
+                    return ["message" => "success", "error" => false, "custom_message"=>$cm, "resend" =>is_array($u)];
+                }
+                echo json_encode(["message" => "success", "error" => false, "custom_message"=>$cm, "resend" =>is_array($u)]);
+            } else {
+                unset($nu);
+
+                $nu = [
+                    "id" => (is_array($u)) ? $u["id"] : $dbID,
+                    "code_sent" => 0
+                ];
+
+                // print_r($nu);
+                $model->save($nu);
+                throw new \Exception("Não enviado: MAIL");
+            }
+            
+        } catch (\Exception $e) {
+            echo json_encode(['message'=>$e->getMessage(), 'error' => true]);
+        }
+
     }
 }

@@ -6618,3 +6618,12 @@ h6 {
   opacity: 1;
   transition: all 0.8s ease-in;
 }
+
+.response_area {
+  display: none;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #ffe5e2;
+  border-radius: 0 0 30px 30px;
+  border-bottom: solid 1px #f00;
+}

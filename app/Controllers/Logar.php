@@ -31,26 +31,26 @@ class Logar extends BaseController
         
         // print_r($data);exit;
         if($data){
-            if($data["confirmed"] == 0) {
-                // echo "zero";
-                $reg = new RegisterController();
-                $t = $reg->code_verify();
-                // var_dump($t);
-                if($t && $t["error"]) {
-                    // echo "eee";
-                    echo json_encode($t);
-                    
-                } else {
-                    echo json_encode([
-                        "error" => true,
-                        "message" => "A verificação do código é necessária."
-                    ]);
-                }
-                return;
-            }
             $pass = $data['password'];
             $pwd_verify = password_verify($password, $pass);
             if($pwd_verify){
+
+                $reg = new RegisterController();
+                $t = $reg->code_verify($data);
+                // echo "rr";
+                echo json_encode($t);
+                // if($t && $t["error"]) {
+                //     echo "eee";
+                //     echo json_encode($t);
+                    
+                // } else {
+                //     echo json_encode([
+                //         "error" => true,
+                //         "error_code" => "NEED_VER",
+                //         "message" => "A verificação do código é necessária."
+                //     ]);
+                // }
+                return;
                 $ses_data = [
                     'id' => $data['id'],
                     'name' => $data['name'],
@@ -116,8 +116,9 @@ class Logar extends BaseController
             }else{
                 return json_encode([
                     "status" => "ERROR",
+                    "error_code" => "UNAUTH",
                     "error" => true,
-                    "message" => "Unauthorized"
+                    "message" => "Usuário e/ou senha inválidos. Verifique e tente novamente."
                 ]);
                 // $session->setFlashdata('msg', 'wrong password.');
                 // return redirect()->to('/login');
@@ -125,8 +126,9 @@ class Logar extends BaseController
         } else {
             return json_encode([
                 "status" => "ERROR",
+                "error_code" => "UNAUTH_NE",
                 "error" => true,
-                "message" => "Unauthorized 2"
+                "message" => "Usuário e/ou senha inválidos. Verifique e tente novamente."
             ]);
         }
         // else{

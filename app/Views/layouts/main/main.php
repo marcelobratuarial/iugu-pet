@@ -359,6 +359,27 @@
                         },
                         success: function (response) {
                             console.log(response)
+                            console.log(typeof response.error)
+                            if(response.error) {
+                                // if(response.error_code == 'UNAUTH' || response.error_code == 'UNAUTH_NE' ) {
+                                //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
+                                // } else if(response.error_code == 'NEED_VER') {
+                                // }
+                                var p = new Promise((resolve)=> {
+                                    $(form).find(".response_area").html(response.message)
+                                    resolve("OK")
+                                })
+                                p.then((e)=> {
+                                    console.log(e)
+                                    $(form).find(".response_area").slideDown(234);
+                                }).then((e) => {
+                                    setTimeout(() => {
+                                        $(form).find(".response_area").slideUp(432);
+                                    }, 4000);
+                                })
+                                
+                                
+                            }
                             // lb.text(response)
                             // $(".custom-control-label").text(text);
                             // $('#imgPreview').attr('src', '');

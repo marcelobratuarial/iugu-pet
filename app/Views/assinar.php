@@ -48,8 +48,9 @@
                         <div class="mt-10">
                             <input type="password" name="password" placeholder="Senha" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Senha'" required class="single-input">
                         </div>
-                        <hr />
-                        <button type="submit" class="logitBtn genric-btn success circle arrow">Continuar<span class="lnr lnr-arrow-right"></span></button>
+                        <hr style="margin-bottom: 0" />
+                        <div class="response_area"></div>
+                        <button type="submit" class="logitBtn genric-btn success circle arrow mt-1">Continuar<span class="lnr lnr-arrow-right"></span></button>
                         <!-- <button class="genric-btn success circle arrow">Login<span class="lnr lnr-arrow-right"></span></button> -->
                     </form>
                 </div>
@@ -184,10 +185,9 @@
 
                                 </div>
                             </div>
-                            dib
-
-                            <hr />
-                            <button type="submit" class="registerBtn genric-btn success circle arrow">Continuar<span class="lnr lnr-arrow-right"></span></button>
+                            <hr style="margin-bottom: 0" />
+                            <div class="response_area"></div>
+                            <button type="submit" class="registerBtn genric-btn success circle arrow mt-1">Continuar<span class="lnr lnr-arrow-right"></span></button>
                         </form>
                     </div>
                     
