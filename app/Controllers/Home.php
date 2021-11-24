@@ -51,11 +51,7 @@ class Home extends BaseController
         // // parent::Controller();
         session();
         // echo "<pre>";print_r($a->get("name"));exit;
-        if(isset($_SESSION['email'])) {
-            echo "<pre>";
-            print_r($_SESSION);
-            echo "</pre>";
-        }
+        
         $args = [];
         $this->requestURL = $this->baseApi . "plans/".$id;
         $args["m"] = "GET";
@@ -69,18 +65,34 @@ class Home extends BaseController
         // }
         $plano = $this->doRequest($this->requestURL, $args);
         
-        $args = [];
-        $args["m"] = "GET";
-        $this->requestURL = $this->baseApi . "customers";
-        $args["pl"] = json_encode([
-            "query" => "marcelo@agencia.com.br",
-            "limit" => 2
-        ]);
-        $user = $this->doRequest($this->requestURL, $args);
+        if(isset($_SESSION['email'])) {
+            echo "<pre>";
+            print_r($_SESSION);
+            echo "</pre>";
+            $args = [];
+            $args["m"] = "GET";
+            $this->requestURL = $this->baseApi . "customers";
+            $args["pl"] = json_encode([
+                "query" => $_SESSION['email'],
+                "limit" => 1
+            ]);
+            $user = $this->doRequest($this->requestURL, $args);
+            // echo gettype(json_decode($user, true));exit;
+            $u = json_decode($user, true);
+            unset($user);
+            $user = [];
+            if($u["totalItems"] > 0) {
+                $user = $u['items'][0];
+            }
+        } else {
+            $user = [];
+        }
+        
+        
         // echo "<pre>";
         // print_r(json_decode($user, true));;
         // print_r(json_decode($plano, true));exit;
-        return view('assinar', ["plan" => json_decode($plano), "user" => json_decode($user)]);
+        return view('assinar', ["plan" => json_decode($plano), "user" => $user]);
 
     }
 
@@ -136,30 +148,65 @@ class Home extends BaseController
     }
 
     public function api() {
-        $rdata = $this->request->getJSON();
+        $rdata = $this->request->getPost();
         $args = [];
-        if(isset($rdata->call)) {
-            $this->requestURL = $this->baseApi . $rdata->call;
+        if(isset($rdata["call"])) {
+            if($rdata["call"] == "payment_methods") {
+                $session = session();
+                $session->get('email');
+                $args_ = [];
+                $args_["m"] = "GET";
+                $this->requestURL = $this->baseApi . "customers";
+                $args_["pl"] = json_encode([
+                    "query" => $session->get('email'),
+                    "limit" => 1
+                ]);
+                $user = $this->doRequest($this->requestURL, $args_);
+                // echo gettype(json_decode($user, true));exit;
+                $u = json_decode($user, true)["items"][0];
+                // var_dump($u);exit;
+                // echo json_encode($u);
+                $this->requestURL = $this->baseApi . "customers/".$u["id"]."/".$rdata["call"];
+                $rdata["payload"]["customer_id"] = $u["id"];
+                $rdata["payload"]["description"] = "Teste";
+                $rdata["method"] = "GET";
+                // echo $this->requestURL;
+                // exit;
+            } else {
+                $this->requestURL = $this->baseApi . $rdata["call"];
+            }
+            
+            
         } else {
             throw new \Exception("invalid call");
         }
-        if(isset($rdata->method)) {
-            $args["m"] = $rdata->method;
+        if(isset($rdata["method"])) {
+            $args["m"] = $rdata["method"];
         } else{
             throw new \Exception("invalid method");
         }
-        if(in_array($rdata->method, ["POST", "PUT"]) && !isset($rdata->payload)) {
+        if(in_array($rdata["method"], ["POST", "PUT"]) && !isset($rdata["payload"])) {
             throw new \Exception("invalid payload");
-        } else if(in_array($rdata->method, ["POST", "PUT"]) && isset($rdata->payload)) {
-            $args["pl"] = json_encode($rdata->payload);
+        } else if(in_array($rdata["method"], ["POST", "PUT"]) && isset($rdata["payload"])) {
+            
+            $args["pl"] = json_encode($rdata["payload"]);
         }
         
         // print_r($this->requestURL);exit;
         // $this->requestURL = $this->baseApi . $rdata['call'];
         // $pl = $rdata['payload'];
         $r = $this->doRequest($this->requestURL, $args);
-            
+        
         print_r($r);
+        $args__ = [];
+        $args__["m"] = "GET";
+        $args__["pl"] = json_encode([
+            "customer_id" => $u["id"]
+        ]);
+        $user = $this->doRequest($this->requestURL, $args__);
+        // echo gettype(json_decode($user, true));exit;
+        $u = json_decode($user, true);
+        print_r($u);
         exit;
     }
 }

@@ -6603,7 +6603,8 @@ h6 {
   opacity: 0;
   transition: all 0.4s ease-out;
 }
-.checkoutPage .verBox.show {
+
+.checkoutPage .optChecked .verBox.show {
   /* display: none; */
   max-height: 800px;
   height: auto;

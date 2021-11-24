@@ -6,7 +6,7 @@ use CodeIgniter\Controller;
 
 use App\Models\UserModel;
 use CodeIgniter\API\ResponseTrait;
-
+use \Firebase\JWT\JWT;
 use App\Controllers\Home;
 
 // print_r($_POST["form_fields"]);exit;
@@ -62,13 +62,14 @@ class RegisterController extends BaseController
         $isajax = (isset($this->request)) ? $this->request->isAJAX() : false;
         
         if($isajax) {
+            
             $rules = [
                 'code' => [
                     'rules' => [
                         'required',
                     ],
                     'errors' => [
-                        'is_unique' => 'Código necessário',
+                        'required' => 'Código necessário',
                     ]
                 ]
                 // 'password'      => 'required|min_length[4]|max_length[50]',
@@ -87,19 +88,91 @@ class RegisterController extends BaseController
                 }
             }
             $code = $this->request->getVar('code');
-            if($data["confirmation"] == $code) {
-                echo json_encode([
-                    "error" => false,
-                    "message" => "Código encontrado"
-                ]);
-                
+            $model = new UserModel();
+            $ck = get_cookie("umail");
+            // var_dump($ck);
+            // var_dump(empty($ck));
+            if(!empty($ck)) {
+                $data = $model->where('email', $ck)->first();
+
+                if($data["confirmation"] == $code) {
+                    
+                    $ses_data = [
+                        'id' => $data['id'],
+                        'name' => $data['name'],
+                        'email' => $data['email'],
+                        'isSignedIn' => TRUE
+                    ];
+                    $session = session();
+                    $session->set($ses_data);
+                    $key = getenv('JWT_SECRET');
+                    $iat = time(); // current timestamp value
+                    $exp = $iat + 3600;
+            
+                    $payload = array(
+                        "iss" => "Issuer of the JWT",
+                        "aud" => "Audience that the JWT",
+                        "sub" => "Subject of the JWT",
+                        "iat" => $iat, //Time the JWT issued at
+                        "exp" => $exp, // Expiration time of token
+                        "email" => $data['email'],
+                    );
+                    
+                    $token = JWT::encode($payload, $key);
+                    // var_dump(get_cookie("jwtteste"));
+                    // $c=1;
+                    // $ck = get_cookie("jwtteste");
+                    // while($ck === null) {
+                    //     echo "tenta ".$c;
+                    // set_cookie("jwtteste",$token, 3600);
+                    set_cookie([
+                        'name' => 'jwtteste',
+                        'value' => $token,
+                        'expire' => 3600*24,
+                        'httponly' => true
+                    ]);
+                    for($i = 1; $i < 100; $i++) {
+                        
+                        $ck = get_cookie("jwtteste");
+                        if(gettype($ck) === NULL) {
+                            // set_cookie("jwtteste",$token, 3600);
+                            set_cookie([
+                                'name' => 'jwtteste',
+                                'value' => $token,
+                                'expire' => 3600*24,
+                                'httponly' => true
+                            ]);
+                        } else {
+                            // return "<br>BREAK: ". $i. " => ".get_cookie("jwtteste");
+                            break;
+                        }
+                        // echo "<br>";
+                    }
+                    //     echo "seta";
+                    //     $c++;
+                    //     $ck = get_cookie("jwtteste");
+                    // }
+                    return json_encode([
+                        "status" => "OK",
+                        "error" => false,
+                        "message" => "Authorized"
+                    ]);
+                    echo json_encode([
+                        "error" => false,
+                        "message" => "Código encontrado"
+                    ]);
+                    
+                } else {
+                    echo json_encode([
+                        "error" => true,
+                        "error_code" => "INV_CODE",
+                        "message" => "Código inválido"
+                    ]);
+                }
             } else {
-                echo json_encode([
-                    "error" => true,
-                    "error_code" => "INV_CODE",
-                    "message" => "Código inválido"
-                ]);
+                echo "done";
             }
+            
         } else if($u) {
             if($u["confirmed"] == 1) {
                 return true;
@@ -112,7 +185,8 @@ class RegisterController extends BaseController
                     return [
                         "error" => true,
                         "error_code" => "NEED_VER",
-                        "message" => "A verificação do código é necessária."
+                        "message" => "A verificação do código é necessária.",
+                        "custom_message" => "Verifique sua caixa de entrada e siga as instruções."
                     ];
                 } else {
                     $a = $this->sendVerCode($u);
@@ -120,7 +194,8 @@ class RegisterController extends BaseController
                         "error" => true,
                         "error_code" => "NEED_VER_EXP",
                         "message" => "Código expirado",
-                        "resend" => $a["resend"]
+                        "resend" => $a["resend"],
+                        "custom_message" => $a["custom_message"]
                     ];
                 }
                 
@@ -346,7 +421,7 @@ class RegisterController extends BaseController
                     // echo "<br>";
                 }
                 // var_dump($a);exit;
-                $m = is_array($u) ? $u["email"] : $this->request->getVar('name');
+                $m = is_array($u) ? $u["email"] : $this->request->getVar('email');
                 $cm = 'Um código de verificação foi enviado para <strong>'. $m .'</strong>.<br>';
                 $cm .= 'Para continuar, acesse sua caixa de entrada e siga as instruções.';
                 if(is_array($u)) {
