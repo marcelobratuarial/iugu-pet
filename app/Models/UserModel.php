@@ -14,6 +14,7 @@ class UserModel extends Model
       'password',
       'confirmation',
       'code_sent',
+      'confirmed',
       'created_at'
     ];
 }

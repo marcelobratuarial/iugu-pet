@@ -112,7 +112,24 @@
             Iugu.setAccountID("4F8D7432F6621AEF83D433C5E197F32E")
             Iugu.setTestMode(true)
             Iugu.setup()
-            
+            var brand
+            var ccn
+
+            $(".credit_card_number").on("blur", function(e) {
+                ccn = $(this).val()
+                console.log(ccn)
+                var card_valid = Iugu.utils.validateCreditCardNumber(ccn); 
+                console.log(card_valid)
+                if(card_valid) {
+                    brand = Iugu.utils.getBrandByCreditCardNumber(ccn)
+                    console.log(brand)
+                }
+            })
+            $(".credit_card_cvv").on("blur", function(e) {
+                var cvv = $(this).val()
+                var cvv_valid = Iugu.utils.validateCVV(ccn, brand);
+                console.log(cvv_valid)
+            })
             jQuery(function($) {
                 $("#email").on("blur", function(e) {
                     var form = $(this);
@@ -154,7 +171,7 @@
                         if (data.errors) {
                             alert("Erro salvando cartão: " + JSON.stringify(data.errors));
                         } else {
-                            $("#token").val( data.id );
+                            // $("#token").val( data.id );
                             var url = '<?= base_url('/api') ?>';
                             // var lb = $(this).parent('div').find(".custom-control-label")
                             // var data = $(form).serializeArray()

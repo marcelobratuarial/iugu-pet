@@ -96,7 +96,15 @@ class RegisterController extends BaseController
                 $data = $model->where('email', $ck)->first();
 
                 if($data["confirmation"] == $code) {
-                    
+                    $uup = [
+                        "id" => $data["id"],
+                        "confirmation"=> NULL, 
+                        "confirmed" => 1
+                    ];
+    
+                    // print_r($uup);
+                    $model->save($uup);
+
                     $ses_data = [
                         'id' => $data['id'],
                         'name' => $data['name'],
@@ -352,7 +360,7 @@ class RegisterController extends BaseController
     public function sendVerCode($u = false) {
         if(is_integer($u)) {
             $dbID = $u;
-        }
+        } else {$dbID = null;}
         $email = \Config\Services::email();
         $model = new UserModel();
         

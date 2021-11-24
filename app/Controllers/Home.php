@@ -87,12 +87,43 @@ class Home extends BaseController
         } else {
             $user = [];
         }
+        $user_default_payment = NULL;
+        if(isset($user["default_payment_method_id"]) &&
+        !empty($user["default_payment_method_id"])) {
+            $dft_pmt = $user["default_payment_method_id"];
+            echo "<pre>";
+            // print_r($user);
+            if(isset($user["payment_methods"]) && 
+            !empty($user["payment_methods"])) {
+                foreach($user["payment_methods"] as $pm) {
+                    if($pm["id"] == $dft_pmt) {
+                        $user_default_payment = $pm;
+                        break;
+                    }
+                }
+            }
+            echo "</pre>";
+        }
         
+        // $args__ = [];
+        // $args__["m"] = "GET";
+        // $args__["pl"] = json_encode([
+        //     "customer_id" => $user["id"]
+        // ]);
+        // $this->requestURL = $this->baseApi . 'customers/'.$user["id"].'/payment_methods';
+        // // print_r($this->requestURL);exit;
+        // // print_r($args__);
+        // // exit;
+        // $payment_forms = $this->doRequest($this->requestURL, $args__);
+        // // echo gettype(json_decode($payment_forms, true));exit;
+        // $pf = json_decode($payment_forms, true);
+        // print_r($pf);
+        // exit;
         
         // echo "<pre>";
         // print_r(json_decode($user, true));;
         // print_r(json_decode($plano, true));exit;
-        return view('assinar', ["plan" => json_decode($plano), "user" => $user]);
+        return view('assinar', ["plan" => json_decode($plano), "user" => $user, "payment"=>$user_default_payment]);
 
     }
 
@@ -169,7 +200,6 @@ class Home extends BaseController
                 $this->requestURL = $this->baseApi . "customers/".$u["id"]."/".$rdata["call"];
                 $rdata["payload"]["customer_id"] = $u["id"];
                 $rdata["payload"]["description"] = "Teste";
-                $rdata["method"] = "GET";
                 // echo $this->requestURL;
                 // exit;
             } else {
@@ -197,16 +227,7 @@ class Home extends BaseController
         // $pl = $rdata['payload'];
         $r = $this->doRequest($this->requestURL, $args);
         
-        print_r($r);
-        $args__ = [];
-        $args__["m"] = "GET";
-        $args__["pl"] = json_encode([
-            "customer_id" => $u["id"]
-        ]);
-        $user = $this->doRequest($this->requestURL, $args__);
-        // echo gettype(json_decode($user, true));exit;
-        $u = json_decode($user, true);
-        print_r($u);
-        exit;
+        // print_r($r);
+        
     }
 }

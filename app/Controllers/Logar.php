@@ -37,8 +37,11 @@ class Logar extends BaseController
 
                 $reg = new RegisterController();
                 $t = $reg->code_verify($data);
-                // echo "rr";
-                echo json_encode($t);
+                // echo gettype($t);
+                if(!is_bool($t) && !$t) {
+                    return;
+                } 
+                
                 // if($t && $t["error"]) {
                 //     echo "eee";
                 //     echo json_encode($t);
@@ -50,7 +53,7 @@ class Logar extends BaseController
                 //         "message" => "A verificação do código é necessária."
                 //     ]);
                 // }
-                return;
+                
                 $ses_data = [
                     'id' => $data['id'],
                     'name' => $data['name'],

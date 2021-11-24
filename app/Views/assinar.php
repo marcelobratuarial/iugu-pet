@@ -233,43 +233,81 @@
                 <div class="row d-flex justify-content-center pt-5">
                     <div class="col-md-8">
                         <?php echo $user["email"] ?>
+                        <pre>
+
+                            <?php var_dump($payment) ?>
+                            <?php var_dump(is_array($payment)) ?>
+                        </pre>
+                        <?php if(is_array($payment)): ?>
+                        <div class="row d-flex optPaymentChecked justify-content-center pt-5">
+                            <div class="col-md-12">
+                                <div class="form-check d-flex form-lg form-check-inline mb-4">
+                                    <input checked class="form-check-input" type="radio" name="payment_meth" data-rf="loginForm" id="pdefault" value="option1">
+                                    <label class="form-check-label" for="pdefault"><h3 style="margin-bottom: 0"><?= $payment["data"]["brand"] ?></h3></label>
+                                </div>
+                                <div class="defCard">
+                                    <?= $payment["data"]["holder_name"] ?><br>
+                                    <?= $payment["data"]["display_number"] ?>
+                                
+                                </div>
+                                
+                                    
+                                
+                            </div>
+
+                        </div>
+                        <?php else: ?>
+                        
+                        <?php endif; ?>
                         <hr>
-                        <form id="payment-form" target="_blank" action="" method="POST">
-                            <div class="usable-creditcard-form">
-                                <div class="wrapper">
-                                    <div class="input-group nmb_a">
-                                        <div class="icon ccic-brand"></div>
-                                        <input autocomplete="off" class="credit_card_number" data-iugu="number" placeholder="Número do Cartão" type="text" value="" />
-                                    </div>
-                                    <div class="input-group nmb_b">
-                                        <div class="icon ccic-cvv"></div>
-                                        <input autocomplete="off" class="credit_card_cvv" data-iugu="verification_value" placeholder="CVV" type="text" value="" />
-                                    </div>
-                                    <div class="input-group nmb_c">
-                                        <div class="icon ccic-name"></div>
-                                        <input class="credit_card_name" data-iugu="full_name" placeholder="Titular do Cartão" type="text" value="" />
-                                    </div>
-                                    <div class="input-group nmb_d">
-                                        <div class="icon ccic-exp"></div>
-                                        <input autocomplete="off" class="credit_card_expiration" data-iugu="expiration" placeholder="MM/AA" type="text" value="" />
-                                    </div>
+                        <div class="row d-flex justify-content-center pt-5">
+                            <div class="col-md-12">
+                                <div class="form-check d-flex form-lg form-check-inline mb-4">
+                                    <input class="form-check-input" type="radio" name="payment_meth" data-rf="loginForm" id="addCard" value="option1">
+                                    <label class="form-check-label" for="addCard"><h3 style="margin-bottom: 0">Adicionar cartão</h3></label>
                                 </div>
-                                <div class="footer">
-                                    <img src="https://s3-sa-east-1.amazonaws.com/storage.pupui.com.br/9CA0F40E971643D1B7C8DE46BBC18396/assets/cc-icons.e8f4c6b4db3cc0869fa93ad535acbfe7.png" alt="Visa, Master, Diners. Amex" border="0" />
-                                    <a class="iugu-btn" href="http://iugu.com" tabindex="-1"><img src="https://s3-sa-east-1.amazonaws.com/storage.pupui.com.br/9CA0F40E971643D1B7C8DE46BBC18396/assets/payments-by-iugu.1df7caaf6958f1b5774579fa807b5e7f.png" alt="Pagamentos por Iugu" border="0" /></a>
-                                </div>
+                                
+                                <form id="payment-form" target="_blank" action="" method="POST">
+                                    <div class="usable-creditcard-form">
+                                        <div class="wrapper">
+                                            <div class="input-group mt-10 nmb_a">
+                                                <div class="icon ccic-brand"></div>
+                                                <input autocomplete="off" class="credit_card_number single-input" data-iugu="number" placeholder="Número do Cartão" type="text" value="" />
+                                            </div>
+                                            <div class="input-group mt-10 nmb_b">
+                                                <div class="icon ccic-cvv"></div>
+                                                <input autocomplete="off" class="credit_card_cvv single-input" data-iugu="verification_value" placeholder="CVV" type="text" value="" />
+                                            </div>
+                                            <div class="input-group mt-10 nmb_c">
+                                                <div class="icon ccic-name"></div>
+                                                <input class="credit_card_name single-input" data-iugu="full_name" placeholder="Titular do Cartão" type="text" value="" />
+                                            </div>
+                                            <div class="input-group mt-10 nmb_d">
+                                                <div class="icon ccic-exp"></div>
+                                                <input autocomplete="off" class="credit_card_expiration single-input" data-iugu="expiration" placeholder="MM/AA" type="text" value="" />
+                                            </div>
+                                        </div>
+                                        <div class="footer">
+                                            <img src="https://s3-sa-east-1.amazonaws.com/storage.pupui.com.br/9CA0F40E971643D1B7C8DE46BBC18396/assets/cc-icons.e8f4c6b4db3cc0869fa93ad535acbfe7.png" alt="Visa, Master, Diners. Amex" border="0" />
+                                            <a class="iugu-btn" href="http://iugu.com" tabindex="-1"><img src="https://s3-sa-east-1.amazonaws.com/storage.pupui.com.br/9CA0F40E971643D1B7C8DE46BBC18396/assets/payments-by-iugu.1df7caaf6958f1b5774579fa807b5e7f.png" alt="Pagamentos por Iugu" border="0" /></a>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="token-area">
+                                        <label for="token">Token do Cartão de Crédito - Enviar para seu Servidor</label>
+                                        <input type="text" name="token" id="token" value="" readonly="true" size="64" style="text-align:center" />
+                                    </div> -->
+
+                                    <div>
+                                        <button type="submit">Salvar</button>
+                                    </div>
+
+                                </form>
+                                
+                                
                             </div>
 
-                            <div class="token-area">
-                                <label for="token">Token do Cartão de Crédito - Enviar para seu Servidor</label>
-                                <input type="text" name="token" id="token" value="" readonly="true" size="64" style="text-align:center" />
-                            </div>
-
-                            <div>
-                                <button type="submit">Salvar</button>
-                            </div>
-
-                        </form>
+                        </div>
                     </div>
                 </div>
             <?php endif; ?>
