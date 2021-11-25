@@ -66,9 +66,9 @@ class Home extends BaseController
         $plano = $this->doRequest($this->requestURL, $args);
         
         if(isset($_SESSION['email'])) {
-            echo "<pre>";
-            print_r($_SESSION);
-            echo "</pre>";
+            // echo "<pre>";
+            // print_r($_SESSION);
+            // echo "</pre>";
             $args = [];
             $args["m"] = "GET";
             $this->requestURL = $this->baseApi . "customers";
@@ -91,7 +91,7 @@ class Home extends BaseController
         if(isset($user["default_payment_method_id"]) &&
         !empty($user["default_payment_method_id"])) {
             $dft_pmt = $user["default_payment_method_id"];
-            echo "<pre>";
+            // echo "<pre>";
             // print_r($user);
             if(isset($user["payment_methods"]) && 
             !empty($user["payment_methods"])) {
@@ -102,7 +102,7 @@ class Home extends BaseController
                     }
                 }
             }
-            echo "</pre>";
+            // echo "</pre>";
         }
         
         // $args__ = [];
@@ -227,7 +227,7 @@ class Home extends BaseController
         // $pl = $rdata['payload'];
         $r = $this->doRequest($this->requestURL, $args);
         
-        // print_r($r);
+        print_r($r);
         
     }
 }

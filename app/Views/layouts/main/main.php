@@ -267,7 +267,7 @@
                 //     console.log("bradcam_area ", $(".bradcam_area").outerHeight(true))
                 //     console.log("header", $("header").outerHeight(true))
                 // })
-                $(".checkoutPage .form-check-input").on("click", function(e){
+                $(".checkoutPage .authArea .form-check-input").on("click", function(e){
                     // console.log($(this).data("rf"))
 
                     const that = this
@@ -312,6 +312,109 @@
                     }).then(() => {
                         // console.log($(that).closest(".row").find("form:first input:first"))
                         $(that).closest(".row").find("form:first input:first").focus()
+                    })
+
+                    
+                    // const el = document.querySelector("#"+$(this).data("rf"));
+                    // console.log(el)
+                    // get scroll position in px
+                    // console.log(el.scrollLeft, el.scrollTop);
+                    // $("html").animate({scrollTop: 340}, 350);
+                    // console.log($("#"+$(this).data("rf")).offset().top)
+                    // var container = $('html');
+                    // var scrollTo = $("#"+$(this).data("rf"));
+                    // // console.log("scrollTo.offset().top ",scrollTo.offset().top )
+                    // // console.log("container.offset().top ",container.offset().top )
+                    // // console.log("container.scrollTop() ",container.scrollTop() )
+                    // // Calculating new position of scrollbar
+                    // var position = scrollTo.offset().top 
+                    //         - container.offset().top 
+                    //         + (container.scrollTop() + 280);
+                    
+                    
+                    // e.target.scrollIntoView(true)
+                    /*console.log($("#"+$(this).data("rf")).offset().top)
+                    console.log($("#"+$(this).data("rf")))
+                    var p = new Promise(function(resolve) {
+                        $(".checkoutPage > div > .row").removeClass("optChecked")
+                        $(this).closest(".row").addClass("optChecked")
+                        resolve("OK")
+                    }).then(() => {
+                        var container = $(".bradcam_text");
+                        var scrollTo = $("#"+$(this).data("rf"));
+                
+                        // Calculating new position of scrollbar
+                        var position = scrollTo.offset().top 
+                                - container.offset().top 
+                                + container.scrollTop();
+                        
+                        $("html,body").animate({
+                            scrollTop: position
+                        }, 350);
+                        // $('body').scrollTo($("#"+$(this).data("rf"))); 
+                    }) */
+                    // var container = $('body');
+                    // var scrollTo = $("#"+$(this).data("rf"));
+            
+                    // // Calculating new position of scrollbar
+                    // var position = scrollTo.offset().top 
+                    //         - container.offset().top 
+                    //         + container.scrollTop();
+                    
+                    
+                    // Setting the value of scrollbar
+                    // container.scrollTop(position);
+                    // $("html,body").animate({
+                    //     scrollTop: $(".optChecked .form-check-input").offset().top + 100
+                    // }, 350);
+                    // .scrollTo('#target')
+                    // $('body').scrollTo($("#"+$(this).data("rf"))); 
+                })
+                $(".checkoutPage .paymentMethodArea .form-check-input").on("click", function(e){
+                    // console.log($(this).data("rf"))
+
+                    const that = this
+                    // var ref
+                    // var html
+                    var p = new Promise(function(resolve) {
+                        $(".checkoutPage .paymentMethodArea .optPayment").removeClass("optPaymentChecked").not($(that).closest(".optPayment"))
+                        // console.log($(that).closest(".row").find("form:first"))
+                        $(that).closest(".optPayment").addClass("optPaymentChecked")
+                        // console.log($(".checkoutPage > div > .row:first"))
+                        // ref = $(".bradcam_text").offset().top //$("#"+$(this).data("rf")).offset().top
+                        // console.log("ref", ref)
+                        setTimeout(() => {
+                            resolve("OK")
+                        }, 200);
+                    })
+                    
+                    p.then(() => {
+                        var ref1 = $(".bradcam_area").outerHeight(true)
+                        var ref2 = $("header").outerHeight(true)
+                        var diff = ref1 + ref2
+                        var ref = $(that).closest(".optPayment").offset().top
+                        var f = (ref + 180) - diff
+                        console.log(ref1)
+                        // console.log(ref2)
+                        // console.log(diff)
+                        // console.log(ref)
+                        // console.log(f)
+                        var s = 0
+                        // if($(this).data("rf") == "registerForm") {
+                        //     s = s + 33
+                        // } else {
+                        //     console.warn("nao");
+                        // }
+                            
+
+                        $("html").animate({
+                            scrollTop: f - s
+                        }, 350);
+                        // console.log("ref", ref)
+                        // console.warn("html", html)
+                    }).then(() => {
+                        // console.log($(that).closest(".row").find("form:first input:first"))
+                        $(that).closest(".optPayment").find("form:first input:first").focus()
                     })
 
                     
