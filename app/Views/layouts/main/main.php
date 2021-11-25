@@ -163,6 +163,88 @@
                         // console
                     }
                 })
+                $('#finish-form').on("submit", function(evt) {
+                    evt.preventDefault()
+                    var form = $(this);
+                    var url = '<?= base_url('/api') ?>';
+                    var payload = {
+                            'call': 'subscriptions',
+                            'method': 'POST',
+                            'payload': {
+                                'plan_identifier': $("#h-plan-id").val(),
+                                'customer_id': $("#h-cid").val()
+                            }
+                        }
+                        $.ajax({
+                                type: "POST",
+                                url: url,
+                                data: payload,
+                                fail: function(r){
+                                    console.log(r)
+                                },
+                                success: function (response) {
+                                    console.log(response)
+                                    console.log(typeof response.error)
+                                    if(response.error) {
+                                        // if(response.error_code == 'UNAUTH' || response.error_code == 'UNAUTH_NE' ) {
+                                        //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
+                                        // } else if(response.error_code == 'NEED_VER') {
+                                        // }
+                                        /*
+                                        var p = new Promise((resolve)=> {
+                                            $(form).find(".response_area").html(response.message)
+                                            resolve("OK")
+                                        })
+                                        p.then((e)=> {
+                                            console.log(e)
+                                            $(form).find(".response_area").slideDown(234);
+                                        }).then((e) => {
+                                            
+                                            
+                                            if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
+                                                var verBox = $(".verBox")
+                                                // console.log($(".optChecked .verBox .custom-message"))
+                                                // console.log(response.custom_message)
+                                                
+                                                
+                                                if($(".optChecked").find(".verBox").length == 0) {
+                                                    $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
+                                                    
+                                                } else {
+                                                    console.log("Not")
+                                                }
+                                                var pp = new Promise((resolve) => {
+                                                    
+                                                    setTimeout(() => {
+                                                        $(form).find(".response_area").slideUp(432);
+                                                        $(form).slideUp(500);
+                                                        resolve()
+                                                    }, 4000);
+                                                })
+                                                pp.then(()=> {
+                                                    $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                                    setTimeout(() => {
+                                                        $(".optChecked").find(".verBox").addClass("show")
+                                                    }, 500)    
+                                                    
+                                                })
+                                            }
+                                        }) */
+                                        
+                                        
+                                    }
+                                    // lb.text(response)
+                                    // $(".custom-control-label").text(text);
+                                    // $('#imgPreview').attr('src', '');
+                                    // $('#imgPreview').slideUp(200);
+                                    // $(".remove-image").slideUp(100);
+                                    // $('#noImageBox').slideDown(250);
+                                    // $("#upload-box").slideDown(500);
+                                },
+                                dataType: 'json',
+                                headers: {'X-Requested-With': 'XMLHttpRequest'}
+                            });
+                });
                 $('#payment-form').submit(function(evt) {
                     evt.preventDefault()
                     var form = $(this);

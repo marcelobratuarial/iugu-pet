@@ -232,14 +232,29 @@
             <?php else: ?>
                 
             <div class="paymentMethodArea row d-flex justify-content-center pt-5">
-                <div class="col-md-8">
-                    <?php echo $user["email"] ?>
-                    <pre>
+                <div class="col-md-10">
+                    <h3><?= $user["name"] ?></h3>
+                    <p><?= $user["email"] ?></p>
+                    <hr>
+                    <ul>
+                        <?php foreach($user["address"] as $a) : ?>
+                            <li>
+                                <?= $a ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    
 
-                        <?php //var_dump($payment) ?>
-                        <?php //var_dump(is_array($payment)) ?>
-                    </pre>
-                    <?php if(is_array($payment)): ?>
+                    <hr>
+                    <ul>
+                        <?php foreach($user["pet_data"] as $pd) : ?>
+                            <li><strong><?= $pd["display"] ?></strong>: <?= $pd["value"] ?></li>
+                        <?php endforeach ?>
+                    </ul>
+                    
+                    <?php 
+                    // print_r($user);
+                    if(is_array($payment)): ?>
                     <div class="row d-flex optPayment optPaymentChecked justify-content-center pt-5">
                         <div class="col-md-12">
                             <div class="form-check d-flex form-lg form-check-inline mb-4">
@@ -294,8 +309,8 @@
                                     <div class="mt-4 mb-6">
                                         <hr>
                                         <ul>
-                                            <li><strong>Este será seu cartão principal</strong></li>
-                                            <li><a href="<?= base_url("minha-conta/cartoes") ?>">Gerenciar meus cartões (<?= count($user["payment_methods"]) ?>)</a></li>
+                                            <li><i class="fa fa-circle" aria-hidden="true"></i> <strong>Este será seu cartão principal</strong></li>
+                                            <li><i class="fa fa-circle" aria-hidden="true"></i> <a href="<?= base_url("minha-conta/cartoes") ?>">Gerenciar meus cartões (<?= count($user["payment_methods"]) ?>)</a></li>
                                         </ul>
                                         
                                         
@@ -352,7 +367,12 @@
                         </ul>
 
                     </div>
-                    <div class="d-flex justify-content-center pt-4"><a href="<?= base_url("assinar/" . $plan->id) ?>" class="btn btn-primary">Assinar agora</a></div>
+                    <div class="d-flex justify-content-center pt-4">
+                        <form id="finish-form" action="" method="post">
+                            <input type="hidden" id="h-plan-id" name="plan_id" value="<?= $plan->identifier ?>">
+                            <input type="hidden" id="h-cid" name="cid" value="<?= isset($user["id"]) ? $user["id"] : NULL ?>">
+                            <button type="submit" class="genric-btn info circle">Completar assinatura</button></div>
+                        </form>
                 </div>
             </div>
         </div>

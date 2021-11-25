@@ -37,11 +37,19 @@ class Logar extends BaseController
 
                 $reg = new RegisterController();
                 $t = $reg->code_verify($data);
-                // echo gettype($t);
-                if(!is_bool($t) && !$t) {
-                    return;
+                // print_r($t);
+                if(is_array($t)) {
+                    if($t["error"]) {
+                        echo json_encode($t);
+                        return;
+                    } else {
+                        echo "some thing";
+                        return;
+                    }
+                    
+                    
                 } 
-                
+                // exit;
                 // if($t && $t["error"]) {
                 //     echo "eee";
                 //     echo json_encode($t);

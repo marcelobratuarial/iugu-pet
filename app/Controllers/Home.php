@@ -104,7 +104,44 @@ class Home extends BaseController
             }
             // echo "</pre>";
         }
+        if(isset($user["custom_variables"]) && !empty($user["custom_variables"])) {
+            $cf_refs = [
+                'pet_name' => [
+                    'display' => "Nome do Pet",
+                ],
+                'pet_peso' => [
+                    'display' => "Peso",
+                ],
+                'pet_raca' => [
+                    'display' => "Raça",
+                ],
+                'pet_nasc' => [
+                    'display' => "Nascimento",
+                ],
+            ];
+            $user["pet_data"] = [];
+            foreach($user["custom_variables"] as $v) {
+                $cf_refs[$v["name"]]["value"] = $v["value"];
+                // print_r($cf_refs);
+                $user["pet_data"][] = $cf_refs[$v["name"]];
+            }
+            $address = [];
+            
+            $address["rua"] = '';
+            $address["rua"] .= (!empty($user["street"])) ? $user["street"] : '[Não informado]';
+            $address["rua"] .= (!empty($user["number"])) ? ', '.$user["number"] : '[S/N]';
+            $address["rua"] .= (!empty($user["complement"])) ? ', '.$user["complement"] : '[S/N]';
+            $address["bairro"] = '';
+            $address["bairro"] .= (!empty($user["district"])) ? $user["district"] : '[Não informado]';
+            $address["cidade"] = '';
+            $address["cidade"] .= (!empty($user["city"])) ? $user["city"] : '[Não informado]';
+            $address["estado"] = '';
+            $address["estado"] .= (!empty($user["state"])) ? $user["state"] : '[Não informado]';
+    
+            $user["address"] = $address;
+        }
         
+        // print_r($user["pet_data"]);exit;
         // $args__ = [];
         // $args__["m"] = "GET";
         // $args__["pl"] = json_encode([
@@ -179,7 +216,9 @@ class Home extends BaseController
     }
 
     public function api() {
-        $rdata = $this->request->getPost();
+        
+        $rdata = (array) $this->request->getPost();
+        // var_dump($rdata);exit;
         $args = [];
         if(isset($rdata["call"])) {
             if($rdata["call"] == "payment_methods") {
@@ -198,10 +237,16 @@ class Home extends BaseController
                 // var_dump($u);exit;
                 // echo json_encode($u);
                 $this->requestURL = $this->baseApi . "customers/".$u["id"]."/".$rdata["call"];
+                $rdata["payload"]["set_as_default"] = true;
                 $rdata["payload"]["customer_id"] = $u["id"];
                 $rdata["payload"]["description"] = "Teste";
                 // echo $this->requestURL;
                 // exit;
+            } else if ($rdata["call"] == "subscriptions" && $rdata["method"] == "POST") {
+                $this->requestURL = $this->baseApi . $rdata["call"];
+                $rdata["payload"]["suspend_on_invoice_expired"] = true;
+                $rdata["payload"]["only_charge_on_due_date"] = false;
+                $rdata["payload"]["only_on_charge_success"] = true;
             } else {
                 $this->requestURL = $this->baseApi . $rdata["call"];
             }
