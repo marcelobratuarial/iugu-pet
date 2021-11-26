@@ -109,6 +109,61 @@
             return tmp;
         }
         $(document).ready(function() {
+            
+            var estadosApi = "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome";
+            $.getJSON( estadosApi, {
+                format: "json"
+            })
+            .done(function( data ) {
+                console.log(data)
+                $.each( data, function( i, item ) {
+                    
+                    var cp = item
+                    delete cp['microregiao']
+                    delete cp['regiao-imediata']
+                    var s = JSON.stringify(cp)
+                       
+                    var op = `<option data-ob='`+s+`' value='`+item.id+`'>`+item.nome+`</option>`
+                    $( "#estados" ).append( op );
+                    
+                });
+                $( "#estados" ).niceSelect('update');
+
+            });
+            $( "#estados" ).on("change", function(e) {
+                $( "#cidades" ).find("option").not(":first").remove()
+                
+                const UF = $(this).find("option:selected").val()
+                var ob = $(this).find("option:selected").data("ob")
+                
+                $( "#selected_state" ).val( JSON.stringify(ob) );
+                var cidadesApi = "https://servicodados.ibge.gov.br/api/v1/localidades/estados/"+UF+"/municipios?orderBy=nome";
+                $.getJSON( cidadesApi, {
+                    format: "json"
+                })
+                .done(function( data ) {
+                    console.log(data)
+                    $.each( data, function( i, item ) {
+
+                        let cp2 = JSON.parse(JSON.stringify(item))
+                        delete cp2['microrregiao']
+                        delete cp2['mesorregiao']
+                        delete cp2['regiao-imediata']
+                        var s = JSON.stringify(cp2)
+                        var op = `<option data-ob='`+s+`' value='`+item.id+`'>`+item.nome+`</option>`
+                        $( "#cidades" ).append( op );
+                        
+                        
+                    });
+                    $( "#cidades" ).niceSelect('update');
+
+                });
+            })
+            $( "#cidades" ).on("change", function(e) {
+                $( "#cidades" ).find("option").not(":first").remove()
+                var ob = $(this).find("option:selected").data("ob")
+                $( "#selected_city" ).val( JSON.stringify(ob) );
+            })
             Iugu.setAccountID("4F8D7432F6621AEF83D433C5E197F32E")
             Iugu.setTestMode(true)
             Iugu.setup()
@@ -689,6 +744,21 @@
                                 })
 
                             }
+                            if(response.error) {
+                                if(response.error_code == 'REQ_FIELDS') {
+                                    console.log(response.errors)
+                                    $.each(response.errors, function(f,m) {
+                                        console.log(f)
+                                        console.log(m)
+                                        var el = $(form).find("input[name='"+f+"']")
+                                        $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i><span>"+m+"</span></div>").insertAfter(el)
+                                        console.log(el)
+                                        setTimeout(() => {
+                                            $(".dyn-response").addClass("show")
+                                        }, 700);
+                                    })
+                                }
+                            }
                             // lb.text(response)
                             // $(".custom-control-label").text(text);
                             // $('#imgPreview').attr('src', '');
@@ -770,7 +840,7 @@
                                         $(form).find(".logitBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
                                     })
                                 }
-                                if(response.error_code == 'UNAUTH') {
+                                if(response.error_code == 'UNAUTH' || response.error_code == 'UNAUTH_NE') {
                                     // console.log($(".optChecked .verBox .custom-message"))
                                     // console.log(response.custom_message)
                                     var pp = new Promise((resolve) => {

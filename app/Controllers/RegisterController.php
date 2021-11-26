@@ -225,7 +225,6 @@ class RegisterController extends BaseController
 
     public function store()
     {
-
         helper(['form']);
         $rules = [
             'name'  => [
@@ -265,7 +264,37 @@ class RegisterController extends BaseController
                 'errors' => [
                     'matches' => 'Senha de confirmação deve ser idêntica.'
                 ]
-            ]
+            ],
+            'street'  => [
+                'rules' => 'required|min_length[2]|max_length[50]',
+                'errors' => [
+                    'required' => 'Logradouro obrigatório.',
+                ]
+            ],
+            'number'  => [
+                'rules' => 'required|min_length[2]|max_length[50]',
+                'errors' => [
+                    'required' => 'Número obrigatório',
+                ]
+            ],  
+            'bairro'  => [
+                'rules' => 'required|min_length[2]|max_length[50]',
+                'errors' => [
+                    'required' => 'Bairro obrigatório',
+                ]
+            ],  
+            'cidade'  => [
+                'rules' => 'required|min_length[2]|max_length[150]',
+                'errors' => [
+                    'required' => 'Cidade obrigatória',
+                ]
+            ],  
+            'estado'  => [
+                'rules' => 'required|min_length[2]|max_length[150]',
+                'errors' => [
+                    'required' => 'Estado obrigatório',
+                ]
+            ],  
         ];
         // var_dump($this->validate($rules));
         // print_r($this->request->getPost());exit;
@@ -363,13 +392,22 @@ class RegisterController extends BaseController
         } else {
             $validation = $this->validator;
             // echo "estes";
-            if ($validation->hasError('password')) {
-                print_r($validation->getErrors('password'));
-            }
-            if ($validation->hasError('confirmpassword')) {
-                print_r($validation->getErrors('confirmpassword'));
-            }
-            // print_r($this->validator);
+            // if ($validation->hasError('password')) {
+            //     print_r($validation->getErrors('password'));
+            // }
+            // if ($validation->hasError('confirmpassword')) {
+            //     print_r($validation->getErrors('confirmpassword'));
+            // }
+            $errors = $validation->getErrors();
+            $response = [
+                "error" => true,
+                "error_code" => "REQ_FIELDS",
+                "message" => "Verifique os campos obrigatórios",
+                "errors" => $errors
+            ];
+            
+
+            echo json_encode($response);
             exit;
             // print_r($data['validation']);
             // echo view('user_register', $data);

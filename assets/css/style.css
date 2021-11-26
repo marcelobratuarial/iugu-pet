@@ -4830,6 +4830,9 @@ h6 {
   box-shadow: none;
   width: 100%;
   padding: 10px 0 10px 0px;
+  height: auto;
+  max-height: 300px;
+  overflow: auto;
 }
 
 /* line 1060, ../../Arafath/CL/january 2020/240. Animal/HTML/scss/_elements.scss */
@@ -6713,3 +6716,50 @@ h6 {
   border-bottom: solid 1px #f00;
 }
 
+.dyn-response {
+  max-height: 0px;
+  font-size: 0;
+  height: 0;
+  opacity: 0;
+  /* line-height: 0px; */
+  padding: 0px;
+  margin-bottom: 0px;
+  border-radius: 0 0 0px 0px;
+  transition: all 0.25s ease-out;
+}
+.dyn-response.show span {
+  display:none
+}
+.dyn-response.show i {
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  border: solid 1px red;
+  border-radius: 50%;
+  background-color: #fff;
+}
+.dyn-response.show:hover span {
+  display: inline-block;
+  margin-left: 40px;
+}
+.dyn-response.show:hover {
+  background: #ffe5e2;
+  border-bottom: solid 1px red;
+}
+.dyn-response.show {
+  position: absolute;
+  right: 0px;
+  top: 0;
+  cursor: pointer;
+  max-height: 500px;
+  font-size: 0.8rem;
+  height: auto;
+  opacity: 1;
+  padding: 5px;
+  margin-bottom: 10px;
+  border-radius: 0 0 10px 10px;
+}

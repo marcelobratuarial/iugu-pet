@@ -68,41 +68,46 @@
                         <div class="dataBox">
                             <form method="POST" id="registerForm" action="">
                                 <div class="boxDados">
-                                    <hr>
+                                    
                                     <h4>Dados</h4>
-                                    <div class="row">
+                                    <div class="row mt-10">
+                                        <div class="col-12">
+                                            <div style="position:relative">
+                                                <input type="text" name="name" placeholder="Nome completo" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome completo'" class="single-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-10">
                                         <div class="col">
-                                            <div class="mt-10">
-                                                <input type="text" name="name" placeholder="Nome completo" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome completo'" required class="single-input">
+                                            <div class="input-group-icon">
+                                                <div class="icon"><i class="fa fa-at" aria-hidden="true"></i></div>
+                                                <input type="email" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'" class="single-input">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="input-group-icon mt-10">
-                                        <div class="icon"><i class="fa fa-at" aria-hidden="true"></i></div>
-                                        <input type="email" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'" required class="single-input">
-                                    </div>
-                                    <div class="row">
+                                    
+                                    <div class="row mt-10">
                                         <div class="col">
-                                            <div class="input-group-icon mt-10">
+                                            <div class="input-group-icon">
                                                 <div class="icon"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div>
-                                                <input type="text" name="address" placeholder="Endereço" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Endereço'" required class="single-input">
+                                                <input type="text" name="address" placeholder="Endereço" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Endereço'" class="single-input">
                                             </div>
                                         </div>
                                         <div class="col-3">
-                                            <div class="mt-10">
-                                                <input type="text" name="number" placeholder="nº" onfocus="this.placeholder = ''" onblur="this.placeholder = 'nº'" required class="single-input">
+                                            <div style="position:relative">
+                                                <input type="text" name="number" placeholder="nº" onfocus="this.placeholder = ''" onblur="this.placeholder = 'nº'" class="single-input">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row mt-10">
                                         <div class="col-8">
-                                            <div class="mt-10">
-                                                <input type="text" name="bairro" placeholder="Bairro" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Bairro'" required class="single-input">
+                                            <div style="position:relative">
+                                                <input type="text" name="bairro" placeholder="Bairro" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Bairro'" class="single-input">
                                             </div>
                                         </div>
                                         <div class="col">
-                                            <div class="mt-10">
+                                            <div style="position:relative">
                                                 <input type="text" name="complemento" placeholder="Complemento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Complemento'" class="single-input">
                                             </div>
                                         </div>
@@ -114,13 +119,10 @@
                                             <div class="input-group-icon mt-10">
                                                 <div class="icon"><i class="ti ti-map-alt" aria-hidden="true"></i></div>
                                                 <div class="form-select" id="default-select">
-                                                    <select name="estado">
-                                                        <option value=" 1">Estado</option>
-                                                        <option value="MG">Minas Gerais</option>
-                                                        <option value="CB">Curitiba</option>
-                                                        <option value="SP">São Paulo</option>
-                                                        <option value="RJ">Rio de Janeiro</option>
+                                                    <select name="estados" id="estados">
+                                                        <option value="">Estado</option>
                                                     </select>
+                                                    <input type="hidden" value="" id="selected_state" name="estado">
                                                 </div>
                                             </div>
                                         </div>
@@ -128,54 +130,52 @@
                                             <div class="input-group-icon mt-10">
                                                 <div class="icon"><i class="ti ti-map" aria-hidden="true"></i></div>
                                                 <div class="form-select" id="default-select">
-                                                    <select name="cidade">
+                                                    <select name="cidades" id="cidades">
                                                         <option value="-">Cidade</option>
-                                                        <option value="Belo Horizonte">Belo Horizonte</option>
-                                                        <option value="Rio de Janeiro">Rio de Janeiro</option>
-                                                        <option value="São Paulo">São Paulo</option>
                                                     </select>
+                                                    <input type="hidden" value="" id="selected_city" name="cidade">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <hr>
+                                    <div class="row mt-10"><hr></div>
                                     <h4>Dados do Pet</h4>
-                                    <div class="row">
+                                    <div class="row mt-10">
                                         <div class="col-8">
-                                            <div class="mt-10">
-                                                <input type="text" name="pet_name" placeholder="Nome" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome'" required class="single-input">
+                                            <div style="position:relative">
+                                                <input type="text" name="pet_name" placeholder="Nome" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome'" class="single-input">
                                             </div>
                                         </div>
                                         <div class="col">
-                                            <div class="mt-10">
-                                                <input type="text" name="pet_nasc" placeholder="Nascimento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nascimento'" required class="single-input">
+                                            <div style="position:relative">
+                                                <input type="text" name="pet_nasc" placeholder="Nascimento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nascimento'" class="single-input">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-6 mt-10">
-                                            <div class="mt-10">
-                                                <input type="text" name="pet_raca" placeholder="Raça" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Raça'" required class="single-input">
+                                    <div class="row mt-10">
+                                        <div class="col-6">
+                                            <div style="position:relative">
+                                                <input type="text" name="pet_raca" placeholder="Raça" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Raça'" class="single-input">
                                             </div>
                                         </div>
                                         <div class="col">
-                                            <div class="mt-10">
-                                                <input type="text" name="pet_peso" placeholder="Peso KG" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Peso KG'" required class="single-input">
+                                            <div style="position:relative">
+                                                <input type="text" name="pet_peso" placeholder="Peso KG" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Peso KG'" class="single-input">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="boxPass">
-                                    <hr>
+                                    
                                     <h4>Criar senha</h4>
-                                    <div class="row">
+                                    <div class="row mt-10">
                                         <div class="col-6">
-                                            <div class="mt-10">
+                                            <div style="position:relative">
                                                 <input type="password" name="password" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" required class="single-input">
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="mt-10">
+                                            <div style="position:relative">
                                                 <input type="password" name="confirmpassword" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" class="single-input">
                                             </div>
                                         </div>
