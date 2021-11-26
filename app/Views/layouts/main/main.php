@@ -555,7 +555,7 @@
                     // .scrollTo('#target')
                     // $('body').scrollTo($("#"+$(this).data("rf"))); 
                 })
-                $(document).on("submit", ".verForm, .verLForm", function(e) {
+                $(document).on("submit", ".optChecked .verForm, .optChecked #verLForm form", function(e) {
                     var form = $(this);
                     console.log(form)
                     e.preventDefault()
@@ -563,12 +563,12 @@
                     // Ex: form.submit();
                     var url = '<?= base_url('/check-code') ?>';
                     // var lb = $(this).parent('div').find(".custom-control-label")
-                    var data = $(form).serializeArray()
+                    // var data = $(form).serializeArray()
                     var payload = {
                         code: $(".confp1").val() + "" + $(".confp2").val()
                     }
                     
-                    console.log(data)
+                    // console.log(data)
                     $.ajax({
                         type: "POST",
                         url: url,
@@ -705,10 +705,14 @@
                     }
                 })
 
-                $(document).on("submit", "#loginForm", function(e) {
+                $("#loginForm").on("submit", function(e) {
                     var form = $(this);
                     console.log("enra")
                     e.preventDefault()
+                    $(form).find(".logitBtn").addClass('disabled')
+                    $(form).find(".logitBtn").attr('disabled', true)
+                    $(form).find(".logitBtn .textPlace").html('Autenticando')
+                    $(form).find(".logitBtn .iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
                     // Seu código para continuar a submissão
                     // Ex: form.submit();
                     var url = '<?= base_url('/logar') ?>';
@@ -721,6 +725,11 @@
                         data: data,
                         fail: function(r){
                             console.log(r)
+                            $(form).find(".logitBtn").removeClass('disabled')
+                            $(form).find(".logitBtn").removeAttr('disabled')
+                            $(form).find(".logitBtn .textPlace").html('Continuar')
+                            $(form).find(".logitBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                    
                         },
                         success: function (response) {
                             console.log(response)
@@ -730,48 +739,93 @@
                                 //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
                                 // } else if(response.error_code == 'NEED_VER') {
                                 // }
-                                var p = new Promise((resolve)=> {
-                                    $(form).find(".response_area").html(response.message)
-                                    resolve("OK")
-                                })
-                                p.then((e)=> {
-                                    console.log(e)
-                                    $(form).find(".response_area").slideDown(234);
-                                }).then((e) => {
+                                if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
+                                    var verBox = $(".verBox")
+                                    // console.log($(".optChecked .verBox .custom-message"))
+                                    // console.log(response.custom_message)
                                     
                                     
-                                    if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
-                                        var verBox = $(".verBox")
-                                        // console.log($(".optChecked .verBox .custom-message"))
-                                        // console.log(response.custom_message)
+                                    if($(".optChecked").find(".verBox").length == 0) {
+                                        $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
                                         
-                                        
-                                        if($(".optChecked").find(".verBox").length == 0) {
-                                            $(verBox).clone().appendTo(".optChecked > div");
-                                            $(".optChecked > div .verBox form").addClass('verLForm').removeClass("verForm")
-                                            
-                                        } else {
-                                            console.log("Not")
-                                        }
-                                        var pp = new Promise((resolve) => {
-                                            
-                                            setTimeout(() => {
-                                                $(form).find(".response_area").slideUp(432);
-                                                $(form).slideUp(500);
-                                                resolve()
-                                            }, 4000);
-                                        })
-                                        pp.then(()=> {
-                                            $(".optChecked .verBox .custom-message").html(response.custom_message)
-                                            setTimeout(() => {
-                                                $(".optChecked").find(".verBox").addClass("show")
-                                            }, 500)    
-                                            
-                                        })
+                                    } else {
+                                        console.log("Not")
                                     }
+                                    var pp = new Promise((resolve) => {
+                                        
+                                        setTimeout(() => {
+                                            $(form).find(".response_area").removeClass("show");
+                                            $(form).slideUp(500);
+                                            resolve()
+                                        }, 4000);
+                                    })
+                                    pp.then(()=> {
+                                        $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                        setTimeout(() => {
+                                            $(".optChecked").find(".verBox").addClass("show")
+                                        }, 500)    
+                                        $(form).find(".logitBtn").removeClass('disabled')
+                                        $(form).find(".logitBtn").removeAttr('disabled')
+                                        $(form).find(".logitBtn .textPlace").html('Continuar')
+                                        $(form).find(".logitBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                    })
+                                }
+                                if(response.error_code == 'UNAUTH') {
+                                    // console.log($(".optChecked .verBox .custom-message"))
+                                    // console.log(response.custom_message)
+                                    var pp = new Promise((resolve) => {
+                                        $(".optChecked").find(".response_area").html(response.message)
+                                        $(".optChecked").find(".response_area").addClass("field_error").addClass("show");
+                                        setTimeout(() => {
+                                            $(".optChecked").find(".response_area").removeClass("show").removeClass("field_error");
+                                            resolve(form)
+                                        }, 4000);
+                                    })
+                                    pp.then((form)=> {
+                                        $(form).find("input:first").focus()
+                                        console.log($(form))
+                                        console.log($(form).find("input:first"))
+                                        // $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                        // setTimeout(() => {
+                                        //     $(".optChecked").find(".verBox").addClass("show").addClass("field-error")
+                                        // }, 500)    
+                                        $(form).find(".logitBtn").removeClass('disabled')
+                                        $(form).find(".logitBtn").removeAttr('disabled')
+                                        $(form).find(".logitBtn .textPlace").html('Continuar')
+                                        $(form).find(".logitBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                    })
+                                    
+                                } 
+                                
+                                
+                            } else {
+                                var pp = new Promise((resolve) => {
+                                    $(".optChecked").find(".response_area").html(response.message)
+                                    $(".optChecked").find(".response_area").addClass("show");
+                                    setTimeout(() => {
+                                        
+                                        resolve(form)
+                                    }, 2000);
                                 })
-                                
-                                
+                                pp.then((form)=> {
+                                    
+                                    // $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                    // setTimeout(() => {
+                                    //     $(".optChecked").find(".verBox").addClass("show").addClass("field-error")
+                                    // }, 500)    
+                                    // $(form).find(".logitBtn").removeClass('disabled')
+                                    // $(form).find(".logitBtn").removeAttr('disabled')
+                                    $(form).find(".logitBtn .textPlace").html(response.message)
+                                    $(form).find(".logitBtn .iconPlace").html('<i class="fa fa-check-circle-o fa-1x"></i>')
+                                    
+                                    setTimeout(() => {
+                                        $(".optChecked").find(".response_area").removeClass("show")
+                                    }, 300);
+                                    setTimeout(() => {
+                                        $(form).slideUp(500)
+                                        location.reload();
+                                    }, 600);
+                                })
                             }
                             // lb.text(response)
                             // $(".custom-control-label").text(text);

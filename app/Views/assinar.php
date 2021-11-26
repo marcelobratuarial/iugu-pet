@@ -50,12 +50,12 @@
                             <div class="mt-10">
                                 <input type="password" name="password" placeholder="Senha" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Senha'" required class="single-input">
                             </div>
-                            <hr style="margin-bottom: 0" />
-                            <div class="response_area"></div>
-                            <button type="submit" class="logitBtn genric-btn success circle arrow mt-1">Continuar<span class="lnr lnr-arrow-right"></span></button>
+                            
+                            <button type="submit" class="d-flex align-items-center justify-content-center logitBtn genric-btn success circle mt-1"><span class="textPlace">Continuar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span></button>
                             <!-- <button class="genric-btn success circle arrow">Login<span class="lnr lnr-arrow-right"></span></button> -->
                         </form>
-                        
+                        <hr style="margin-bottom: 0" />
+                        <div class="response_area"></div>
                     </div>
 
                 </div>
@@ -116,10 +116,10 @@
                                                 <div class="form-select" id="default-select">
                                                     <select name="estado">
                                                         <option value=" 1">Estado</option>
-                                                        <option value="1">Minas Gerais</option>
-                                                        <option value="1">Curitiba</option>
-                                                        <option value="1">São Paulo</option>
-                                                        <option value="1">Rio de Janeiro</option>
+                                                        <option value="MG">Minas Gerais</option>
+                                                        <option value="CB">Curitiba</option>
+                                                        <option value="SP">São Paulo</option>
+                                                        <option value="RJ">Rio de Janeiro</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -129,10 +129,10 @@
                                                 <div class="icon"><i class="ti ti-map" aria-hidden="true"></i></div>
                                                 <div class="form-select" id="default-select">
                                                     <select name="cidade">
-                                                        <option value=" 1">Cidade</option>
-                                                        <option value="1">Belo Horizonte</option>
-                                                        <option value="1">Rio de Janeiro</option>
-                                                        <option value="1">São Paulo</option>
+                                                        <option value="-">Cidade</option>
+                                                        <option value="Belo Horizonte">Belo Horizonte</option>
+                                                        <option value="Rio de Janeiro">Rio de Janeiro</option>
+                                                        <option value="São Paulo">São Paulo</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -154,14 +154,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-6 mt-10">
-                                            <div class="default-select">
-                                                <select name="pet_raca">
-                                                    <option value="1">Raça</option>
-                                                    <option value="1">Chiuaua</option>
-                                                    <option value="1">York Shire</option>
-                                                    <option value="1">Pastor Alemão</option>
-                                                    <option value="1">Fila Brasileiro</option>
-                                                </select>
+                                            <div class="mt-10">
+                                                <input type="text" name="pet_raca" placeholder="Raça" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Raça'" required class="single-input">
                                             </div>
                                         </div>
                                         <div class="col">

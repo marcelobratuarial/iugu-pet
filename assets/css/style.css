@@ -3684,7 +3684,7 @@ h6 {
   outline: none;
   line-height: 40px;
   padding: 0 30px;
-  font-size: .8em;
+  /* font-size: .8em; */
   text-align: center;
   text-decoration: none;
   font-weight: 500;
@@ -6620,15 +6620,6 @@ h6 {
   transition: all 0.8s ease-in;
 }
 
-.response_area {
-  display: none;
-  padding: 10px;
-  margin-bottom: 10px;
-  background: #ffe5e2;
-  border-radius: 0 0 30px 30px;
-  border-bottom: solid 1px #f00;
-}
-
 
 
 
@@ -6691,3 +6682,34 @@ h6 {
 #payment-form ul li i {
   margin-right: 10px;
 }
+
+.response_area.show{
+  max-height: 500px;
+  font-size: inherit;
+  height: auto;
+  opacity: 1;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 0 0 30px 30px;
+  transition: all 0.25s ease-in;
+  border-bottom: solid 1px #0f0;
+}
+
+
+.response_area {
+  max-height: 0px;
+  font-size: 0;
+  height: 0;
+  opacity: 0;
+  padding: 0px;
+  margin-bottom: 0px;
+  background: #c5fcc5;
+  border-radius: 0 0 0px 0px;
+  transition: all 0.25s ease-out;
+  border-bottom: solid 1px #0f0;
+}
+.response_area.field_error {
+  background: #ffe5e2;
+  border-bottom: solid 1px #f00;
+}
+

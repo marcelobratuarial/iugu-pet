@@ -18,6 +18,8 @@ class RegisterController extends BaseController
     use ResponseTrait;
 
     public $requestUrl;
+    private $iuguUser;
+    private $dbUser;
     public function __construct () {
         $a = new Home();
         $this->requestUrl = $a->baseApi . "customers";
@@ -266,7 +268,7 @@ class RegisterController extends BaseController
             ]
         ];
         // var_dump($this->validate($rules));
-        // print_r($this->request->getPostGet());exit;
+        // print_r($this->request->getPost());exit;
         if ($this->validate($rules)) {
             $model = new UserModel();
             $data = [
@@ -274,60 +276,88 @@ class RegisterController extends BaseController
                 'email'    => $this->request->getVar('email'),
                 'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT)
             ];
-            
-            if ($model->save($data)) {
-                $dbID = $model->insertID();
-                $nu = $model->find($dbID);
-                
-                $iuguData = [
-                    "email" => $this->request->getVar('email'),
-                    "name" => $this->request->getVar('name'),
-                    "number" => $this->request->getVar('number'),
-                    "street" => $this->request->getVar('street'),
-                    "city" => $this->request->getVar('cidade'),
-                    "state" => $this->request->getVar('estado'),
-                    "district" => $this->request->getVar('bairro'),
-                    "complement" => $this->request->getVar('complemento'),
-                    "custom_variables" => [
-                        [
-                            "name" => "pet_name",
-                            "value" => $this->request->getVar('pet_name')
-                        ],
-                        [  
-                            "name" => "pet_nasc",
-                            "value" => $this->request->getVar('pet_nasc')
-                        ],
-                        [
-                            "name" => "pet_raca",
-                            "value" => $this->request->getVar('pet_raca')
-                        ],
-                        [
-                            "name" => "pet_peso",
-                            "value" => $this->request->getVar('pet_peso')
+            try {
+                if ($model->save($data)) {
+                    $dbID = $model->insertID();
+                    $nu = $model->find($dbID);
+                    $this->dbUser = $nu;
+                    $iuguData = [
+                        "email" => $this->request->getVar('email'),
+                        "name" => $this->request->getVar('name'),
+                        "number" => $this->request->getVar('number'),
+                        "street" => $this->request->getVar('address'),
+                        "city" => $this->request->getVar('cidade'),
+                        "state" => $this->request->getVar('estado'),
+                        "district" => $this->request->getVar('bairro'),
+                        "complement" => $this->request->getVar('complemento'),
+                        "custom_variables" => [
+                            [
+                                "name" => "pet_name",
+                                "value" => $this->request->getVar('pet_name')
+                            ],
+                            [  
+                                "name" => "pet_nasc",
+                                "value" => $this->request->getVar('pet_nasc')
+                            ],
+                            [
+                                "name" => "pet_raca",
+                                "value" => $this->request->getVar('pet_raca')
+                            ],
+                            [
+                                "name" => "pet_peso",
+                                "value" => $this->request->getVar('pet_peso')
+                            ]
                         ]
-                    ]
-                ];
-               $a = new Home();
-               $args = [
-                   "m" => "POST",
-                   "pl" => json_encode($iuguData)
-               ];
-               
-            //    echo $a->baseApi;
-                $r = $a->doRequest($this->requestUrl, $args);
-                $rr = json_decode($r, true);
-                if(isset($rr["errors"])) {
-                    $model->delete($dbID);
-                    echo json_encode($rr);
+                    ];
+                    // print_r($iuguData);exit;
+                    $a = new Home();
+                    $args = [
+                        "m" => "POST",
+                        "pl" => json_encode($iuguData)
+                    ];
+                    
+                    try {
+                            $r = $a->doRequest($this->requestUrl, $args);
+                            $rr = json_decode($r, true);
+                            if(isset($rr["errors"])) {
+                                $model->delete($dbID);
+                                echo json_encode($rr);
+                                throw new \Exception($rr);
+                            }
+                            $this->iuguUser = $rr;
+                    } catch (\Exception $th) {
+                        
+                    }
+                //    echo $a->baseApi;
+                    
+                    
+    
+                    // print_r($rr);exit;
+    
+                    $response = $this->SendVerCode($dbID);
+                    if($response["error"]) {
+                        echo json_encode($response);
+                    } else {
+                        print_r($response);
+                    }
+                    
+    
+                    // print_r($r);exit;
+                } else {
+                    $rr = json_encode([
+                        'error' => true,
+                        'message' => "Usuário não criado no banco de dados.",
+                        'error_code' => "USER_NOT_CREATED_DB"
+                    ]);
+                    throw new \Exception($rr, 100000000);
                     exit;
                 }
-
-                // print_r($rr);exit;
-
-                $this->SendVerCode($dbID);
-
-                // print_r($r);exit;
-            };
+            } catch (\Exception $e) {
+                print_r($e->getMessage());
+                exit;
+                //throw $th;
+            }
+            
 
             // return redirect()->to('/login');
         } else {
@@ -432,10 +462,12 @@ class RegisterController extends BaseController
                 $m = is_array($u) ? $u["email"] : $this->request->getVar('email');
                 $cm = 'Um código de verificação foi enviado para <strong>'. $m .'</strong>.<br>';
                 $cm .= 'Para continuar, acesse sua caixa de entrada e siga as instruções.';
+                $response = ["message" => "success", "error" => false, "custom_message"=>$cm, "resend" =>is_array($u)];
                 if(is_array($u)) {
-                    return ["message" => "success", "error" => false, "custom_message"=>$cm, "resend" =>is_array($u)];
+                    return $response;
                 }
-                echo json_encode(["message" => "success", "error" => false, "custom_message"=>$cm, "resend" =>is_array($u)]);
+                echo json_encode($response);
+                exit;
             } else {
                 unset($nu);
 
@@ -446,11 +478,38 @@ class RegisterController extends BaseController
 
                 // print_r($nu);
                 $model->save($nu);
-                throw new \Exception("Não enviado: MAIL");
+                $err = json_encode([
+                    "message" => "Email não enviado",
+                    "error_code" => "VER_CODE_NOT_SENT"
+                ]);
+                throw new \Exception($err);
             }
             
         } catch (\Exception $e) {
-            echo json_encode(['message'=>$e->getMessage(), 'error' => true]);
+            $er = json_decode($e->getMessage(), true);
+            // print_r($er);exit;
+            if($er["error_code"] == 'VER_CODE_NOT_SENT') {
+                if(!is_null($this->dbUser)) {
+                    $model = new UserModel();
+                    $model->delete($this->dbUser["id"]);
+                    $a = new Home();
+                    $args = [];
+                    $args["m"] = "DELETE";
+                    $this->requestURL = $a->baseApi . "customers/".$this->iuguUser["id"];
+                    // print_r($this->requestURL);
+                    $args["pl"] = json_encode([
+                        "id" => $this->iuguUser["id"]
+                    ]);
+                    $user = $a->doRequest($this->requestURL, $args);
+                    // var_dump($user);
+                }
+                
+            }
+            return [
+                'message' => $er['message'],
+                'error' => true,
+                'error_code' => $er['error_code']
+            ];
         }
 
     }
