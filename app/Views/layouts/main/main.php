@@ -134,9 +134,14 @@
                 $( "#cidades" ).find("option").not(":first").remove()
                 
                 const UF = $(this).find("option:selected").val()
+                console.log(UF)
+                
                 var ob = $(this).find("option:selected").data("ob")
                 
                 $( "#selected_state" ).val( JSON.stringify(ob) );
+                if(UF != "") {
+                    $("#registerForm").valid()
+                }
                 var cidadesApi = "https://servicodados.ibge.gov.br/api/v1/localidades/estados/"+UF+"/municipios?orderBy=nome";
                 $.getJSON( cidadesApi, {
                     format: "json"
@@ -160,9 +165,276 @@
                 });
             })
             $( "#cidades" ).on("change", function(e) {
-                $( "#cidades" ).find("option").not(":first").remove()
-                var ob = $(this).find("option:selected").data("ob")
+                var ob = $("#cidades").find("option:selected").data("ob")
                 $( "#selected_city" ).val( JSON.stringify(ob) );
+                if(ob != "undefined") {
+                    $("#registerForm").valid()
+                }
+            })
+            $("#registerForm").on("submit", function(e) {
+                var form = $(this);
+                e.preventDefault()
+                // Seu código para continuar a submissão
+                // Ex: form.submit();
+                
+                
+                $("#registerForm").validate({
+                    errorClass: "field_error",
+                    rules: {
+                        // simple rule, converted to {required:true}
+                        name: "required",
+                        password: {
+                            required: true,
+                            minlength : 5,
+                        },
+                        confirmpassword : {
+                            required: true,
+                            minlength : 5,
+                            equalTo: "#registerForm input[name=password]"
+                        },
+                        // compound rule
+                        email: {
+                            required: true,
+                            email: true
+                        },
+                        estado: "required",
+                        cidade: "required",
+                        address: "required",
+                        number: "required",
+                        complement: "required",
+                        bairro: "required",
+                    },
+                    
+                    messages: {
+                        password: "Obrigatório",
+                        confirmpassword: "Obrigatório",
+                        name: "Obrigatório",
+                        estado: "Obrigatório",
+                        cidade: "Obrigatório",
+                        address: "Obrigatório",
+                        number: "Obrigatório",
+                        bairro: "Obrigatório",
+                        complement: "Obrigatório",
+                        email: {
+                            required: "Obrigatório",
+                            email: "Inválido: ex.: name@domain.com"
+                        }
+                    },
+                    ignore: [],
+                    errorElement: 'span',
+                    // wrapper: 'span',
+                    errorPlacement: function(error, element) {
+                        if($(element).parent('div').find('.dyn-response').length == 0) {
+
+                            $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i></div>").insertAfter(element)
+                            var t = $(element).parent('div').find(".dyn-response")
+                            if($(t).find("span").length == 0) {
+                                $("<span>"+$(error).html()+"</span>").appendTo($(t))
+                                t.addClass("show")
+                            }
+                        }
+                        // $(error).attr('style', '')
+                        // console.log($(error).html())
+                        
+                    },
+                    // invalidHandler: function(event, validator) {
+                    // },
+                    // submitHandler: function() { 
+                        
+                    // },
+
+                    highlight: function(element, errorClass, validClass) {
+                        // $(element).addClass(errorClass).removeClass(validClass);
+                        // $(element.form).find("label[for=" + element.id + "]")
+                        // .addClass(errorClass);
+                        // console.log(element)
+                        $(element).closest('div').find('.dyn-response').addClass('show')
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).closest('div').find('.dyn-response').removeClass('show').remove() //removeClass(errorClass).addClass(validClass);
+                        // $(element.form).find("label[for=" + element.id + "]")
+                        // .removeClass(errorClass);
+                        console.log($(element))
+                    }
+                })
+                console.log("teste")
+                if($("#registerForm").valid()) {
+                    console.log("valid")
+                    var url = '<?= base_url('/register') ?>';
+                    // var lb = $(this).parent('div').find(".custom-control-label")
+                    var data = $(form).serializeArray()
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        // fail: errPost,
+                        success: function (response) {
+                            console.log(response)
+                            if(!response.error) {
+                                
+                                var p = new Promise(function(resolve) {
+                                    $(".optChecked .verBox").addClass("show")
+                                    $(".optChecked .dataBox").addClass("hide")
+                                    $(".optChecked .custom-message").html(response.custom_message)
+                                    // $("html").animate({scrollTop: 340}, 350);
+                                    setTimeout(() => {
+                                        resolve("OK")
+                                    }, 200);
+                                })
+                                p.then(() => {
+                                    $(".dataBox.hide").slideUp(200)
+                                    var ref1 = $(".bradcam_area").outerHeight(true)
+                                    var ref2 = $("header").outerHeight(true)
+                                    var diff = ref1 + ref2
+                                    var ref = $(".verBox").offset().top
+                                    var f = (ref + 180) - diff
+                                    
+
+                                    $("html").animate({
+                                        scrollTop: f
+                                    }, 350);
+                                }).then(() => {
+                                    setTimeout(() => {
+                                        $(".checkoutPage .form-check-input").addClass("disabled")
+                                        $(".checkoutPage .form-check-input").attr("disabled", true)
+                                        $(".verBox").find("form:first input:first").focus()    
+                                    }, 360);
+                                    
+                                })
+
+                            }
+                            if(response.error) {
+                                if(response.error_code == 'REQ_FIELDS') {
+                                    // console.log(response.errors)
+                                    $.each(response.errors, function(f,m) {
+                                        // console.log(f)
+                                        // console.log(m)
+                                        var el = $(form).find("input[name='"+f+"']")
+                                        if($(el).parent().find(".dyn-response").length == 0) {
+                                            $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i><span>"+m+"</span></div>").insertAfter(el)
+                                        }                                                
+                                        // console.log(el)
+                                        setTimeout(() => {
+                                            $(".dyn-response").addClass("show")
+                                        }, 700);
+                                    })
+                                }
+                            } else {
+                                // var pp = new Promise((resolve) => {
+                                //     $(".optChecked").find(".response_area").html(response.message)
+                                //     $(".optChecked").find(".response_area").addClass("show");
+                                //     setTimeout(() => {
+                                        
+                                //         resolve(form)
+                                //     }, 2000);
+                                // })
+                                // pp.then((form)=> {
+                                    
+                                //     // $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                //     // setTimeout(() => {
+                                //     //     $(".optChecked").find(".verBox").addClass("show").addClass("field-error")
+                                //     // }, 500)    
+                                //     // $(form).find(".logitBtn").removeClass('disabled')
+                                //     // $(form).find(".logitBtn").removeAttr('disabled')
+                                //     $(form).find(".logitBtn .textPlace").html(response.message)
+                                //     $(form).find(".logitBtn .iconPlace").html('<i class="fa fa-check-circle-o fa-1x"></i>')
+                                    
+                                //     setTimeout(() => {
+                                //         $(".optChecked").find(".response_area").removeClass("show")
+                                //     }, 300);
+                                //     setTimeout(() => {
+                                //         $(form).slideUp(500)
+                                //         location.reload();
+                                //     }, 600);
+                                // })
+                            }
+                            // lb.text(response)
+                            // $(".custom-control-label").text(text);
+                            // $('#imgPreview').attr('src', '');
+                            // $('#imgPreview').slideUp(200);
+                            // $(".remove-image").slideUp(100);
+                            // $('#noImageBox').slideDown(250);
+                            // $("#upload-box").slideDown(500);
+                        },
+                        dataType:"json",
+                        // headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    });
+                } else {
+                    console.warn("valid")
+                }
+                return
+                // var url = '<?= base_url('/register') ?>';
+                // var lb = $(this).parent('div').find(".custom-control-label")
+                // var data = $(form).serializeArray()
+                // $.ajax({
+                //     type: "POST",
+                //     url: url,
+                //     data: data,
+                //     // fail: errPost,
+                //     success: function (response) {
+                //         console.log(response)
+                //         if(!response.error) {
+                            
+                //             var p = new Promise(function(resolve) {
+                //                 $(".optChecked .verBox").addClass("show")
+                //                 $(".optChecked .dataBox").addClass("hide")
+                //                 $(".optChecked .custom-message").html(response.custom_message)
+                //                 // $("html").animate({scrollTop: 340}, 350);
+                //                 setTimeout(() => {
+                //                     resolve("OK")
+                //                 }, 200);
+                //             })
+                //             p.then(() => {
+                //                 $(".dataBox.hide").slideUp(200)
+                //                 var ref1 = $(".bradcam_area").outerHeight(true)
+                //                 var ref2 = $("header").outerHeight(true)
+                //                 var diff = ref1 + ref2
+                //                 var ref = $(".verBox").offset().top
+                //                 var f = (ref + 180) - diff
+                                
+
+                //                 $("html").animate({
+                //                     scrollTop: f
+                //                 }, 350);
+                //             }).then(() => {
+                //                 setTimeout(() => {
+                //                     $(".checkoutPage .form-check-input").addClass("disabled")
+                //                     $(".checkoutPage .form-check-input").attr("disabled", true)
+                //                     $(".verBox").find("form:first input:first").focus()    
+                //                 }, 360);
+                                
+                //             })
+
+                //         }
+                //         if(response.error) {
+                //             if(response.error_code == 'REQ_FIELDS') {
+                //                 console.log(response.errors)
+                //                 $.each(response.errors, function(f,m) {
+                //                     console.log(f)
+                //                     console.log(m)
+                //                     var el = $(form).find("input[name='"+f+"']")
+                //                     $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i><span>"+m+"</span></div>").insertAfter(el)
+                //                     console.log(el)
+                //                     setTimeout(() => {
+                //                         $(".dyn-response").addClass("show")
+                //                     }, 700);
+                //                 })
+                //             }
+                //         }
+                //         // lb.text(response)
+                //         // $(".custom-control-label").text(text);
+                //         // $('#imgPreview').attr('src', '');
+                //         // $('#imgPreview').slideUp(200);
+                //         // $(".remove-image").slideUp(100);
+                //         // $('#noImageBox').slideDown(250);
+                //         // $("#upload-box").slideDown(500);
+                //     },
+                //     dataType: 'json',
+                //     // headers: {'X-Requested-With': 'XMLHttpRequest'}
+                // });
+                // if ($(this).is(":checked") ) {
+                //     // console
+                // }
             })
             Iugu.setAccountID("4F8D7432F6621AEF83D433C5E197F32E")
             Iugu.setTestMode(true)
@@ -411,7 +683,7 @@
                     // var ref
                     // var html
                     var p = new Promise(function(resolve) {
-                        $(".checkoutPage > div > .row").removeClass("optChecked").not($(that).closest(".row"))
+                        $(".checkoutPage .authArea > .row").removeClass("optChecked").not($(that).closest(".row"))
                         // console.log($(that).closest(".row").find("form:first"))
                         $(that).closest(".row").addClass("optChecked")
                         // console.log($(".checkoutPage > div > .row:first"))
@@ -680,6 +952,36 @@
                                 })
                                 
                                 
+                            } else {
+                                var pp = new Promise((resolve) => {
+                                    $(".optChecked").find(form).find(".response_area").html(response.message)
+                                    $(".optChecked").find(form).find(".response_area").addClass("show");
+                                    setTimeout(() => {
+                                        
+                                        resolve(form)
+                                    }, 2000);
+                                })
+                                pp.then((form)=> {
+                                    
+                                    // $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                    // setTimeout(() => {
+                                    //     $(".optChecked").find(".verBox").addClass("show").addClass("field-error")
+                                    // }, 500)    
+                                    // $(form).find(".logitBtn").removeClass('disabled')
+                                    // $(form).find(".logitBtn").removeAttr('disabled')
+                                    $(form).find(".verifyBtn .textPlace, .loginBtn .textPlace").html(response.message)
+                                    $(form).find(".verifyBtn .iconPlace, .loginBtn .iconPlace").html('<i class="fa fa-check-circle-o fa-1x"></i>')
+                                    
+                                    setTimeout(() => {
+                                        $(".optChecked").find(".verBox, .verLBox").removeClass("show")
+                                        $(".optChecked").find(form).find(".response_area").removeClass("show")
+                                    }, 300);
+                                    setTimeout(() => {
+                                        $(".optChecked .dataBox").addClass("hide")
+                                        $(form).slideUp(500)
+                                        location.reload();
+                                    }, 600);
+                                })
                             }
                             // lb.text(response)
                             // $(".custom-control-label").text(text);
@@ -696,84 +998,8 @@
                         // console
                     }
                 })
-                $("#registerForm").on("submit", function(e) {
-                    var form = $(this);
-                    e.preventDefault()
-                    // Seu código para continuar a submissão
-                    // Ex: form.submit();
-                    var url = '<?= base_url('/register') ?>';
-                    // var lb = $(this).parent('div').find(".custom-control-label")
-                    var data = $(form).serializeArray()
-                    $.ajax({
-                        type: "POST",
-                        url: url,
-                        data: data,
-                        // fail: errPost,
-                        success: function (response) {
-                            console.log(response)
-                            if(!response.error) {
-                                
-                                var p = new Promise(function(resolve) {
-                                    $(".optChecked .verBox").addClass("show")
-                                    $(".optChecked .dataBox").addClass("hide")
-                                    $(".optChecked .custom-message").html(response.custom_message)
-                                    // $("html").animate({scrollTop: 340}, 350);
-                                    setTimeout(() => {
-                                        resolve("OK")
-                                    }, 200);
-                                })
-                                p.then(() => {
-                                    $(".dataBox.hide").slideUp(200)
-                                    var ref1 = $(".bradcam_area").outerHeight(true)
-                                    var ref2 = $("header").outerHeight(true)
-                                    var diff = ref1 + ref2
-                                    var ref = $(".verBox").offset().top
-                                    var f = (ref + 180) - diff
-                                    
-
-                                    $("html").animate({
-                                        scrollTop: f
-                                    }, 350);
-                                }).then(() => {
-                                    setTimeout(() => {
-                                        $(".checkoutPage .form-check-input").addClass("disabled")
-                                        $(".checkoutPage .form-check-input").attr("disabled", true)
-                                        $(".verBox").find("form:first input:first").focus()    
-                                    }, 360);
-                                    
-                                })
-
-                            }
-                            if(response.error) {
-                                if(response.error_code == 'REQ_FIELDS') {
-                                    console.log(response.errors)
-                                    $.each(response.errors, function(f,m) {
-                                        console.log(f)
-                                        console.log(m)
-                                        var el = $(form).find("input[name='"+f+"']")
-                                        $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i><span>"+m+"</span></div>").insertAfter(el)
-                                        console.log(el)
-                                        setTimeout(() => {
-                                            $(".dyn-response").addClass("show")
-                                        }, 700);
-                                    })
-                                }
-                            }
-                            // lb.text(response)
-                            // $(".custom-control-label").text(text);
-                            // $('#imgPreview').attr('src', '');
-                            // $('#imgPreview').slideUp(200);
-                            // $(".remove-image").slideUp(100);
-                            // $('#noImageBox').slideDown(250);
-                            // $("#upload-box").slideDown(500);
-                        },
-                        dataType: 'json',
-                        // headers: {'X-Requested-With': 'XMLHttpRequest'}
-                    });
-                    if ($(this).is(":checked") ) {
-                        // console
-                    }
-                })
+                
+                
 
                 $("#loginForm").on("submit", function(e) {
                     var form = $(this);

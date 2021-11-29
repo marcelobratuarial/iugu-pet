@@ -230,7 +230,7 @@ class RegisterController extends BaseController
             'name'  => [
                 'rules' => 'required|min_length[2]|max_length[50]',
                 'errors' => [
-                    'required' => 'We really need youdr email.',
+                    'required' => 'Obrigatório',
                 ]
             ],
             'email' => [
@@ -265,34 +265,58 @@ class RegisterController extends BaseController
                     'matches' => 'Senha de confirmação deve ser idêntica.'
                 ]
             ],
-            'street'  => [
+            'address'  => [
                 'rules' => 'required|min_length[2]|max_length[50]',
                 'errors' => [
-                    'required' => 'Logradouro obrigatório.',
+                    'required' => 'Obrigatório.',
                 ]
             ],
             'number'  => [
-                'rules' => 'required|min_length[2]|max_length[50]',
+                'rules' => 'required|max_length[50]',
                 'errors' => [
-                    'required' => 'Número obrigatório',
+                    'required' => 'Obrigatório',
                 ]
             ],  
             'bairro'  => [
                 'rules' => 'required|min_length[2]|max_length[50]',
                 'errors' => [
-                    'required' => 'Bairro obrigatório',
+                    'required' => 'Obrigatório',
                 ]
             ],  
             'cidade'  => [
                 'rules' => 'required|min_length[2]|max_length[150]',
                 'errors' => [
-                    'required' => 'Cidade obrigatória',
+                    'required' => 'Obrigatório',
                 ]
             ],  
             'estado'  => [
                 'rules' => 'required|min_length[2]|max_length[150]',
                 'errors' => [
-                    'required' => 'Estado obrigatório',
+                    'required' => 'Obrigatório',
+                ]
+            ],  
+            'pet_name'  => [
+                'rules' => 'required|min_length[1]|max_length[150]',
+                'errors' => [
+                    'required' => 'Obrigatório',
+                ]
+            ],  
+            'pet_nasc'  => [
+                'rules' => 'required|min_length[2]|max_length[150]',
+                'errors' => [
+                    'required' => 'Obrigatório',
+                ]
+            ],  
+            'pet_raca'  => [
+                'rules' => 'required|min_length[2]|max_length[150]',
+                'errors' => [
+                    'required' => 'Obrigatório',
+                ]
+            ],  
+            'pet_peso'  => [
+                'rules' => 'required|min_length[1]|max_length[150]',
+                'errors' => [
+                    'required' => 'Obrigatório',
                 ]
             ],  
         ];
@@ -364,11 +388,12 @@ class RegisterController extends BaseController
                     // print_r($rr);exit;
     
                     $response = $this->SendVerCode($dbID);
-                    if($response["error"]) {
-                        echo json_encode($response);
-                    } else {
-                        print_r($response);
-                    }
+                    echo json_encode($response);
+                    // if($response["error"]) {
+                    //     echo json_encode($response);
+                    // } else {
+                    //     print_r($response);
+                    // }
                     
     
                     // print_r($r);exit;
@@ -426,6 +451,7 @@ class RegisterController extends BaseController
 
 
     public function sendVerCode($u = false) {
+        helper("cookie");
         if(is_integer($u)) {
             $dbID = $u;
         } else {$dbID = null;}
@@ -471,11 +497,12 @@ class RegisterController extends BaseController
 
                 // print_r($nu);
                 $model->save($nu);
-                helper("cookie");
+                
                 // set_cookie("umail",$this->request->getVar('email'), 3600);
+                $m = is_array($u) ? $u["email"] : $this->request->getVar('email');
                 set_cookie([
                     'name' => 'umail',
-                    'value' => is_array($u) ? $u["email"] : $this->request->getVar('email'),
+                    'value' => $m,
                     'expire' => 3600,
                     'httponly' => true
                 ]);
@@ -483,20 +510,21 @@ class RegisterController extends BaseController
                     
                     $ck = get_cookie("umail");
                     if(gettype($ck) === NULL) {
-                        // set_cookie("umail",$this->request->getVar('email'),  3600);
+                        // set_cookie("umail",$m, 3600);
                         set_cookie([
                             'name' => 'umail',
-                            'value' => is_array($u) ? $u["email"] : $this->request->getVar('email'),
+                            'value' => $m,
                             'expire' => 3600,
                             'httponly' => true
                         ]);
                     } else {
-                        // return "<br>BREAK: ". $i. " => ".get_cookie("umail");
+                        // return "<br>BREAK: ". $i. " => ".get_cookie("jwtteste");
                         break;
                     }
                     // echo "<br>";
                 }
-                // var_dump($a);exit;
+                // var_dump($u);
+                // exit;
                 $m = is_array($u) ? $u["email"] : $this->request->getVar('email');
                 $cm = 'Um código de verificação foi enviado para <strong>'. $m .'</strong>.<br>';
                 $cm .= 'Para continuar, acesse sua caixa de entrada e siga as instruções.';
@@ -504,7 +532,7 @@ class RegisterController extends BaseController
                 if(is_array($u)) {
                     return $response;
                 }
-                echo json_encode($response);
+                return $response;
                 exit;
             } else {
                 unset($nu);

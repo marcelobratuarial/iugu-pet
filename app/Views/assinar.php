@@ -171,7 +171,7 @@
                                     <div class="row mt-10">
                                         <div class="col-6">
                                             <div style="position:relative">
-                                                <input type="password" name="password" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" required class="single-input">
+                                                <input type="password" name="password" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" class="single-input">
                                             </div>
                                         </div>
                                         <div class="col-6">
@@ -213,7 +213,7 @@
                                 
                                 <hr style="margin-bottom: 0" />
                                 <div class="response_area"></div>
-                                <button type="submit" class="logitBtn genric-btn success circle arrow">Confirmar<span class="lnr lnr-arrow-right"></span></button>
+                                <button type="submit" class="verifyBtn genric-btn success circle arrow">Verificar<span class="lnr lnr-arrow-right"></span></button>
                                 <!-- <button class="genric-btn success circle arrow">Login<span class="lnr lnr-arrow-right"></span></button> -->
                             </form>
                         </div>
