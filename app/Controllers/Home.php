@@ -217,7 +217,7 @@ class Home extends BaseController
 
     public function api() {
         
-        $rdata = (array) $this->request->getJSON();
+        $rdata = (array) $this->request->getPost();
         // var_dump($rdata);exit;
         $args = [];
         if(isset($rdata["call"])) {
