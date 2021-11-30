@@ -50,12 +50,12 @@
                             <div class="mt-10">
                                 <input type="password" name="password" placeholder="Senha" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Senha'" required class="single-input">
                             </div>
-                            
+                            <hr style="margin-bottom: 0" />
+                            <div class="response_area"></div>
                             <button type="submit" class="d-flex align-items-center justify-content-center logitBtn genric-btn success circle mt-1"><span class="textPlace">Continuar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span></button>
                             <!-- <button class="genric-btn success circle arrow">Login<span class="lnr lnr-arrow-right"></span></button> -->
                         </form>
-                        <hr style="margin-bottom: 0" />
-                        <div class="response_area"></div>
+                        
                     </div>
 
                 </div>
@@ -184,12 +184,11 @@
                                 </div>
                                 <hr style="margin-bottom: 0" />
                                 <div class="response_area"></div>
-                                <button type="submit" class="registerBtn genric-btn success circle arrow mt-1">Continuar<span class="lnr lnr-arrow-right"></span></button>
+                                <button type="submit" class="d-flex align-items-center justify-content-center registerBtn genric-btn success circle arrow mt-1"><span class="textPlace">Continuar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span></button>
                             </form>
                         </div>
                         
                         <div class="verBox">
-                            <hr>
                             <div class="row mt-10">
                                 <div class="col-md-12">
                                     <h5>Quase pronto!</h5>
@@ -213,7 +212,7 @@
                                 
                                 <hr style="margin-bottom: 0" />
                                 <div class="response_area"></div>
-                                <button type="submit" class="verifyBtn genric-btn success circle arrow">Verificar<span class="lnr lnr-arrow-right"></span></button>
+                                <button type="submit" class="d-flex align-items-center justify-content-center verifyBtn genric-btn success circle arrow mt-1"><span class="textPlace">Verificar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span></button>
                                 <!-- <button class="genric-btn success circle arrow">Login<span class="lnr lnr-arrow-right"></span></button> -->
                             </form>
                         </div>

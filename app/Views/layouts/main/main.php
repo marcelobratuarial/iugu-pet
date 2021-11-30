@@ -57,7 +57,14 @@
             <!-- <source src="movie.ogg" type="video/ogg" /> -->
             Your browser does not support the video tag.
             </video>
-        </div> */ ?>
+        </div> */ 
+        // $nextWeek = time() + (7 * 24 * 60 * 60);
+        //            // 7 days; 24 hours; 60 mins; 60secs
+        // echo 'Now:       '. date('Y-m-d H:i:s') ."\n";
+        // echo 'Next Week: '. date('Y-m-d H:i:s', $nextWeek) ."\n";
+        // // or using strtotime():
+        // echo 'Next Week: '. date('Y-m-d H:i:s', strtotime('+1 week')) ."\n";
+        ?>
     <?= $this->renderSection('header') ?>
 
     <main style="clear: both;">
@@ -176,7 +183,10 @@
                 e.preventDefault()
                 // Seu código para continuar a submissão
                 // Ex: form.submit();
-                
+                $(form).find(".registerBtn").addClass('disabled')
+                $(form).find(".registerBtn").attr('disabled', true)
+                $(form).find(".registerBtn .textPlace").html('Aguarde')
+                $(form).find(".registerBtn .iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
                 
                 $("#registerForm").validate({
                     errorClass: "field_error",
@@ -297,13 +307,17 @@
                                     setTimeout(() => {
                                         $(".checkoutPage .form-check-input").addClass("disabled")
                                         $(".checkoutPage .form-check-input").attr("disabled", true)
-                                        $(".verBox").find("form:first input:first").focus()    
+                                        $(".verBox").find("form:first input:first").focus()   
+                                        $(form).find(".registerBtn").removeClass('disabled')
+                                        $(form).find(".registerBtn").removeAttr('disabled')
+                                        $(form).find(".registerBtn .textPlace").html('Continuar')
+                                        $(form).find(".registerBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                
                                     }, 360);
                                     
                                 })
-
-                            }
-                            if(response.error) {
+                                
+                            } else {
                                 if(response.error_code == 'REQ_FIELDS') {
                                     // console.log(response.errors)
                                     $.each(response.errors, function(f,m) {
@@ -316,51 +330,31 @@
                                         // console.log(el)
                                         setTimeout(() => {
                                             $(".dyn-response").addClass("show")
-                                        }, 700);
+                                        }, 400);
                                     })
                                 }
-                            } else {
-                                // var pp = new Promise((resolve) => {
-                                //     $(".optChecked").find(".response_area").html(response.message)
-                                //     $(".optChecked").find(".response_area").addClass("show");
-                                //     setTimeout(() => {
-                                        
-                                //         resolve(form)
-                                //     }, 2000);
-                                // })
-                                // pp.then((form)=> {
-                                    
-                                //     // $(".optChecked .verBox .custom-message").html(response.custom_message)
-                                //     // setTimeout(() => {
-                                //     //     $(".optChecked").find(".verBox").addClass("show").addClass("field-error")
-                                //     // }, 500)    
-                                //     // $(form).find(".logitBtn").removeClass('disabled')
-                                //     // $(form).find(".logitBtn").removeAttr('disabled')
-                                //     $(form).find(".logitBtn .textPlace").html(response.message)
-                                //     $(form).find(".logitBtn .iconPlace").html('<i class="fa fa-check-circle-o fa-1x"></i>')
-                                    
-                                //     setTimeout(() => {
-                                //         $(".optChecked").find(".response_area").removeClass("show")
-                                //     }, 300);
-                                //     setTimeout(() => {
-                                //         $(form).slideUp(500)
-                                //         location.reload();
-                                //     }, 600);
-                                // })
-                            }
-                            // lb.text(response)
-                            // $(".custom-control-label").text(text);
-                            // $('#imgPreview').attr('src', '');
-                            // $('#imgPreview').slideUp(200);
-                            // $(".remove-image").slideUp(100);
-                            // $('#noImageBox').slideDown(250);
-                            // $("#upload-box").slideDown(500);
+                                setTimeout(() => {
+                                    $(form).find(".registerBtn").removeClass('disabled')
+                                    $(form).find(".registerBtn").removeAttr('disabled')
+                                    $(form).find(".registerBtn .textPlace").html('Continuar')
+                                    $(form).find(".registerBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                            
+                                }, 200);
+                            } 
+                            
                         },
                         dataType:"json",
                         // headers: {'X-Requested-With': 'XMLHttpRequest'}
                     });
                 } else {
-                    console.warn("valid")
+                    console.warn("invalid")
+                    setTimeout(() => {
+                        $(form).find(".registerBtn").removeClass('disabled')
+                        $(form).find(".registerBtn").removeAttr('disabled')
+                        $(form).find(".registerBtn .textPlace").html('Continuar')
+                        $(form).find(".registerBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                
+                    }, 900);
                 }
                 return
                 // var url = '<?= base_url('/register') ?>';
@@ -886,6 +880,11 @@
                     var form = $(this);
                     console.log(form)
                     e.preventDefault()
+                    $(form).find(".verifyBtn").addClass('disabled')
+                    $(form).find(".verifyBtn").attr('disabled', true)
+                    $(form).find(".verifyBtn .textPlace").html('Verificando')
+                    $(form).find(".verifyBtn .iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                    
                     // Seu código para continuar a submissão
                     // Ex: form.submit();
                     var url = '<?= base_url('/check-code') ?>';
@@ -911,45 +910,60 @@
                                 //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
                                 // } else if(response.error_code == 'NEED_VER') {
                                 // }
-                                var p = new Promise((resolve)=> {
-                                    $(form).find(".response_area").html(response.message)
-                                    resolve("OK")
-                                })
-                                p.then((e)=> {
-                                    console.log(e)
-                                    $(form).find(".response_area").slideDown(234);
-                                }).then((e) => {
+                                if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
+                                    var verBox = $(".verBox")
+                                    // console.log($(".optChecked .verBox .custom-message"))
+                                    // console.log(response.custom_message)
                                     
                                     
-                                    if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
-                                        var verBox = $(".verBox")
-                                        // console.log($(".optChecked .verBox .custom-message"))
-                                        // console.log(response.custom_message)
-                                        
-                                        
-                                        if($(".optChecked").find(".verBox").length == 0) {
-                                            $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
-                                            
-                                        } else {
-                                            console.log("Not")
-                                        }
-                                        var pp = new Promise((resolve) => {
-                                            
-                                            setTimeout(() => {
-                                                $(form).find(".response_area").slideUp(432);
-                                                $(form).slideUp(500);
-                                                resolve()
-                                            }, 4000);
-                                        })
-                                        pp.then(()=> {
-                                            $(".optChecked .verBox .custom-message").html(response.custom_message)
-                                            setTimeout(() => {
-                                                $(".optChecked").find(".verBox").addClass("show")
-                                            }, 500)    
-                                            
-                                        })
+                                    if($(".optChecked").find(".verBox").length == 0) {
+                                        $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
+                                    } else {
+                                        console.log("Not")
                                     }
-                                })
+                                    var pp = new Promise((resolve) => {
+                                        $(form).find(".response_area").html(response.message)
+                                        $(form).find(".response_area").addClass("show")
+                                        
+                                        setTimeout(() => {
+                                            $(form).find(".response_area").removeClass("show").removeClass("field_error");
+                                            $(form).slideUp(500);
+                                            resolve()
+                                        }, 4000);
+                                    })
+                                    
+                                } else if(response.error_code == 'INV_CODE') {
+                                    var p = new Promise((resolve)=> {
+                                        $(form).find(".response_area").html(response.message)
+                                        $(form).find(".response_area").addClass("field_error").addClass("show");
+                                        resolve("OK")
+                                    })
+                                    p.then(()=>{
+                                        setTimeout(() => {
+                                            $(form).find(".response_area").removeClass("show").removeClass("field_error");
+                                        }, 4000);
+                                    })
+                                }
+                                // var p = new Promise((resolve)=> {
+                                //     $(form).find(".response_area").html(response.message)
+                                //     resolve("OK")
+                                // })
+                                // p.then((e)=> {
+                                //     console.log(e)
+                                //     $(form).find(".response_area").slideDown(234);
+                                // }).then((e) => {
+                                    
+                                    
+                                    
+                                // }).then(()=>{
+                                setTimeout(() => {
+                                    $(form).find(".verifyBtn").removeClass('disabled')
+                                    $(form).find(".verifyBtn").removeAttr('disabled')
+                                    $(form).find(".verifyBtn .textPlace").html('Continuar')
+                                    $(form).find(".verifyBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                            
+                                }, 900);
+                                // })
                                 
                                 
                             } else {
@@ -975,12 +989,18 @@
                                     setTimeout(() => {
                                         $(".optChecked").find(".verBox, .verLBox").removeClass("show")
                                         $(".optChecked").find(form).find(".response_area").removeClass("show")
+                                        $(form).find(".registerBtn").removeClass('disabled')
+                                        $(form).find(".registerBtn").removeAttr('disabled')
+                                        $(form).find(".registerBtn .textPlace").html('Continuar')
+                                        $(form).find(".registerBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                
                                     }, 300);
                                     setTimeout(() => {
                                         $(".optChecked .dataBox").addClass("hide")
                                         $(form).slideUp(500)
                                         location.reload();
                                     }, 600);
+                                   
                                 })
                             }
                             // lb.text(response)
@@ -1038,7 +1058,7 @@
                                 if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
                                     var verBox = $(".verBox")
                                     // console.log($(".optChecked .verBox .custom-message"))
-                                    // console.log(response.custom_message)
+                                    console.log(response)
                                     
                                     
                                     if($(".optChecked").find(".verBox").length == 0) {
@@ -1048,18 +1068,22 @@
                                         console.log("Not")
                                     }
                                     var pp = new Promise((resolve) => {
-                                        
+                                        $(form).find(".response_area").html(response.message)
+                                        $(".optChecked #verLForm .custom-message").html(response.custom_message)
+
                                         setTimeout(() => {
-                                            $(form).find(".response_area").removeClass("show");
-                                            $(form).slideUp(500);
+                                            $(form).find(".response_area").addClass("field_error").addClass("show")
+                                        }, 200)    
+                                        setTimeout(() => {
+                                            $(form).slideUp(200);
+                                            $(form).find(".response_area").removeClass("show").removeClass("field_error");
+                                            $(".authArea .optChecked #verLForm").addClass("show");
+                                            
                                             resolve()
                                         }, 4000);
                                     })
                                     pp.then(()=> {
-                                        $(".optChecked .verBox .custom-message").html(response.custom_message)
-                                        setTimeout(() => {
-                                            $(".optChecked").find(".verBox").addClass("show")
-                                        }, 500)    
+                                        
                                         $(form).find(".logitBtn").removeClass('disabled')
                                         $(form).find(".logitBtn").removeAttr('disabled')
                                         $(form).find(".logitBtn .textPlace").html('Continuar')

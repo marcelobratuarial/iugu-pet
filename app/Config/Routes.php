@@ -39,7 +39,7 @@ $routes->get('/', 'Home::index'); //,['filter' => 'authFilter']);
 $routes->get('/services', 'Home::services');
 $routes->get('/assinar/(:any)', 'Home::assinar/$1');
 // $routes->get('/api', 'Home::api');
-$routes->post('/api', 'Home::api',['filter' => 'authFilter']);
+$routes->post('/api', 'Home::api'); //,['filter' => 'authFilter']);
 
 $routes->post('/register', 'RegisterController::store');
 $routes->post('/check-cEmail', 'RegisterController::checkCustomerMail');
