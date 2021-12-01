@@ -523,6 +523,7 @@
                         }
                     })
                 }
+                payFormValidade()
                 $("#email").on("blur", function(e) {
                     var form = $(this);
                     e.preventDefault()
@@ -640,7 +641,8 @@
                 $('#payment-form').on("submit", function(evt) {
                     evt.preventDefault()
                     var form = $(this);
-
+                    
+                    // return false
                     $(form).find(".saveCardBtn").addClass('disabled')
                     $(form).find(".saveCardBtn").attr('disabled', true)
                     $(form).find(".saveCardBtn .textPlace").html('Processando')
@@ -654,7 +656,15 @@
                         var tokenResponseHandler = function(data) {
                         
                             if (data.errors) {
+                                
                                 alert("Erro salvando cartão: " + JSON.stringify(data.errors));
+                                setTimeout(() => {
+                                    $(form).find(".saveCardBtn").removeClass('disabled')
+                                    $(form).find(".saveCardBtn").removeAttr('disabled')
+                                    $(form).find(".saveCardBtn .textPlace").html('Salvar cartão')
+                                    $(form).find(".saveCardBtn .iconPlace").html('<i class="fa fa-check-circle fa-1x"></i>')
+                            
+                                }, 900);
                             } else {
                                 // $("#token").val( data.id );
                                 var url = '<?= base_url('/api') ?>';
@@ -728,9 +738,10 @@
                                         } else {
                                             var p = new Promise((resolve)=> {
                                                 $(form).find(".response_area").html(response.message)
-                                                $("#defaultCard").find(".form-check-label").html(response.response_data.data.display_number)
+                                                $("#defaultCard").find(".form-check-label h3").html(response.response_data.data.display_number)
                                                 $("#defaultCard").find(".defCard .def-card-brand").html(response.response_data.data.brand)
-                                                $("#defaultCard").find(".defCard .def-card-name").html(response.response_data.data.holder_name)
+                                                $("#defaultCard").find(".defCard .def-card-name").html('<strong>'+response.response_data.data.holder_name+'</strong>')
+                                                $("#defaultCard").find(".manageCardLink .cardCount").html(response.response_data.cardCount)
                                                 
                                                 resolve("OK")
                                             })
@@ -738,11 +749,14 @@
                                                 console.log(e)
                                                 $(form).find(".response_area").slideDown(234);
                                             }).then((e) => {
+                                                $(".manageCardLink").slideDown(100);
                                                 setTimeout(() => {
                                                     $(form).find(".response_area").slideUp(432);
+                                                    $("#payment-form")[0].reset()
+                                                    $("#pdefault").trigger("click")
                                                     $("#defaultCard").slideDown(500);
-                                                    resolve()
-                                                }, 4000);
+                                                    
+                                                }, 2000);
                                                 
                                                 // if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
                                                 //     var verBox = $(".verBox")
@@ -772,6 +786,14 @@
                                                         
                                                 //     })
                                                 // }
+                                            }).then(() => {
+                                                setTimeout(() => {
+                                                    $(form).find(".saveCardBtn").removeClass('disabled')
+                                                    $(form).find(".saveCardBtn").removeAttr('disabled')
+                                                    $(form).find(".saveCardBtn .textPlace").html('Salvar cartão')
+                                                    $(form).find(".saveCardBtn .iconPlace").html('<i class="fa fa-check-circle fa-1x"></i>')
+                                            
+                                                }, 900);
                                             })
                                         }
                                         // lb.text(response)
@@ -883,8 +905,8 @@
                         setTimeout(() => {
                             $(form).find(".saveCardBtn").removeClass('disabled')
                             $(form).find(".saveCardBtn").removeAttr('disabled')
-                            $(form).find(".saveCardBtn .textPlace").html('Continuar')
-                            $(form).find(".saveCardBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                            $(form).find(".saveCardBtn .textPlace").html('Salvar cartão')
+                            $(form).find(".saveCardBtn .iconPlace").html('<i class="fa fa-check-circle fa-1x"></i>')
                     
                         }, 900);
                     }

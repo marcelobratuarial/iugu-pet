@@ -88,22 +88,25 @@ class Home extends BaseController
             $user = [];
         }
         $user_default_payment = NULL;
+        $dft_pmt = NULL; 
         if(isset($user["default_payment_method_id"]) &&
         !empty($user["default_payment_method_id"])) {
             $dft_pmt = $user["default_payment_method_id"];
+        }
             // echo "<pre>";
             // print_r($user);
-            if(isset($user["payment_methods"]) && 
-            !empty($user["payment_methods"])) {
-                foreach($user["payment_methods"] as $pm) {
-                    if($pm["id"] == $dft_pmt) {
-                        $user_default_payment = $pm;
-                        break;
-                    }
+        if(isset($user["payment_methods"]) && 
+        !empty($user["payment_methods"])) {
+            foreach($user["payment_methods"] as $pm) {
+                if($pm["id"] == $dft_pmt || count($user["payment_methods"]) >= 1) {
+                    $user_default_payment = $pm;
+                    break;
                 }
             }
-            // echo "</pre>";
         }
+        // print_r($user_default_payment);exit;
+            // echo "</pre>";
+        
         if(isset($user["custom_variables"]) && !empty($user["custom_variables"])) {
             $cf_refs = [
                 'pet_name' => [
@@ -218,6 +221,9 @@ class Home extends BaseController
     public function api() {
         
         $rdata = (array) $this->request->getPost();
+        if(empty($rdata)) {
+            $rdata = (array) $this->request->getJSON();
+        }
         // $rdata = (array) $this->request->getJSON();
         // var_dump($rdata);exit;
         try {
@@ -257,6 +263,17 @@ class Home extends BaseController
                             "response" => $rr
                         ]);
                     } else {
+                        $args_ = [];
+                        $args_["m"] = "GET";
+                        $this->requestURL = $this->baseApi . "customers";
+                        $args_["pl"] = json_encode([
+                            "query" => $session->get('email'),
+                            "limit" => 1
+                        ]);
+                        $user = $this->doRequest($this->requestURL, $args_);
+                        // echo gettype(json_decode($user, true));exit;
+                        $u = json_decode($user, true)["items"][0];
+                        $rr["cardCount"] = count($u["payment_methods"]);
                         return $this->response->setJSON([
                             "error" => false,
                             "message" => "Cartão salvo com sucesso",

@@ -247,7 +247,7 @@
                     
                     <?php 
                     // print_r($user);
-                    $hasCard = (is_array($payment));
+                    $hasCard = (is_array($payment) || count($user["payment_methods"]) > 0);
 
                      ?>
                     <div id="defaultCard" <?= ($hasCard) ? '"': 'style="display: none"'?> class="row optPayment optPaymentChecked pt-5">
@@ -261,9 +261,11 @@
                                 <span class="def-card-name"><?= ($hasCard) ? '<strong>'. $payment["data"]["holder_name"] . '</strong>': ''?></span>
                                 
                                 <hr>
-                                <?php if(isset($user["payment_methods"]) && count($user["payment_methods"]) > 1) : ?>
-                                <a href="<?= base_url("minha-conta/cartoes") ?>">Gerenciar meus cartões (<?= count($user["payment_methods"]) ?>)</a>
-                                <?php endif; ?>
+                        
+                                <div class="manageCardLink" <?= ($hasCard) ? '"': 'style="display: none"'?>>
+                                    
+                                    <a href="<?= base_url("minha-conta/cartoes") ?>">Gerenciar meus cartões (<span class="cardCount"><?= count($user["payment_methods"]) ?></span>)</a>
+                                </div>
                             </div>
                             
                             
@@ -284,14 +286,14 @@
                                     <h4 class="mb-3 mt-3 d-flex align-items-center justify-content-center"><span style="font-size: 2.2rem;" class="mr-2"><i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i></span> Você não tem nenhum cartão cadastrado.</h4>
                                     <hr class="w-100">
                                     
-                                    <a class="btn btn-info add-new-card-btn" href="<?= base_url("minha-conta/cartoes") ?>">Adicionar cartão</a>
+                                    <a class="genric-btn primary-border circle  add-new-card-btn" href="">Adicionar cartão <i class="fa fa-cc fa-1x"></i></a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <?php endif; ?>
                     
-                    <div style="display: none" class="addCardArea row optPayment pt-5 mb-5">
+                    <div <?= ($hasCard) ? '' : 'style="display: none"'?> class="addCardArea row optPayment pt-5 mb-5">
                         <div class="col-md-12">
                             <div  class="form-check d-flex form-lg form-check-inline mb-4">
                                 <input class="form-check-input" type="radio" name="payment_meth" data-rf="payment-form" id="addCard" value="option1">
@@ -322,7 +324,7 @@
                                         <hr>
                                         <ul>
                                             <li><i class="fa fa-circle" aria-hidden="true"></i> <strong>Este será seu cartão principal</strong></li>
-                                            <li><i class="fa fa-circle" aria-hidden="true"></i> <a href="<?= base_url("minha-conta/cartoes") ?>">Gerenciar meus cartões (<?= count($user["payment_methods"]) ?>)</a></li>
+                                            <!-- <li><i class="fa fa-circle" aria-hidden="true"></i> <a href="<?= base_url("minha-conta/cartoes") ?>">Gerenciar meus cartões (<?= count($user["payment_methods"]) ?>)</a></li> -->
                                         </ul>
                                         
                                         
@@ -341,7 +343,7 @@
 
                                 <div class="mt-4">
                                     <hr>
-                                    <button class="btn btn-primary saveCardBtn" type="submit">Salvar</button>
+                                    <button class="genric-btn info circle saveCardBtn" type="submit"><span class="textPlace">Salvar cartão</span> <span class="ml-3 iconPlace"><i class="fa fa-check-circle fa-1x"></i></span></button>
                                 </div>
                                 <hr style="margin-bottom: 0" />
                                 <div class="response_area"></div>
