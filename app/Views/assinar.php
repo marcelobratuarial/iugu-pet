@@ -247,16 +247,18 @@
                     
                     <?php 
                     // print_r($user);
-                    if(is_array($payment)): ?>
-                    <div class="row d-flex optPayment optPaymentChecked justify-content-center pt-5">
+                    $hasCard = (is_array($payment));
+
+                     ?>
+                    <div id="defaultCard" <?= ($hasCard) ? '"': 'style="display: none"'?> class="row optPayment optPaymentChecked pt-5">
                         <div class="col-md-12">
                             <div class="form-check d-flex form-lg form-check-inline mb-4">
-                                <input checked class="form-check-input" type="radio" name="payment_meth" data-rf="loginForm" id="pdefault" value="<?= $payment["id"] ?>">
-                                <label class="form-check-label" for="pdefault"><h3 style="margin-bottom: 0"><?= $payment["data"]["display_number"] ?></h3></label>
+                                <input checked class="form-check-input" type="radio" name="payment_meth" data-rf="loginForm" id="pdefault" value="<?= ($hasCard) ? $payment["id"] : ''?>">
+                                <label class="form-check-label" for="pdefault"><h3 style="margin-bottom: 0"><?= ($hasCard) ? $payment["data"]["display_number"] : ''?></h3></label>
                             </div>
                             <div class="defCard">
-                                <?= $payment["data"]["brand"] ?><br>
-                                <strong><?= $payment["data"]["holder_name"] ?></strong>
+                                <span class="def-card-brand"><?= ($hasCard) ? $payment["data"]["brand"]: ''?></span><br>
+                                <span class="def-card-name"><?= ($hasCard) ? '<strong>'. $payment["data"]["holder_name"] . '</strong>': ''?></span>
                                 
                                 <hr>
                                 <?php if(isset($user["payment_methods"]) && count($user["payment_methods"]) > 1) : ?>
@@ -268,35 +270,52 @@
                         </div>
                         
                     </div>
-                    <?php else: ?>
                     
+                    <?php if(!$hasCard): ?>
+                    <div class="row mt-3 mb-3">
+                        <div class="col-md-12">
+                            <hr class="w-100">
+                        </div>
+                    </div>
+                    <div class="row no-box-container">
+                        <div class="col-md-12">
+                            <div class=" d-flex flex-column align-items-center justify-content-center">
+                                <div class="alert alert-warning  d-flex flex-column align-items-center justify-content-center" role="alert">
+                                    <h4 class="mb-3 mt-3 d-flex align-items-center justify-content-center"><span style="font-size: 2.2rem;" class="mr-2"><i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i></span> Você não tem nenhum cartão cadastrado.</h4>
+                                    <hr class="w-100">
+                                    
+                                    <a class="btn btn-info add-new-card-btn" href="<?= base_url("minha-conta/cartoes") ?>">Adicionar cartão</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <?php endif; ?>
                     
-                    <div class="row d-flex optPayment justify-content-center pt-5 mb-5">
+                    <div style="display: none" class="addCardArea row optPayment pt-5 mb-5">
                         <div class="col-md-12">
-                            <div class="form-check d-flex form-lg form-check-inline mb-4">
-                                <input class="form-check-input" type="radio" name="payment_meth" data-rf="loginForm" id="addCard" value="option1">
+                            <div  class="form-check d-flex form-lg form-check-inline mb-4">
+                                <input class="form-check-input" type="radio" name="payment_meth" data-rf="payment-form" id="addCard" value="option1">
                                 <label class="form-check-label" for="addCard"><h3 style="margin-bottom: 0">Adicionar cartão</h3></label>
                             </div>
                             
-                            <form id="payment-form" target="_blank" action="" method="POST">
+                            <form id="payment-form" action="" method="POST">
                                 <div class="usable-creditcard-form">
                                     <div class="wrapper">
                                         <div class="input-group mt-10 nmb_a">
                                             <div class="icon ccic-brand"></div>
-                                            <input autocomplete="off" class="credit_card_number single-input" data-iugu="number" placeholder="Número do Cartão" type="text" value="" />
+                                            <input autocomplete="off" name="credit_card_number" class="credit_card_number single-input" data-iugu="number" placeholder="Número do Cartão" type="text" value="" />
                                         </div>
                                         <div class="input-group mt-10 nmb_b">
                                             <div class="icon ccic-cvv"></div>
-                                            <input autocomplete="off" class="credit_card_cvv single-input" data-iugu="verification_value" placeholder="CVV" type="text" value="" />
+                                            <input autocomplete="off" name="credit_card_cvv" class="credit_card_cvv single-input" data-iugu="verification_value" placeholder="CVV" type="text" value="" />
                                         </div>
                                         <div class="input-group mt-10 nmb_c">
                                             <div class="icon ccic-name"></div>
-                                            <input class="credit_card_name single-input" data-iugu="full_name" placeholder="Titular do Cartão" type="text" value="" />
+                                            <input name="credit_card_name" class="credit_card_name single-input" data-iugu="full_name" placeholder="Titular do Cartão" type="text" value="" />
                                         </div>
                                         <div class="input-group mt-10 nmb_d">
                                             <div class="icon ccic-exp"></div>
-                                            <input autocomplete="off" class="credit_card_expiration single-input" data-iugu="expiration" placeholder="MM/AA" type="text" value="" />
+                                            <input name="credit_card_expiration" autocomplete="off" class="credit_card_expiration single-input" data-iugu="expiration" placeholder="MM/AA" type="text" value="" />
                                         </div>
                                     </div>
                                     <div class="mt-4 mb-6">
@@ -322,9 +341,10 @@
 
                                 <div class="mt-4">
                                     <hr>
-                                    <button class="btn btn-primary" type="submit">Salvar</button>
+                                    <button class="btn btn-primary saveCardBtn" type="submit">Salvar</button>
                                 </div>
-
+                                <hr style="margin-bottom: 0" />
+                                <div class="response_area"></div>
                             </form>
                             
                             

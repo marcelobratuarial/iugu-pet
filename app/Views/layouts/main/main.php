@@ -452,6 +452,77 @@
                 console.log(cvv_valid)
             })
             jQuery(function($) {
+                var payFormValidade = function() {
+                    $("#payment-form").validate({
+                        errorClass: "field_error",
+                        rules: {
+                            // simple rule, converted to {required:true}
+                            credit_card_number: {
+                                required: true,
+                                minlength : 12,
+                                maxlength: 16
+                            },
+                            credit_card_cvv: {
+                                required: true,
+                                minlength : 3,
+                                maxlength : 4,
+                            },
+                            credit_card_name : {
+                                required: true,
+                                minlength: 6,
+                                maxlength: 50
+                            },
+                            // compound rule
+                            credit_card_expiration: {
+                                required: true,
+                                date: true
+                            }
+                        },
+                        
+                        messages: {
+                            credit_card_number: "Obrigatório",
+                            credit_card_cvv: "Obrigatório",
+                            credit_card_name: "Obrigatório",
+                            credit_card_expiration: "Obrigatório"
+                        },
+                        ignore: [],
+                        errorElement: 'span',
+                        // wrapper: 'span',
+                        errorPlacement: function(error, element) {
+                            if($(element).parent('div').find('.dyn-response').length == 0) {
+
+                                $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i></div>").insertAfter(element)
+                                var t = $(element).parent('div').find(".dyn-response")
+                                if($(t).find("span").length == 0) {
+                                    $("<span>"+$(error).html()+"</span>").appendTo($(t))
+                                    t.addClass("show")
+                                }
+                            }
+                            // $(error).attr('style', '')
+                            // console.log($(error).html())
+                            
+                        },
+                        // invalidHandler: function(event, validator) {
+                        // },
+                        // submitHandler: function() { 
+                            
+                        // },
+
+                        highlight: function(element, errorClass, validClass) {
+                            // $(element).addClass(errorClass).removeClass(validClass);
+                            // $(element.form).find("label[for=" + element.id + "]")
+                            // .addClass(errorClass);
+                            // console.log(element)
+                            $(element).closest('div').find('.dyn-response').addClass('show')
+                        },
+                        unhighlight: function(element, errorClass, validClass) {
+                            $(element).closest('div').find('.dyn-response').removeClass('show').remove() //removeClass(errorClass).addClass(validClass);
+                            // $(element.form).find("label[for=" + element.id + "]")
+                            // .removeClass(errorClass);
+                            console.log($(element))
+                        }
+                    })
+                }
                 $("#email").on("blur", function(e) {
                     var form = $(this);
                     e.preventDefault()
@@ -566,103 +637,259 @@
                                 headers: {'X-Requested-With': 'XMLHttpRequest'}
                             });
                 });
-                $('#payment-form').submit(function(evt) {
+                $('#payment-form').on("submit", function(evt) {
                     evt.preventDefault()
                     var form = $(this);
-                    var tokenResponseHandler = function(data) {
+
+                    $(form).find(".saveCardBtn").addClass('disabled')
+                    $(form).find(".saveCardBtn").attr('disabled', true)
+                    $(form).find(".saveCardBtn .textPlace").html('Processando')
+                    $(form).find(".saveCardBtn .iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                    
+                    
+                    console.log("teste")
+                    if($("#payment-form").valid()) {
+                        console.log("valid")
+
+                        var tokenResponseHandler = function(data) {
                         
-                        if (data.errors) {
-                            alert("Erro salvando cartão: " + JSON.stringify(data.errors));
-                        } else {
-                            // $("#token").val( data.id );
-                            var url = '<?= base_url('/api') ?>';
-                            // var lb = $(this).parent('div').find(".custom-control-label")
-                            // var data = $(form).serializeArray()
-                            var payload = {
-                                'call': 'payment_methods',
-                                'method': 'POST',
-                                'payload': {
-                                    token: data.id
+                            if (data.errors) {
+                                alert("Erro salvando cartão: " + JSON.stringify(data.errors));
+                            } else {
+                                // $("#token").val( data.id );
+                                var url = '<?= base_url('/api') ?>';
+                                // var lb = $(this).parent('div').find(".custom-control-label")
+                                // var data = $(form).serializeArray()
+                                var payload = {
+                                    'call': 'payment_methods',
+                                    'method': 'POST',
+                                    'payload': {
+                                        token: data.id
+                                    }
                                 }
+                                
+                                // console.log(data)
+                                $.ajax({
+                                    type: "POST",
+                                    url: url,
+                                    data: payload,
+                                    fail: function(r){
+                                        console.log(r)
+                                    },
+                                    success: function (response) {
+                                        console.log(response)
+                                        console.log(typeof response.error)
+                                        if(response.error) {
+                                            // if(response.error_code == 'UNAUTH' || response.error_code == 'UNAUTH_NE' ) {
+                                            //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
+                                            // } else if(response.error_code == 'NEED_VER') {
+                                            // }
+                                            var p = new Promise((resolve)=> {
+                                                $(form).find(".response_area").html(response.message)
+                                                resolve("OK")
+                                            })
+                                            p.then((e)=> {
+                                                console.log(e)
+                                                $(form).find(".response_area").slideDown(234);
+                                            }).then((e) => {
+                                                
+                                                
+                                                if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
+                                                    var verBox = $(".verBox")
+                                                    // console.log($(".optChecked .verBox .custom-message"))
+                                                    // console.log(response.custom_message)
+                                                    
+                                                    
+                                                    if($(".optChecked").find(".verBox").length == 0) {
+                                                        $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
+                                                        
+                                                    } else {
+                                                        console.log("Not")
+                                                    }
+                                                    var pp = new Promise((resolve) => {
+                                                        
+                                                        setTimeout(() => {
+                                                            $(form).find(".response_area").slideUp(432);
+                                                            $(form).slideUp(500);
+                                                            resolve()
+                                                        }, 4000);
+                                                    })
+                                                    pp.then(()=> {
+                                                        $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                                        setTimeout(() => {
+                                                            $(".optChecked").find(".verBox").addClass("show")
+                                                        }, 500)    
+                                                        
+                                                    })
+                                                }
+                                            })
+                                            
+                                            
+                                        } else {
+                                            var p = new Promise((resolve)=> {
+                                                $(form).find(".response_area").html(response.message)
+                                                $("#defaultCard").find(".form-check-label").html(response.response_data.data.display_number)
+                                                $("#defaultCard").find(".defCard .def-card-brand").html(response.response_data.data.brand)
+                                                $("#defaultCard").find(".defCard .def-card-name").html(response.response_data.data.holder_name)
+                                                
+                                                resolve("OK")
+                                            })
+                                            p.then((e)=> {
+                                                console.log(e)
+                                                $(form).find(".response_area").slideDown(234);
+                                            }).then((e) => {
+                                                setTimeout(() => {
+                                                    $(form).find(".response_area").slideUp(432);
+                                                    $("#defaultCard").slideDown(500);
+                                                    resolve()
+                                                }, 4000);
+                                                
+                                                // if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
+                                                //     var verBox = $(".verBox")
+                                                //     // console.log($(".optChecked .verBox .custom-message"))
+                                                //     // console.log(response.custom_message)
+                                                    
+                                                    
+                                                //     if($(".optChecked").find(".verBox").length == 0) {
+                                                //         $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
+                                                        
+                                                //     } else {
+                                                //         console.log("Not")
+                                                //     }
+                                                //     var pp = new Promise((resolve) => {
+                                                        
+                                                //         setTimeout(() => {
+                                                //             $(form).find(".response_area").slideUp(432);
+                                                //             $(form).slideUp(500);
+                                                //             resolve()
+                                                //         }, 4000);
+                                                //     })
+                                                //     pp.then(()=> {
+                                                //         $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                                //         setTimeout(() => {
+                                                //             $(".optChecked").find(".verBox").addClass("show")
+                                                //         }, 500)    
+                                                        
+                                                //     })
+                                                // }
+                                            })
+                                        }
+                                        // lb.text(response)
+                                        // $(".custom-control-label").text(text);
+                                        // $('#imgPreview').attr('src', '');
+                                        // $('#imgPreview').slideUp(200);
+                                        // $(".remove-image").slideUp(100);
+                                        // $('#noImageBox').slideDown(250);
+                                        // $("#upload-box").slideDown(500);
+                                    },
+                                    dataType: 'json',
+                                    headers: {'X-Requested-With': 'XMLHttpRequest'}
+                                });
+                                // form.get(0).submit();
                             }
                             
-                            // console.log(data)
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data: payload,
-                                fail: function(r){
-                                    console.log(r)
-                                },
-                                success: function (response) {
-                                    console.log(response)
-                                    console.log(typeof response.error)
-                                    if(response.error) {
-                                        // if(response.error_code == 'UNAUTH' || response.error_code == 'UNAUTH_NE' ) {
-                                        //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
-                                        // } else if(response.error_code == 'NEED_VER') {
-                                        // }
-                                        var p = new Promise((resolve)=> {
-                                            $(form).find(".response_area").html(response.message)
-                                            resolve("OK")
-                                        })
-                                        p.then((e)=> {
-                                            console.log(e)
-                                            $(form).find(".response_area").slideDown(234);
-                                        }).then((e) => {
-                                            
-                                            
-                                            if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
-                                                var verBox = $(".verBox")
-                                                // console.log($(".optChecked .verBox .custom-message"))
-                                                // console.log(response.custom_message)
-                                                
-                                                
-                                                if($(".optChecked").find(".verBox").length == 0) {
-                                                    $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
-                                                    
-                                                } else {
-                                                    console.log("Not")
-                                                }
-                                                var pp = new Promise((resolve) => {
-                                                    
-                                                    setTimeout(() => {
-                                                        $(form).find(".response_area").slideUp(432);
-                                                        $(form).slideUp(500);
-                                                        resolve()
-                                                    }, 4000);
-                                                })
-                                                pp.then(()=> {
-                                                    $(".optChecked .verBox .custom-message").html(response.custom_message)
-                                                    setTimeout(() => {
-                                                        $(".optChecked").find(".verBox").addClass("show")
-                                                    }, 500)    
-                                                    
-                                                })
-                                            }
-                                        })
-                                        
-                                        
-                                    }
-                                    // lb.text(response)
-                                    // $(".custom-control-label").text(text);
-                                    // $('#imgPreview').attr('src', '');
-                                    // $('#imgPreview').slideUp(200);
-                                    // $(".remove-image").slideUp(100);
-                                    // $('#noImageBox').slideDown(250);
-                                    // $("#upload-box").slideDown(500);
-                                },
-                                dataType: 'json',
-                                headers: {'X-Requested-With': 'XMLHttpRequest'}
-                            });
-                            // form.get(0).submit();
+                            
                         }
                         
-                        
-                    }
+                        Iugu.createPaymentToken(this, tokenResponseHandler);
+                        return false;
+
+
+
+
+
+
+
+
+
+                        var url = '<?= base_url('/register') ?>';
+                        // var lb = $(this).parent('div').find(".custom-control-label")
+                        var data = $(form).serializeArray()
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: data,
+                            // fail: errPost,
+                            success: function (response) {
+                                console.log(response)
+                                if(!response.error) {
+                                    
+                                    var p = new Promise(function(resolve) {
+                                        $(".optChecked .verBox").addClass("show")
+                                        $(".optChecked .dataBox").addClass("hide")
+                                        $(".optChecked .custom-message").html(response.custom_message)
+                                        // $("html").animate({scrollTop: 340}, 350);
+                                        setTimeout(() => {
+                                            resolve("OK")
+                                        }, 200);
+                                    })
+                                    p.then(() => {
+                                        $(".dataBox.hide").slideUp(200)
+                                        var ref1 = $(".bradcam_area").outerHeight(true)
+                                        var ref2 = $("header").outerHeight(true)
+                                        var diff = ref1 + ref2
+                                        var ref = $(".verBox").offset().top
+                                        var f = (ref + 180) - diff
+                                        
+
+                                        $("html").animate({
+                                            scrollTop: f
+                                        }, 350);
+                                    }).then(() => {
+                                        setTimeout(() => {
+                                            $(".checkoutPage .form-check-input").addClass("disabled")
+                                            $(".checkoutPage .form-check-input").attr("disabled", true)
+                                            $(".verBox").find("form:first input:first").focus()   
+                                            $(form).find(".saveCardBtn").removeClass('disabled')
+                                            $(form).find(".saveCardBtn").removeAttr('disabled')
+                                            $(form).find(".saveCardBtn .textPlace").html('Continuar')
+                                            $(form).find(".saveCardBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                    
+                                        }, 360);
+                                        
+                                    })
+                                    
+                                } else {
+                                    if(response.error_code == 'REQ_FIELDS') {
+                                        // console.log(response.errors)
+                                        $.each(response.errors, function(f,m) {
+                                            // console.log(f)
+                                            // console.log(m)
+                                            var el = $(form).find("input[name='"+f+"']")
+                                            if($(el).parent().find(".dyn-response").length == 0) {
+                                                $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i><span>"+m+"</span></div>").insertAfter(el)
+                                            }                                                
+                                            // console.log(el)
+                                            setTimeout(() => {
+                                                $(".dyn-response").addClass("show")
+                                            }, 400);
+                                        })
+                                    }
+                                    setTimeout(() => {
+                                        $(form).find(".registerBtn").removeClass('disabled')
+                                        $(form).find(".registerBtn").removeAttr('disabled')
+                                        $(form).find(".registerBtn .textPlace").html('Continuar')
+                                        $(form).find(".registerBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                
+                                    }, 200);
+                                } 
+                                
+                            },
+                            dataType:"json",
+                            // headers: {'X-Requested-With': 'XMLHttpRequest'}
+                        });
+                    } else {
+                        console.warn("invalid")
+                        setTimeout(() => {
+                            $(form).find(".saveCardBtn").removeClass('disabled')
+                            $(form).find(".saveCardBtn").removeAttr('disabled')
+                            $(form).find(".saveCardBtn .textPlace").html('Continuar')
+                            $(form).find(".saveCardBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
                     
-                    Iugu.createPaymentToken(this, tokenResponseHandler);
-                    return false;
+                        }, 900);
+                    }
+                    return
+                    
                 });
                 // $(document).scroll(function() {
                 //     console.log("ref", $(".bradcam_text").offset().top)
@@ -670,6 +897,23 @@
                 //     console.log("bradcam_area ", $(".bradcam_area").outerHeight(true))
                 //     console.log("header", $("header").outerHeight(true))
                 // })
+                $(".add-new-card-btn").on("click", function(e) {
+                    e.preventDefault()
+                    var p = new Promise((resolve) => {
+                        $(".no-box-container").fadeOut(250)
+                        setTimeout(() => {
+                            resolve("OK")
+                        }, 200);
+                    })
+
+                    p.then(()=> {
+                        $(".optPayment.addCardArea").fadeIn(250)
+                        $("#addCard").trigger("click")        
+                    }).then(() => {
+                        payFormValidade()
+                    })
+                    
+                })
                 $(".checkoutPage .authArea .form-check-input").on("click", function(e){
                     // console.log($(this).data("rf"))
 

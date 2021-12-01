@@ -218,43 +218,78 @@ class Home extends BaseController
     public function api() {
         
         $rdata = (array) $this->request->getPost();
+        // $rdata = (array) $this->request->getJSON();
         // var_dump($rdata);exit;
-        $args = [];
-        if(isset($rdata["call"])) {
-            if($rdata["call"] == "payment_methods") {
-                $session = session();
-                $session->get('email');
-                $args_ = [];
-                $args_["m"] = "GET";
-                $this->requestURL = $this->baseApi . "customers";
-                $args_["pl"] = json_encode([
-                    "query" => $session->get('email'),
-                    "limit" => 1
-                ]);
-                $user = $this->doRequest($this->requestURL, $args_);
-                // echo gettype(json_decode($user, true));exit;
-                $u = json_decode($user, true)["items"][0];
-                // var_dump($u);exit;
-                // echo json_encode($u);
-                $this->requestURL = $this->baseApi . "customers/".$u["id"]."/".$rdata["call"];
-                $rdata["payload"]["set_as_default"] = true;
-                $rdata["payload"]["customer_id"] = $u["id"];
-                $rdata["payload"]["description"] = "Teste";
-                // echo $this->requestURL;
-                // exit;
-            } else if ($rdata["call"] == "subscriptions" && $rdata["method"] == "POST") {
-                $this->requestURL = $this->baseApi . $rdata["call"];
-                $rdata["payload"]["suspend_on_invoice_expired"] = true;
-                $rdata["payload"]["only_charge_on_due_date"] = false;
-                $rdata["payload"]["only_on_charge_success"] = true;
+        try {
+            $args = [];
+            if(isset($rdata["call"])) {
+                if($rdata["call"] == "payment_methods") {
+                    $session = session();
+                    $session->get('email');
+                    $args_ = [];
+                    $args_["m"] = "GET";
+                    $this->requestURL = $this->baseApi . "customers";
+                    $args_["pl"] = json_encode([
+                        "query" => $session->get('email'),
+                        "limit" => 1
+                    ]);
+                    $user = $this->doRequest($this->requestURL, $args_);
+                    // echo gettype(json_decode($user, true));exit;
+                    $u = json_decode($user, true)["items"][0];
+                    // var_dump($u);exit;
+                    // echo json_encode($u);
+                    $this->requestURL = $this->baseApi . "customers/".$u["id"]."/".$rdata["call"];
+                    $rdata["payload"]["set_as_default"] = true;
+                    $rdata["payload"]["customer_id"] = $u["id"];
+                    $rdata["payload"]["description"] = "Teste";
+
+
+                    $args_cc = [];
+                    $args_cc["m"] = "POST";
+                    $args_cc["pl"] = json_encode($rdata["payload"]);
+
+                    $r = $this->doRequest($this->requestURL, $args_cc);
+                    $rr = json_decode($r, true);
+                    if(isset($rr["errors"])) {
+                        return $this->response->setJSON([
+                            "error" => true,
+                            "message" => "Erro ao salvar cartão",
+                            "response" => $rr
+                        ]);
+                    } else {
+                        return $this->response->setJSON([
+                            "error" => false,
+                            "message" => "Cartão salvo com sucesso",
+                            "response_data" => $rr
+                        ]);
+                    }
+                    
+                    // echo $this->requestURL;
+                    // exit;
+                } else if ($rdata["call"] == "subscriptions" && $rdata["method"] == "POST") {
+                    $this->requestURL = $this->baseApi . $rdata["call"];
+                    $rdata["payload"]["suspend_on_invoice_expired"] = true;
+                    $rdata["payload"]["only_charge_on_due_date"] = false;
+                    $rdata["payload"]["only_on_charge_success"] = true;
+                } else if (preg_match('/[^customers].*[payment_methods].*$/', $rdata["call"]) && $rdata["method"] == "POST") {
+                    $this->requestURL = $this->baseApi . $rdata["call"];
+                    return $this->response->setJSON($this->requestURL);
+                    exit;
+                    // $rdata["payload"]["suspend_on_invoice_expired"] = true;
+                    // $rdata["payload"]["only_charge_on_due_date"] = false;
+                    // $rdata["payload"]["only_on_charge_success"] = true;
+                } else {
+                    $this->requestURL = $this->baseApi . $rdata["call"];
+                }
+                
+                
             } else {
-                $this->requestURL = $this->baseApi . $rdata["call"];
+                throw new \Exception("invalid call");
             }
+        } catch (\Exception $e) {
             
-            
-        } else {
-            throw new \Exception("invalid call");
         }
+        
         if(isset($rdata["method"])) {
             $args["m"] = $rdata["method"];
         } else{
