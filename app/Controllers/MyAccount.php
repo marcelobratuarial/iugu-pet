@@ -59,15 +59,47 @@ class MyAccount extends BaseController
         $r = $a->doRequest($this->requestURL, $args);
         $assinaturas = json_decode($r, true)["items"];
         // echo "<pre>";
-        print_r($assinaturas);exit;
-        return view('account/dashboard', ["plans" => $planos]);
+        helper("number");
+        foreach($assinaturas as $k=> $a) {
+            $decimal = number_format(($a['price_cents'] /100), 2, '.', ' ');
+            $assinaturas[$k]['decimal'] = $decimal;
+            $assinaturas[$k]['real'] = number_to_currency($decimal, $a['currency'], null, 2);
+            $date = date_create($a['cycled_at']);
+            $expi = date_create($a['expires_at']);
+            $periodo = $date->format('d/m/Y') . ' ~ ' . $expi->format('d/m/Y');
+            // echo $periodo;
+            $assinaturas[$k]['periodo'] = $periodo;
+            // number_to_currency($a['price_cents'])
+        }
+
+
+
+        $user_default_payment = NULL;
+        $dft_pmt = NULL; 
+        if(isset($user["default_payment_method_id"]) &&
+        !empty($user["default_payment_method_id"])) {
+            $dft_pmt = $user["default_payment_method_id"];
+        }
+            // echo "<pre>";
+            // print_r($user);
+        if(isset($user["payment_methods"]) && 
+            !empty($user["payment_methods"])) {
+            foreach($user["payment_methods"] as $pm) {
+                if($pm["id"] == $dft_pmt || count($user["payment_methods"]) == 1) {
+                    $user_default_payment = $pm;
+                    break;
+                } else if(count($user["payment_methods"]) > 1) {
+                    $user_default_payment = [];
+                    break;
+                }
+            }
+        }
+        // print_r($user);exit;
+        return view('account/dashboard', ["assinaturas" => $assinaturas, "dft_payment"=>$user_default_payment, "user"=>$user]);
     }
-    public function mailTeste() {
-        $conf = [
-            'name' => "marcelo",
-            'code' => '132 123'
-        ];
-        return view("mail/codConfirm", $conf);
+    public function login() {
+        
+        return view("account/login", ["user"=> []]);
     }
     public function assinar($id)
     {

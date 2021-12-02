@@ -33,27 +33,51 @@
 
 <div class="container">
     <div class="row checkoutPage">
-        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
-            <section style="margin: 40px auto">
+        <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-9">
+          <section style="margin: 40px auto" class="assinaturas">
+            <h3>Minhas assinaturas</h3>
+            <?php if(isset($assinaturas) && !empty($assinaturas)) : ?>
               <div class="row">
-                <div class="col-md-8">
-                  <h3>Plano ativo</h3>
-                  <div class="card">
-                    <img src="<?= base_url("assets/img/service/service_icon_1.png") ?>" alt="" style="object-fit: cover;height: 180px;">
-                    <div class="card-body">
-                      <h5 class="card-title">Card title</h5>
-                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                <?php foreach($assinaturas as $ass) : ?>
+                  <div class="col-md-6">
+                    <div class="card border-success mb-3" style="">
+                      <div class="card-header"><?= $ass['plan_name'] ?></div>
+                      <div class="card-body text-success">
+                        <h5 class="card-title"><?= $ass["periodo"] ?></h5>
+                        <p class="card-text"><?= $ass["real"] ?></p>
+                        <a href="<?= base_url('minha-conta/assinatura/'.$ass["id"]) ?>" class="btn btn-primary">Detalhes</a>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              
-            </section>
-            
+                <?php endforeach ?>
+              <?php endif; ?>
+          </section>
+          <hr />
+          <section style="margin: 40px auto" class="cartoes">
+            <h3>Meus cartões</h3>
+            <?php if(isset($user['payment_methods']) && !empty($user['payment_methods'])) : ?>
+              <div class="row">
+                <?php foreach($user['payment_methods'] as $pm) : ?>
+                  <div class="col-md-6">
+                    <div class="card border-success mb-3" style="">
+                      <div class="card-header"><?= $pm['data']['display_number'] ?></div>
+                      <div class="card-body text-success">
+                        <h5 class="card-title"><?= $pm['data']["brand"] ?></h5>
+                        <a href="<?= base_url('minha-conta/assinatura/'.$pm["id"]) ?>" class="btn btn-primary">Detalhes</a>
+                      </div>
+                    </div>
+                  </div>
+                <?php endforeach ?>
+              <?php endif; ?>
+          </section>
         </div>
         <div class="col">
-            nav
+          <nav style="margin: 40px auto" class="nav flex-column">
+            <a class="nav-link active" href="<?= base_url('minha-conta') ?>">Dashboard</a>
+            <a class="nav-link" href="<?= base_url('minha-conta/assinaturas') ?>">Assinaturas</a>
+            <a class="nav-link" href="<?= base_url('minha-conta/cartoes') ?>">Cartões</a>
+            <a class="nav-link disabled" href="<?= base_url('minha-conta/meus-dados') ?>">Meus dados</a>
+          </nav>
         </div>
     </div>
 </div>

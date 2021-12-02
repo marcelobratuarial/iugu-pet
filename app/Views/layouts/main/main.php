@@ -1144,6 +1144,7 @@
                 })
                 $(document).on("submit", ".optChecked .verForm, .optChecked #verLForm form", function(e) {
                     var form = $(this);
+                    var form_ref = $(this).data("form-ref")
                     console.log(form)
                     e.preventDefault()
                     $(form).find(".verifyBtn").addClass('disabled')
@@ -1264,7 +1265,12 @@
                                     setTimeout(() => {
                                         $(".optChecked .dataBox").addClass("hide")
                                         $(form).slideUp(500)
-                                        location.reload();
+                                        if(form_ref == 'my-account') {
+                                            window.location.href = "<?= base_url('minha-conta') ?>"
+                                        } else {
+                                            location.reload();
+                                        }
+                                        
                                     }, 600);
                                    
                                 })
@@ -1289,6 +1295,8 @@
 
                 $("#loginForm").on("submit", function(e) {
                     var form = $(this);
+                    var form_ref = $(this).data("form-ref")
+                    console.log(form_ref)
                     console.log("enra")
                     e.preventDefault()
                     $(form).find(".logitBtn").addClass('disabled')
@@ -1409,7 +1417,13 @@
                                     }, 300);
                                     setTimeout(() => {
                                         $(form).slideUp(500)
-                                        location.reload();
+                                        console.log(form_ref)
+                                        if(form_ref == 'my-account') {
+                                            window.location.href = "<?= base_url('minha-conta') ?>"
+                                        } else {
+                                            location.reload();
+                                        }
+                                        
                                     }, 600);
                                 })
                             }

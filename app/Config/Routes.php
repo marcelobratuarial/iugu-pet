@@ -47,6 +47,7 @@ $routes->post('/check-cEmail', 'RegisterController::checkCustomerMail');
 $routes->post('/check-code', 'RegisterController::code_verify');
 // $routes->post('/api', 'Home::index');
 
+$routes->get("/minha-conta/login", 'MyAccount::login');
 /*
  * --------------------------------------------------------------------
  * Additional Routing
