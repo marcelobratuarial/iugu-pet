@@ -25,7 +25,9 @@
             <div class="col-lg-12">
                 <div class="bradcam_text text-center">
                     <h3>Minha conta</h3>
+                    <h4 class="text-white">Gerenciar cartões </h4>
                 </div>
+                
             </div>
         </div>
     </div>
@@ -34,29 +36,9 @@
 <div class="container">
     <div class="row checkoutPage">
         <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-9">
-          <section style="margin: 40px auto; position:relative" class="assinaturas">
-            <h3>Minhas assinaturas</h3>
-            <a class="genric-btn success small" style="position:absolute;top: 10px; right: 0px" href="<?= base_url('minha-conta/assinaturas') ?>">Gerenciar</a>
-            <?php if(isset($assinaturas) && !empty($assinaturas)) : ?>
-              <div class="row">
-                <?php foreach($assinaturas as $ass) : ?>
-                  <div class="col-md-6">
-                    <div class="card border-success mb-3" style="">
-                      <div class="card-header"><?= $ass['plan_name'] ?></div>
-                      <div class="card-body text-success">
-                        <h5 class="card-title"><?= $ass["periodo"] ?></h5>
-                        <p class="card-text"><?= $ass["real"] ?></p>
-                        <a href="<?= base_url('minha-conta/assinatura/'.$ass["id"]) ?>" class="btn btn-primary">Detalhes</a>
-                      </div>
-                    </div>
-                  </div>
-                <?php endforeach ?>
-              <?php endif; ?>
-          </section>
-          <hr />
+          
           <section style="margin: 40px auto; position:relative" class="cartoes">
-            <h3>Meus cartões </h3>
-            <a class="genric-btn success small" style="position:absolute;top: 10px; right: 0px" href="<?= base_url('minha-conta/cartoes') ?>">Gerenciar</a>
+            
             <?php if(isset($user['payment_methods']) && !empty($user['payment_methods'])) : ?>
               <table class="table">
                 <thead>

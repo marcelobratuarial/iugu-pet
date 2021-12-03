@@ -25,6 +25,7 @@
             <div class="col-lg-12">
                 <div class="bradcam_text text-center">
                     <h3>Minha conta</h3>
+                    <h4 class="text-white">Gerenciar minhas assinaturas </h4>
                 </div>
             </div>
         </div>
@@ -32,11 +33,9 @@
 </div>
 
 <div class="container">
-    <div class="row checkoutPage">
+    <div class="row ">
         <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-9">
           <section style="margin: 40px auto; position:relative" class="assinaturas">
-            <h3>Minhas assinaturas</h3>
-            <a class="genric-btn success small" style="position:absolute;top: 10px; right: 0px" href="<?= base_url('minha-conta/assinaturas') ?>">Gerenciar</a>
             <?php if(isset($assinaturas) && !empty($assinaturas)) : ?>
               <div class="row">
                 <?php foreach($assinaturas as $ass) : ?>
@@ -54,44 +53,13 @@
               <?php endif; ?>
           </section>
           <hr />
-          <section style="margin: 40px auto; position:relative" class="cartoes">
-            <h3>Meus cartões </h3>
-            <a class="genric-btn success small" style="position:absolute;top: 10px; right: 0px" href="<?= base_url('minha-conta/cartoes') ?>">Gerenciar</a>
-            <?php if(isset($user['payment_methods']) && !empty($user['payment_methods'])) : ?>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Bandeira</th>
-                    <th scope="col">Número</th>
-                    <th scope="col">a</th>
-                  </tr>
-                </thead>
-                <tbody>
-                <?php foreach($user['payment_methods'] as $pm) : ?>
-
-                      
-                  <?php 
-                    $dft = ($pm['default']) ? '<span class="badge badge-primary">Padrão</span>' : '';
-                  ?>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td><?= $pm['data']['brand'] ?></td>
-                    <td><?= $pm['data']['display_number'] ?> <?=$dft?></td>
-                    <td>-</td>
-                  </tr>  
-                <?php endforeach ?>
-                </tbody>
-              </table>
-              <?php endif; ?>
-          </section>
         </div>
         <div class="col">
           <nav style="margin: 40px auto" class="nav flex-column">
             <a class="nav-link active" href="<?= base_url('minha-conta') ?>">Dashboard</a>
             <a class="nav-link" href="<?= base_url('minha-conta/assinaturas') ?>">Assinaturas</a>
             <a class="nav-link" href="<?= base_url('minha-conta/cartoes') ?>">Cartões</a>
-            <a class="nav-link disabled" href="<?= base_url('minha-conta/meus-dados') ?>">Meus dados</a>
+            <a class="nav-link" href="<?= base_url('minha-conta/meus-dados') ?>">Meus dados</a>
           </nav>
         </div>
     </div>

@@ -41,6 +41,9 @@ $routes->get('/assinar/(:any)', 'Home::assinar/$1');
 // $routes->get('/api', 'Home::api');
 $routes->post('/api', 'Home::api'); //,['filter' => 'authFilter']);
 $routes->get('/minha-conta', 'MyAccount::index', ['filter' => 'authFilter']);
+$routes->get('/minha-conta/assinaturas', 'MyAccount::assinaturas', ['filter' => 'authFilter']);
+$routes->get('/minha-conta/assinatura/(:any)', 'MyAccount::assinatura/$1', ['filter' => 'authFilter']);
+$routes->get('/minha-conta/cartoes', 'MyAccount::cartoes', ['filter' => 'authFilter']);
 
 $routes->post('/register', 'RegisterController::store');
 $routes->post('/check-cEmail', 'RegisterController::checkCustomerMail');
