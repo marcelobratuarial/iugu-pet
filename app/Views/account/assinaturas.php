@@ -40,7 +40,7 @@
               <div class="row">
                 <?php foreach($assinaturas as $ass) : ?>
                   <div class="col-md-6">
-                    <div class="card border-success mb-3" style="">
+                    <div class="card border-success mb-3">
                       <div class="card-header"><?= $ass['plan_name'] ?></div>
                       <div class="card-body text-success">
                         <h5 class="card-title"><?= $ass["periodo"] ?></h5>
