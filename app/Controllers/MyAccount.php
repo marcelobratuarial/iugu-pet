@@ -248,6 +248,9 @@ class MyAccount extends BaseController
                 $decimal = number_format(($ri['total'] /100), 2, '.', ' ');
                 $assinatura['recent_invoices'][$i]['decimal'] = $decimal;
             }
+            if($ri['status'] == 'paid') {
+                $assinatura['recent_invoices'][$i]['status'] = "Pago";
+            }
             // 
             // $assinatura['real'] = number_to_currency($decimal, $assinatura['currency'], null, 2);
                 // $assinatura['recent_invoices'][$i]['decimal'] = $decimal;

@@ -91,7 +91,7 @@
             <a class="nav-link active" href="<?= base_url('minha-conta') ?>">Dashboard</a>
             <a class="nav-link" href="<?= base_url('minha-conta/assinaturas') ?>">Assinaturas</a>
             <a class="nav-link" href="<?= base_url('minha-conta/cartoes') ?>">Cartões</a>
-            <a class="nav-link disabled" href="<?= base_url('minha-conta/meus-dados') ?>">Meus dados</a>
+            <a class="nav-link" href="<?= base_url('minha-conta/meus-dados') ?>">Meus dados</a>
           </nav>
         </div>
     </div>
