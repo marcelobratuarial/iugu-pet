@@ -288,14 +288,25 @@ class Home extends BaseController
                     $rdata["payload"]["suspend_on_invoice_expired"] = true;
                     $rdata["payload"]["only_charge_on_due_date"] = false;
                     $rdata["payload"]["only_on_charge_success"] = true;
-                } else if (preg_match('/[^customers].*[payment_methods].*$/', $rdata["call"]) && $rdata["method"] == "POST") {
-                    $this->requestURL = $this->baseApi . $rdata["call"];
-                    return $this->response->setJSON($this->requestURL);
-                    exit;
+                } else if (preg_match_all('/^subscriptions.*suspend$/', $rdata["call"]) && $rdata["method"] == "POST") {
+                    $this->requestURL = $this->baseApi . "subscriptions/" . $rdata["payload"]['id'] ."/suspend";
+                    // print_r($rdata);
+                    // return $this->response->setJSON($this->requestURL);
+                    // exit;
+                    // $rdata["payload"]["suspend_on_invoice_expired"] = true;
+                    // $rdata["payload"]["only_charge_on_due_date"] = false;
+                    // $rdata["payload"]["only_on_charge_success"] = true;
+                } else if (preg_match_all('/^subscriptions.*activate$/', $rdata["call"]) && $rdata["method"] == "POST") {
+                    $this->requestURL = $this->baseApi . "subscriptions/" . $rdata["payload"]['id'] ."/activate";
+                    // print_r($rdata);
+                    // return $this->response->setJSON($this->requestURL);
+                    // exit;
                     // $rdata["payload"]["suspend_on_invoice_expired"] = true;
                     // $rdata["payload"]["only_charge_on_due_date"] = false;
                     // $rdata["payload"]["only_on_charge_success"] = true;
                 } else {
+                    echo "else";
+                    print_r($rdata);
                     $this->requestURL = $this->baseApi . $rdata["call"];
                 }
                 

@@ -48,8 +48,8 @@ class MyAccount extends BaseController
         $this->requestURL = $a->baseApi . "subscriptions";
         $args["m"] = "GET";
         $args["pl"] = json_encode([
-            "customer_id" => "74AE1E1406354345AE23CCC30DAA5BD6",
-            "status_filter" => "active"
+            "customer_id" => $uid, //"74AE1E1406354345AE23CCC30DAA5BD6",
+            // "status_filter" => "active"
         ]);
         // if(in_array($rdata->method, ["POST", "PUT"]) && !isset($rdata->payload)) {
         //     throw new \Exception("invalid payload");
@@ -191,9 +191,10 @@ class MyAccount extends BaseController
         $this->requestURL = $a->baseApi . "subscriptions";
         $args["m"] = "GET";
         $args["pl"] = json_encode([
-            "customer_id" => "74AE1E1406354345AE23CCC30DAA5BD6",
-            "status_filter" => "active"
+            "customer_id" => $uid, //"74AE1E1406354345AE23CCC30DAA5BD6",
+            // "status_filter" => "active"
         ]);
+        // echo $uid;
         // if(in_array($rdata->method, ["POST", "PUT"]) && !isset($rdata->payload)) {
         //     throw new \Exception("invalid payload");
         // } else if(in_array($rdata->method, ["POST", "PUT"]) && isset($rdata->payload)) {
@@ -242,6 +243,15 @@ class MyAccount extends BaseController
         // }
         $assinatura = json_decode($a->doRequest($this->requestURL, $args),true);
         // print_r($assinatura);exit;
+        $args = [];
+        $this->requestURL = $a->baseApi . "plans/identifier/".$assinatura["plan_identifier"];
+        $args["m"] = "GET";
+        $args["pl"] = json_encode([
+            "identifier" => $assinatura["plan_identifier"]
+        ]);
+        
+        $plano = $a->doRequest($this->requestURL, $args);
+        $assinatura["plano"] = json_decode($plano, true);
         foreach($assinatura['recent_invoices'] as $i=> $ri): 
             // print_r($ri);
             if(is_numeric($ri['total'])) {
@@ -258,6 +268,13 @@ class MyAccount extends BaseController
             $data = $due_date->format('d/m/Y');
             // // echo $due_date;
             $assinatura['recent_invoices'][$i]['data'] = $data;
+        endforeach;
+
+        foreach($assinatura['logs'] as $i=> $log): 
+            $due_date = date_create($log['created_at']);
+            $data = $due_date->format('d/m/Y H:i:s');
+            // // echo $due_date;
+            $assinatura['logs'][$i]['data'] = $data;
         endforeach;
         // exit;
         // print_r($assinatura['recent_invoices']);exit;

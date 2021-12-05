@@ -6784,3 +6784,6 @@ h6 {
   border-radius: 10px 10px 10px 10px;
   transition: all 0.2s ease-in;
 }
+.modal-backdrop {
+  z-index: 999;
+}

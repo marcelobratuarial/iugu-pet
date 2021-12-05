@@ -41,7 +41,12 @@
               <div class="row">
                 <?php foreach($assinaturas as $ass) : ?>
                   <div class="col-md-6">
-                    <div class="card border-success mb-3">
+                    <div class="card border-success mb-3" style="position: relative">
+                      <?php if($ass["active"] && !$ass["suspended"]) : ?>
+                        <span style="position: absolute; top: 5px; right: 10px" class="badge badge-pill badge-success">ATIVO</span>
+                      <?php elseif($ass["active"] && $ass["suspended"]) : ?>
+                        <span style="position: absolute; top: 5px; right: 10px" class="badge badge-pill badge-warning">SUSPENSO</span>
+                      <?php endif; ?>
                       <div class="card-header"><?= $ass['plan_name'] ?></div>
                       <div class="card-body text-success">
                         <h5 class="card-title"><?= $ass["periodo"] ?></h5>
