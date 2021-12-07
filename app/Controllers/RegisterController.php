@@ -265,6 +265,12 @@ class RegisterController extends BaseController
                     'matches' => 'Senha de confirmação deve ser idêntica.'
                 ]
             ],
+            'cep'  => [
+                'rules' => 'required|min_length[8]|max_length[10]',
+                'errors' => [
+                    'required' => 'Obrigatório.',
+                ]
+            ],
             'address'  => [
                 'rules' => 'required|min_length[2]|max_length[50]',
                 'errors' => [
@@ -331,6 +337,8 @@ class RegisterController extends BaseController
             ];
             try {
                 if ($model->save($data)) {
+                    $cep = str_replace('.', '', $this->request->getVar('cep')) ;
+                    $cep = str_replace('-', '', $cep) ;
                     $dbID = $model->insertID();
                     $nu = $model->find($dbID);
                     $this->dbUser = $nu;
@@ -338,6 +346,7 @@ class RegisterController extends BaseController
                         "email" => $this->request->getVar('email'),
                         "name" => $this->request->getVar('name'),
                         "number" => $this->request->getVar('number'),
+                        "zip_code" => $cep,
                         "street" => $this->request->getVar('address'),
                         "city" => $this->request->getVar('cidade'),
                         "state" => $this->request->getVar('estado'),

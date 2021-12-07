@@ -186,6 +186,7 @@ class MyAccount extends BaseController
                 $user = $u['items'][0];
             }
         }
+        // print_r($user);exit;
         $uid = $user["id"];
         $args = [];
         $this->requestURL = $a->baseApi . "subscriptions";
@@ -203,6 +204,7 @@ class MyAccount extends BaseController
         $r = $a->doRequest($this->requestURL, $args);
         $assinaturas = json_decode($r, true)["items"];
         // echo "<pre>";
+        // print_r($assinaturas);exit;
         helper("number");
         foreach($assinaturas as $k=> $a) {
             $decimal = number_format(($a['price_cents'] /100), 2, '.', ' ');
@@ -219,7 +221,9 @@ class MyAccount extends BaseController
         return view('account/assinaturas', ["assinaturas" => $assinaturas, "user"=>$user]);
     }
     public function login() {
-        return view("account/login", ["user"=> []]);
+        $items = file_get_contents(ROOTPATH."/content/estados.json");
+        $estados = json_decode($items, false); 
+        return view("account/login", ["user"=> [], "estados"=>$estados]);
     }
     public function assinatura($id)
     {

@@ -9,11 +9,13 @@ class Home extends BaseController
     use ResponseTrait;
     private $payload;
     public $baseApi;
+    public $cepApi;
     public $requestURL;
     protected $k;
     
     public function __construct () {
         $this->baseApi = 'https://api.iugu.com/v1/';
+        $this->cepApi = 'https://correios.brasilplataformas.com.br/api/cep';
         $this->k = base64_encode(env("KEY_IUGU").":"); //$_SERVER['KEY_IUGU'].":";
         // $this->payload = $this->request->getJSON();;
         $this->requestURL = "";
@@ -45,6 +47,58 @@ class Home extends BaseController
             'code' => '132 123'
         ];
         return view("mail/codConfirm", $conf);
+    }
+    public function getCEP() {
+        // $rdata = (array) $this->request->getPost();
+        // if(empty($rdata)) {
+        //     $rdata = (array) $this->request->getJSON();
+        // }
+        // $cep = isset($rdata["cep"]) ? $rdata["cep"] : null;
+        // echo json_encode([
+        //     'cep' => $cep
+        // ]);exit;
+        $rdata = (array) $this->request->getPost();
+        if(empty($rdata)) {
+            $rdata = (array) $this->request->getJSON();
+        }
+        $cep = isset($rdata["cep"]) ? $rdata["cep"] : null;
+        if(!is_null($cep)) {
+            $curl = curl_init();
+            $data = [
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_SSL_VERIFYPEER => false,
+                
+                CURLOPT_URL => $this->cepApi,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode([
+                    'cep' => $cep
+                ]),
+                CURLOPT_HTTPHEADER => [
+                    'Accept: application/json',
+                    'Content-Type: application/json'
+                ]
+            ];
+           
+            curl_setopt_array($curl, $data);
+            // echo "<pre>";
+            // print_r(curl_getinfo($curl));exit;
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+            
+            curl_close($curl);
+            
+            if ($err) {
+                return "cURL Error #:" . $err;
+            } else {
+                return $response;
+            }
+        }
     }
     public function assinar($id)
     {
@@ -129,11 +183,10 @@ class Home extends BaseController
                 $user["pet_data"][] = $cf_refs[$v["name"]];
             }
             $address = [];
-            
             $address["rua"] = '';
             $address["rua"] .= (!empty($user["street"])) ? $user["street"] : '[Não informado]';
-            $address["rua"] .= (!empty($user["number"])) ? ', '.$user["number"] : '[S/N]';
-            $address["rua"] .= (!empty($user["complement"])) ? ', '.$user["complement"] : '[S/N]';
+            $address["rua"] .= (strlen($user["number"]) > 0) ? ', '.$user["number"] : '[S/N]';
+            $address["rua"] .= $user["complement"];
             $address["bairro"] = '';
             $address["bairro"] .= (!empty($user["district"])) ? $user["district"] : '[Não informado]';
             $address["cidade"] = '';
@@ -143,8 +196,8 @@ class Home extends BaseController
     
             $user["address"] = $address;
         }
-        
-        // print_r($user["pet_data"]);exit;
+        $items = file_get_contents(ROOTPATH."/content/estados.json");
+        $estados = json_decode($items, false); 
         // $args__ = [];
         // $args__["m"] = "GET";
         // $args__["pl"] = json_encode([
@@ -163,7 +216,7 @@ class Home extends BaseController
         // echo "<pre>";
         // print_r(json_decode($user, true));;
         // print_r(json_decode($plano, true));exit;
-        return view('assinar', ["plan" => json_decode($plano), "user" => $user, "payment"=>$user_default_payment]);
+        return view('assinar', ["estados" => $estados, "plan" => json_decode($plano), "user" => $user, "payment"=>$user_default_payment]);
 
     }
 
@@ -285,9 +338,9 @@ class Home extends BaseController
                     // exit;
                 } else if ($rdata["call"] == "subscriptions" && $rdata["method"] == "POST") {
                     $this->requestURL = $this->baseApi . $rdata["call"];
-                    $rdata["payload"]["suspend_on_invoice_expired"] = true;
-                    $rdata["payload"]["only_charge_on_due_date"] = false;
-                    $rdata["payload"]["only_on_charge_success"] = true;
+                    $rdata["payload"]["suspend_on_invoice_expired"] = 1;
+                    $rdata["payload"]["only_charge_on_due_date"] = 0;
+                    $rdata["payload"]["only_on_charge_success"] = 1;
                 } else if (preg_match_all('/^subscriptions.*suspend$/', $rdata["call"]) && $rdata["method"] == "POST") {
                     $this->requestURL = $this->baseApi . "subscriptions/" . $rdata["payload"]['id'] ."/suspend";
                     // print_r($rdata);

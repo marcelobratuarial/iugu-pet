@@ -73,7 +73,7 @@
                                     <div class="row mt-10">
                                         <div class="col-12">
                                             <div style="position:relative">
-                                                <input type="text" name="name" placeholder="Nome completo" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nome completo'" class="single-input">
+                                                <input type="text" name="name" class="single-input">
                                             </div>
                                         </div>
                                     </div>
@@ -81,7 +81,17 @@
                                         <div class="col">
                                             <div class="input-group-icon">
                                                 <div class="icon"><i class="fa fa-at" aria-hidden="true"></i></div>
-                                                <input type="email" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'" class="single-input">
+                                                <input type="email" id="email" name="email" placeholder="Email" class="single-input">
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row mt-10">
+                                        <div class="col">
+                                            <div class="input-group-icon">
+                                                <div class="icon"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div>
+                                                <input type="text" id="cep" name="cep" placeholder="CEP" class="single-input">
                                             </div>
                                         </div>
                                     </div>
@@ -91,24 +101,24 @@
                                         <div class="col">
                                             <div class="input-group-icon">
                                                 <div class="icon"><i class="fa fa-thumb-tack" aria-hidden="true"></i></div>
-                                                <input type="text" name="address" placeholder="Endereço" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Endereço'" class="single-input">
+                                                <input type="text" id="address" name="address" placeholder="Endereço" class="single-input">
                                             </div>
                                         </div>
                                         <div class="col-3">
                                             <div style="position:relative">
-                                                <input type="text" name="number" placeholder="nº" onfocus="this.placeholder = ''" onblur="this.placeholder = 'nº'" class="single-input">
+                                                <input type="text" id="number" name="number" placeholder="nº" class="single-input">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row mt-10">
                                         <div class="col-8">
                                             <div style="position:relative">
-                                                <input type="text" name="bairro" placeholder="Bairro" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Bairro'" class="single-input">
+                                                <input type="text" id="bairro" name="bairro" placeholder="Bairro" class="single-input">
                                             </div>
                                         </div>
                                         <div class="col">
                                             <div style="position:relative">
-                                                <input type="text" name="complemento" placeholder="Complemento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Complemento'" class="single-input">
+                                                <input type="text" id="complemento" name="complemento" placeholder="Complemento" class="single-input">
                                             </div>
                                         </div>
 
@@ -118,16 +128,24 @@
                                         <div class="col-5">
                                             <div class="input-group-icon mt-10">
                                                 <div class="icon"><i class="ti ti-map-alt" aria-hidden="true"></i></div>
-                                                <div class="form-select" id="default-select">
-                                                    <select name="estados" id="estados">
+                                                <div class="estados-select form-select" id="default-select">
+                                                    <select name="estado" id="estados">
                                                         <option value="">Estado</option>
+                                                        <?php if(isset($estados)) : ?>
+                                                        <?php foreach($estados as $estado) : ?>
+                                                            <option class="estado-item" value="<?= $estado->sigla ?>"><?= $estado->nome ?></option>
+                                                        <?php endforeach; ?>
+                                                        <?php endif; ?>
                                                     </select>
-                                                    <input type="hidden" value="" id="selected_state" name="estado">
+                                                    <!-- <input type="hidden" value="" id="selected_state" name="estado"> -->
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-7">
-                                            <div class="input-group-icon mt-10">
+                                        <div class="col-7  mt-10">
+                                            <div style="position:relative">
+                                                <input type="text" name="cidade" id="cidade" placeholder="Cidade" class="single-input">
+                                            </div>
+                                            <!-- <div class="input-group-icon mt-10">
                                                 <div class="icon"><i class="ti ti-map" aria-hidden="true"></i></div>
                                                 <div class="form-select" id="default-select">
                                                     <select name="cidades" id="cidades">
@@ -135,7 +153,7 @@
                                                     </select>
                                                     <input type="hidden" value="" id="selected_city" name="cidade">
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                     <div class="row mt-10"><hr></div>

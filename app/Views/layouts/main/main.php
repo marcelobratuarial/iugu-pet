@@ -117,77 +117,69 @@
         }
         $(document).ready(function() {
             
-            var estadosApi = "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome";
-            $.getJSON( estadosApi, {
-                format: "json"
-            })
-            .done(function( data ) {
-                console.log(data)
-                $.each( data, function( i, item ) {
+            // var estadosApi = "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome";
+            // $.getJSON( estadosApi, {
+            //     format: "json"
+            // })
+            // .done(function( data ) {
+            //     console.log(data)
+            //     $.each( data, function( i, item ) {
                     
-                    var cp = item
-                    delete cp['microregiao']
-                    delete cp['regiao-imediata']
-                    var s = JSON.stringify(cp)
+            //         var cp = item
+            //         delete cp['microregiao']
+            //         delete cp['regiao-imediata']
+            //         var s = JSON.stringify(cp)
                        
-                    var op = `<option data-ob='`+s+`' value='`+item.id+`'>`+item.nome+`</option>`
-                    $( "#estados" ).append( op );
+            //         var op = `<option data-ob='`+s+`' value='`+item.id+`'>`+item.nome+`</option>`
+            //         $( "#estados" ).append( op );
                     
-                });
-                $( "#estados" ).niceSelect('update');
+            //     });
+            //     $( "#estados" ).niceSelect('update');
 
-            });
+            // });
             $( "#estados" ).on("change", function(e) {
-                $( "#cidades" ).find("option").not(":first").remove()
+                // $( "#cidades" ).find("option").not(":first").remove()
+                var v = $("#registerForm").validate()
+                v.element("#estados")
+                // const UF = $(this).find("option:selected").val()
+                console.log(this)
                 
-                const UF = $(this).find("option:selected").val()
-                console.log(UF)
+                // var ob = $(this).find("option:selected").data("ob")
                 
-                var ob = $(this).find("option:selected").data("ob")
-                
-                $( "#selected_state" ).val( JSON.stringify(ob) );
-                if(UF != "") {
+                // $( "#selected_state" ).val( JSON.stringify(ob) );
+                // if(UF != "") {
                     $("#registerForm").valid()
-                }
-                var cidadesApi = "https://servicodados.ibge.gov.br/api/v1/localidades/estados/"+UF+"/municipios?orderBy=nome";
-                $.getJSON( cidadesApi, {
-                    format: "json"
-                })
-                .done(function( data ) {
-                    console.log(data)
-                    $.each( data, function( i, item ) {
+                // }
+                // var cidadesApi = "https://servicodados.ibge.gov.br/api/v1/localidades/estados/"+UF+"/municipios?orderBy=nome";
+                // $.getJSON( cidadesApi, {
+                //     format: "json"
+                // })
+                // .done(function( data ) {
+                //     console.log(data)
+                //     $.each( data, function( i, item ) {
 
-                        let cp2 = JSON.parse(JSON.stringify(item))
-                        delete cp2['microrregiao']
-                        delete cp2['mesorregiao']
-                        delete cp2['regiao-imediata']
-                        var s = JSON.stringify(cp2)
-                        var op = `<option data-ob='`+s+`' value='`+item.id+`'>`+item.nome+`</option>`
-                        $( "#cidades" ).append( op );
+                //         let cp2 = JSON.parse(JSON.stringify(item))
+                //         delete cp2['microrregiao']
+                //         delete cp2['mesorregiao']
+                //         delete cp2['regiao-imediata']
+                //         var s = JSON.stringify(cp2)
+                //         var op = `<option data-ob='`+s+`' value='`+item.id+`'>`+item.nome+`</option>`
+                //         $( "#cidades" ).append( op );
                         
                         
-                    });
-                    $( "#cidades" ).niceSelect('update');
+                //     });
+                //     $( "#cidades" ).niceSelect('update');
 
-                });
+                // });
             })
-            $( "#cidades" ).on("change", function(e) {
-                var ob = $("#cidades").find("option:selected").data("ob")
-                $( "#selected_city" ).val( JSON.stringify(ob) );
-                if(ob != "undefined") {
-                    $("#registerForm").valid()
-                }
-            })
-            $("#registerForm").on("submit", function(e) {
-                var form = $(this);
-                e.preventDefault()
-                // Seu código para continuar a submissão
-                // Ex: form.submit();
-                $(form).find(".registerBtn").addClass('disabled')
-                $(form).find(".registerBtn").attr('disabled', true)
-                $(form).find(".registerBtn .textPlace").html('Aguarde')
-                $(form).find(".registerBtn .iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
-                
+            // $( "#cidades" ).on("change", function(e) {
+            //     var ob = $("#cidades").find("option:selected").data("ob")
+            //     $( "#selected_city" ).val( JSON.stringify(ob) );
+            //     if(ob != "undefined") {
+            //         $("#registerForm").valid()
+            //     }
+            // })
+            var regForm = function() {
                 $("#registerForm").validate({
                     errorClass: "field_error",
                     rules: {
@@ -206,6 +198,11 @@
                         email: {
                             required: true,
                             email: true
+                        },
+                        cep: {
+                            required: true,
+                            minlength : 10,
+                            maxlength : 10
                         },
                         estado: "required",
                         cidade: "required",
@@ -267,12 +264,27 @@
                         console.log($(element))
                     }
                 })
+            }
+            regForm()
+            $("#registerForm").on("submit", function(e) {
+                var form = $(this);
+                e.preventDefault()
+                // Seu código para continuar a submissão
+                // Ex: form.submit();
+                $(form).find(".registerBtn").addClass('disabled')
+                $(form).find(".registerBtn").attr('disabled', true)
+                $(form).find(".registerBtn .textPlace").html('Aguarde')
+                $(form).find(".registerBtn .iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                
+                
                 console.log("teste")
                 if($("#registerForm").valid()) {
                     console.log("valid")
                     var url = '<?= base_url('/register') ?>';
                     // var lb = $(this).parent('div').find(".custom-control-label")
                     var data = $(form).serializeArray()
+                    console.log(typeof data)
+                    console.log(data)
                     $.ajax({
                         type: "POST",
                         url: url,
@@ -1884,7 +1896,112 @@
                 console.log(f)
                 $(p).text(f)
             })
+            $("#cep").on("keyup", function(){
+                var cep = $(this).val();
+                console.log(cep)
+                console.log($(this).cleanVal().length)
+                if($(this).cleanVal().length < 8) {
+                    return false
+                }
+                var url = '<?= base_url('/api/cep') ?>';
+                    
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: {
+                        'cep': $(this).cleanVal()
+                    },
+                    fail: function(r){
+                        console.log(r)
+                        // $(form).find(".logitBtn").removeClass('disabled')
+                        // $(form).find(".logitBtn").removeAttr('disabled')
+                        // $(form).find(".logitBtn .textPlace").html('Continuar')
+                        // $(form).find(".logitBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        console.log(typeof response.error)
+                        if(response.message) {
+                            // if(response.error_code == 'UNAUTH' || response.error_code == 'UNAUTH_NE' ) {
+                            //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
+                            // } else if(response.error_code == 'NEED_VER') {
+                            // }
+                            $("#cep").addClass("invalid-cep")   
+                            $("#estados").val('') //.trigger("change")
+                            $( "#estados" ).niceSelect('update');
+                            
+                            $("#address").val('')// $(".optChecked").find(".response_area").html(response.message)
+                            $("#number").val('')// $(".optChecked").find(".response_area").html(response.message)
+                            $("#complemento").val('')// $(".optChecked").find(".response_area").html(response.message)
+                            $("#cidade").val('')// $(".optChecked").find(".response_area").html(response.message)
+                            $("#bairro").val('')// $(".optChecked").find(".response_area").html(response.message)
+                            $("#address").val('')
+                            setTimeout(() => {
+                                $("#cep").removeClass("invalid-cep")   
+                                
+                            }, 2000);
+                            
+                        } else {
+                            var pp = new Promise((resolve) => {
+                                $("#estados").val(response.uf) //.trigger("change")
+                                $( "#estados" ).niceSelect('update');
+                                
+                                $("#cidade").val(response.cidade)// $(".optChecked").find(".response_area").html(response.message)
+                                $("#bairro").val(response.bairro)// $(".optChecked").find(".response_area").html(response.message)
+                                $("#address").val(response.logradouro)// $(".optChecked").find(".response_area").html(response.message)
+                                // $(".optChecked").find(".response_area").addClass("show");
+                                
+                                $("#cep").removeClass("invalid-cep")   
+                                $("#cidade, #bairro, #address").addClass("shining")    
+                                $(".estados-select").addClass("shining")    
+                                setTimeout(() => {
+                                    $("#cidade, #bairro, #address").removeClass("shining")    
+                                    $(".estados-select").removeClass("shining") 
+                                       
+                                    resolve()
+                                }, 600);
+                            })
+                            pp.then(()=> {
+                                $("#registerForm").valid()
+                                // $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                // setTimeout(() => {
+                                //     $(".optChecked").find(".verBox").addClass("show").addClass("field-error")
+                                // }, 500)    
+                                // $(form).find(".logitBtn").removeClass('disabled')
+                                // $(form).find(".logitBtn").removeAttr('disabled')
+                                // $(form).find(".logitBtn .textPlace").html(response.message)
+                                // $(form).find(".logitBtn .iconPlace").html('<i class="fa fa-check-circle-o fa-1x"></i>')
+                                
+                                // setTimeout(() => {
+                                //     $(".optChecked").find(".response_area").removeClass("show")
+                                // }, 300);
+                                // setTimeout(() => {
+                                //     $(form).slideUp(500)
+                                //     console.log(form_ref)
+                                //     if(form_ref == 'my-account') {
+                                //         window.location.href = "<?= base_url('minha-conta') ?>"
+                                //     } else {
+                                //         location.reload();
+                                //     }
+                                    
+                                // }, 600);
+                            })
+                        }
+                        // lb.text(response)
+                        // $(".custom-control-label").text(text);
+                        // $('#imgPreview').attr('src', '');
+                        // $('#imgPreview').slideUp(200);
+                        // $(".remove-image").slideUp(100);
+                        // $('#noImageBox').slideDown(250);
+                        // $("#upload-box").slideDown(500);
+                    },
+                    dataType: 'json',
+                    // headers: {'X-Requested-With': 'XMLHttpRequest'}
+                });
+            })
 
+            $("#cep").mask("99.999-999");
         })
         $('#datepicker').datepicker({
             iconsLibrary: 'fontawesome',

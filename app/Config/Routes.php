@@ -40,6 +40,7 @@ $routes->get('/services', 'Home::services');
 $routes->get('/assinar/(:any)', 'Home::assinar/$1');
 // $routes->get('/api', 'Home::api');
 $routes->post('/api', 'Home::api'); //,['filter' => 'authFilter']);
+$routes->post('/api/cep', 'Home::getCEP'); //,['filter' => 'authFilter']);
 $routes->get('/minha-conta', 'MyAccount::index', ['filter' => 'authFilter']);
 $routes->get('/minha-conta/assinaturas', 'MyAccount::assinaturas', ['filter' => 'authFilter']);
 $routes->get('/minha-conta/assinatura/(:any)', 'MyAccount::assinatura/$1', ['filter' => 'authFilter']);
