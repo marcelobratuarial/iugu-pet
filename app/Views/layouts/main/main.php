@@ -1013,7 +1013,7 @@
 
                                 $.each(response.logs, function(index, i) {
                                     var tr = '<tr><th scope="row">'+ index +'</th>' +
-                                    '<td>'+ i.created_at + '</td>' +
+                                    '<td>'+ i.data + '</td>' +
                                     '<td>' + i.description + '</td>' +
                                     '<td>' + i.notes + '</td></tr>'
                                     $(tr).appendTo("#logsBox tbody")
@@ -1140,7 +1140,7 @@
 
                                 $.each(response.logs, function(index, i) {
                                     var tr = '<tr><th scope="row">'+ index +'</th>' +
-                                    '<td>'+ i.created_at + '</td>' +
+                                    '<td>'+ i.data + '</td>' +
                                     '<td>' + i.description + '</td>' +
                                     '<td>' + i.notes + '</td></tr>'
                                     $(tr).appendTo("#logsBox tbody")
@@ -1228,6 +1228,144 @@
                     // }).then(() => {
                     //     payFormValidade()
                     // })
+                    
+                })
+
+
+
+                $("#confimar-remover-cartao-btn").on("click", function(e) {
+                    console.log("fdsafda")
+                    e.preventDefault()
+                    // return false
+                    $("#cancelar-remover-cartao-btn").addClass('disabled')
+                    $("#cancelar-remover-cartao-btn").attr('disabled', true)
+
+                    $(this).addClass('disabled')
+                    $(this).attr('disabled', true)
+                    $(this).find(".textPlace").html('Processando')
+                    $(this).find(".iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                    var url = '<?= base_url('/api') ?>';
+                    var that = this
+                    var payload = {
+                            'call': 'customers/{customer_id}/payment_methods/{id}',
+                            'method': 'DELETE',
+                            'payload': {
+                                'id': $(this).data("card-id")
+                            }
+                        }
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: payload,
+                            fail: function(r){
+                                console.log(r)
+                            },
+                            success: function (response) {
+                                console.log(response)
+                                console.log(typeof response.error)
+                                
+                                if(response.errors) {
+                                    $("#ResponseCustom #ResponseCustomLongTitle").html("ERRO!")
+                                    $("#ResponseCustom .modal-body").html("Algo de errado aconteceu!<br>Tente novamente em instantes.")
+                                    $("#cancelar-remover-cartao-btn").removeClass('disabled')
+                                    $("#cancelar-remover-cartao-btn").removeAttr('disabled')
+                                    $(".remover-cartao-btn").slideDown(100)
+                                    $(that).removeClass('disabled')
+                                    $(that).removeAttr('disabled')
+                                    $(that).find(".textPlace").html('Remover cartão')
+                                    $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                    $('#RemoveCardConfirm').modal("hide")
+                                    $('#ResponseCustom').modal("show")
+                                } else {
+                                    $("#ResponseCustom #ResponseCustomLongTitle").html("Sucesso!")
+                                    $("#ResponseCustom .modal-body").html("Cartão removido com sucesso!")
+                                    $("#cancelar-remover-cartao-btn").removeClass('disabled')
+                                    $("#cancelar-remover-cartao-btn").removeAttr('disabled')
+                                    $(".remover-cartao-btn").slideUp(100)
+                                    $(that).removeClass('disabled')
+                                    $(that).removeAttr('disabled')
+                                    $(that).find(".textPlace").html('Remover cartão')
+                                    $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                    $('#RemoveCardConfirm').modal("hide")
+                                    $('#ResponseCustom').modal("show")
+                                    setTimeout(() => {
+                                        // console.log('<?= base_url('minha-conta/cartoes') ?>')
+                                        window.location.href = "<?= base_url('minha-conta/cartoes') ?>"
+                                    }, 2500);
+                                }
+                                
+                            },
+                            dataType: 'json',
+                            headers: {'X-Requested-With': 'XMLHttpRequest'}
+                        });
+                    
+                    
+                })
+
+                $("#confimar-definir-cartao-padrao-btn").on("click", function(e) {
+                    console.log("fdsafda")
+                    e.preventDefault()
+                    // return false
+                    $("#cancelar-definir-cartao-padrao-btn").addClass('disabled')
+                    $("#cancelar-definir-cartao-padrao-btn").attr('disabled', true)
+
+                    $(this).addClass('disabled')
+                    $(this).attr('disabled', true)
+                    $(this).find(".textPlace").html('Processando')
+                    $(this).find(".iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                    var url = '<?= base_url('/api') ?>';
+                    var that = this
+                    var payload = {
+                            'call': 'customers/{customer_id}',
+                            'method': 'PUT',
+                            'payload': {
+                                'id': $(this).data("card-id")
+                            }
+                        }
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: payload,
+                            fail: function(r){
+                                console.log(r)
+                            },
+                            success: function (response) {
+                                console.log(response)
+                                console.log(typeof response.error)
+                                
+                                if(response.errors) {
+                                    $("#ResponseCustom #ResponseCustomLongTitle").html("ERRO!")
+                                    $("#ResponseCustom .modal-body").html("Algo de errado aconteceu!<br>Tente novamente em instantes.")
+                                    $("#cancelar-definir-cartao-padrao-btn").removeClass('disabled')
+                                    $("#cancelar-definir-cartao-padrao-btn").removeAttr('disabled')
+                                    $(".definir-cartao-padrao-btn").slideDown(100)
+                                    $(that).removeClass('disabled')
+                                    $(that).removeAttr('disabled')
+                                    $(that).find(".textPlace").html('Remover cartão')
+                                    $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                    $('#DefinirCartaoPadraoConfirm').modal("hide")
+                                    $('#ResponseCustom').modal("show")
+                                } else {
+                                    $("#ResponseCustom #ResponseCustomLongTitle").html("Sucesso!")
+                                    $("#ResponseCustom .modal-body").html("Cartão difinido como padrão!")
+                                    $("#cancelar-definir-cartao-padrao-btn").removeClass('disabled')
+                                    $("#cancelar-definir-cartao-padrao-btn").removeAttr('disabled')
+                                    $(".definir-cartao-padrao-btn").slideUp(80)
+                                    $("#definir-cartao-padrao-badge").slideDown(100)
+                                    $(that).removeClass('disabled')
+                                    $(that).removeAttr('disabled')
+                                    $(that).find(".textPlace").html('Definir padrão')
+                                    $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                    $('#DefinirCartaoPadraoConfirm').modal("hide")
+                                    $('#ResponseCustom').modal("show")
+                                   
+                                }
+                                
+                            },
+                            dataType: 'json',
+                            headers: {'X-Requested-With': 'XMLHttpRequest'}
+                        });
+                    
                     
                 })
                 $(".checkoutPage .authArea .form-check-input").on("click", function(e){

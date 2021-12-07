@@ -159,7 +159,7 @@ class MyAccount extends BaseController
             }
         }
         // print_r($user);exit;
-        return view('account/cartoes', ["dft_payment"=>$user_default_payment, "user"=>$user]);
+        return view('account/cartoes', ["dft_payment"=>$user_default_payment, "user"=>$user, "payment"=>$user_default_payment]);
     }
     public function assinaturas()
     {
@@ -219,7 +219,6 @@ class MyAccount extends BaseController
         return view('account/assinaturas', ["assinaturas" => $assinaturas, "user"=>$user]);
     }
     public function login() {
-        
         return view("account/login", ["user"=> []]);
     }
     public function assinatura($id)
@@ -312,6 +311,74 @@ class MyAccount extends BaseController
         
         
         return view('account/assinatura', ["assinatura" => $assinatura,true, "user" => $user]);
+
+    }
+    public function cartao($id)
+    {
+        helper("number");
+        $a = new Home();
+        // // parent::Controller();
+        session();
+        // echo "<pre>";print_r($a->get("name"));exit;
+        if(isset($_SESSION['email'])) {
+            // echo "<pre>";
+            // print_r($_SESSION);
+            // echo "</pre>";
+            $args = [];
+            $args["m"] = "GET";
+            $this->requestURL = $a->baseApi . "customers";
+            $args["pl"] = json_encode([
+                "query" => $_SESSION['email'],
+                "limit" => 1
+            ]);
+            $user = $a->doRequest($this->requestURL, $args);
+            // echo gettype(json_decode($user, true));exit;
+            $u = json_decode($user, true);
+            unset($user);
+            $user = [];
+            if($u["totalItems"] > 0) {
+                $user = $u['items'][0];
+            }
+        } else {
+            $user = [];
+        }
+        
+
+        $args = [];
+        $this->requestURL = $a->baseApi . "customers/". $user["id"] . "/payment_methods/" .$id;
+        $args["m"] = "GET";
+        // print_r($this->requestURL);exit;
+        $args["pl"] = json_encode([
+            'id' => $id,
+            'customer_id' => $user["id"]
+        ]);
+        // if(in_array($rdata->method, ["POST", "PUT"]) && !isset($rdata->payload)) {
+        //     throw new \Exception("invalid payload");
+        // } else if(in_array($rdata->method, ["POST", "PUT"]) && isset($rdata->payload)) {
+        //     $args["pl"] = json_encode($rdata->payload);
+        // }
+        $cartao = json_decode($a->doRequest($this->requestURL, $args),true);
+        if(isset($cartao["errors"])) {
+            session()->setFlashdata("card_not_found", $cartao["errors"] );
+            return redirect()->to('minha-conta/cartoes'); 
+        }
+        
+        $user_default_payment = NULL;
+        $dft_pmt = NULL; 
+        if(isset($user["default_payment_method_id"]) &&
+        !empty($user["default_payment_method_id"])) {
+            $dft_pmt = $user["default_payment_method_id"];
+        }
+
+        if($cartao["id"] == $dft_pmt) {
+            $cartao['default'] = true;
+        } else {
+            $cartao['default'] = false;
+        }
+           
+        
+        
+        return view('account/cartao', ["cartao" => $cartao,true, "user" => $user]);
 
     }
 

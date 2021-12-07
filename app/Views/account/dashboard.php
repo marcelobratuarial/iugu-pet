@@ -51,7 +51,7 @@
                       <div class="card-body text-success">
                         <h5 class="card-title"><?= $ass["periodo"] ?></h5>
                         <p class="card-text"><?= $ass["real"] ?></p>
-                        <a href="<?= base_url('minha-conta/assinatura/'.$ass["id"]) ?>" class="btn btn-primary">Detalhes</a>
+                        <a href="<?= base_url('minha-conta/assinatura/'.$ass["id"]) ?>" class="genric-btn info-border circle medium">Detalhes</a>
                       </div>
                     </div>
                   </div>
@@ -69,21 +69,21 @@
                     <th scope="col">#</th>
                     <th scope="col">Bandeira</th>
                     <th scope="col">Número</th>
-                    <th scope="col">a</th>
+                    <th scope="col">Detalhes</th>
                   </tr>
                 </thead>
                 <tbody>
-                <?php foreach($user['payment_methods'] as $pm) : ?>
+                <?php foreach($user['payment_methods'] as $i => $pm) : ?>
 
                       
                   <?php 
                     $dft = ($pm['default']) ? '<span class="badge badge-primary">Padrão</span>' : '';
                   ?>
                   <tr>
-                    <th scope="row">3</th>
-                    <td><?= $pm['data']['brand'] ?></td>
+                    <th scope="row"><?= $i+1 ?></th>
+                    <td><img src="<?=base_url("assets/img/brands/". strtolower($pm['data']['brand']).".png") ?>" width="60" style="margin-right: 20px; object-fit: cover; width: 60px" ><?= $pm['data']['brand'] ?></td>
                     <td><?= $pm['data']['display_number'] ?> <?=$dft?></td>
-                    <td>-</td>
+                    <td><a href="<?= base_url('minha-conta/cartao/'.$pm["id"]) ?>" class="genric-btn info-border circle small">Detalhes</a></td>
                   </tr>  
                 <?php endforeach ?>
                 </tbody>

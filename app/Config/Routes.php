@@ -43,6 +43,7 @@ $routes->post('/api', 'Home::api'); //,['filter' => 'authFilter']);
 $routes->get('/minha-conta', 'MyAccount::index', ['filter' => 'authFilter']);
 $routes->get('/minha-conta/assinaturas', 'MyAccount::assinaturas', ['filter' => 'authFilter']);
 $routes->get('/minha-conta/assinatura/(:any)', 'MyAccount::assinatura/$1', ['filter' => 'authFilter']);
+$routes->get('/minha-conta/cartao/(:any)', 'MyAccount::cartao/$1', ['filter' => 'authFilter']);
 $routes->get('/minha-conta/cartoes', 'MyAccount::cartoes', ['filter' => 'authFilter']);
 
 $routes->post('/register', 'RegisterController::store');

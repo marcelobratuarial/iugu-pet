@@ -291,6 +291,17 @@ class Home extends BaseController
                 } else if (preg_match_all('/^subscriptions.*suspend$/', $rdata["call"]) && $rdata["method"] == "POST") {
                     $this->requestURL = $this->baseApi . "subscriptions/" . $rdata["payload"]['id'] ."/suspend";
                     // print_r($rdata);
+                    $args = [];
+                    $args["m"] = "POST";
+                    $args["pl"] = json_encode($rdata["payload"]);
+                    $assinatura = json_decode($this->doRequest($this->requestURL, $args),true);
+                    foreach($assinatura['logs'] as $i=> $log): 
+                        $due_date = date_create($log['created_at']);
+                        $data = $due_date->format('d/m/Y H:i:s');
+                        // // echo $due_date;
+                        $assinatura['logs'][$i]['data'] = $data;
+                    endforeach;
+                    return $this->response->setJSON($assinatura);
                     // return $this->response->setJSON($this->requestURL);
                     // exit;
                     // $rdata["payload"]["suspend_on_invoice_expired"] = true;
@@ -298,12 +309,89 @@ class Home extends BaseController
                     // $rdata["payload"]["only_on_charge_success"] = true;
                 } else if (preg_match_all('/^subscriptions.*activate$/', $rdata["call"]) && $rdata["method"] == "POST") {
                     $this->requestURL = $this->baseApi . "subscriptions/" . $rdata["payload"]['id'] ."/activate";
-                    // print_r($rdata);
+                    $args = [];
+                    $args["m"] = "POST";
+                    $args["pl"] = json_encode($rdata["payload"]);
+                    $assinatura = json_decode($this->doRequest($this->requestURL, $args),true);
+                    // print_r($assinatura);exit;
+                    foreach($assinatura['logs'] as $i=> $log): 
+                        $due_date = date_create($log['created_at']);
+                        $data = $due_date->format('d/m/Y H:i:s');
+                        // echo "DUO" .$due_date;
+                        $assinatura['logs'][$i]['data'] = $data;
+                    endforeach;
+                    
+                    return $this->response->setJSON($assinatura);
                     // return $this->response->setJSON($this->requestURL);
                     // exit;
                     // $rdata["payload"]["suspend_on_invoice_expired"] = true;
                     // $rdata["payload"]["only_charge_on_due_date"] = false;
                     // $rdata["payload"]["only_on_charge_success"] = true;
+                } else if (preg_match_all('/^customers.*payment_methods.*/', $rdata["call"]) && $rdata["method"] == "DELETE") {
+                    session();
+                    if(isset($_SESSION['email'])) {
+                        // echo "<pre>";
+                        // print_r($_SESSION);
+                        // echo "</pre>";
+                        $args = [];
+                        $args["m"] = "GET";
+                        $this->requestURL = $this->baseApi . "customers";
+                        $args["pl"] = json_encode([
+                            "query" => $_SESSION['email'],
+                            "limit" => 1
+                        ]);
+                        $user = $this->doRequest($this->requestURL, $args);
+                        // var_dump($user);exit;
+                        $u = json_decode($user, true);
+                        unset($user);
+                        $user = [];
+                        if($u["totalItems"] > 0) {
+                            $user = $u['items'][0];
+                        }
+
+                        $this->requestURL = $this->baseApi . "customers/" . $user['id'] ."/payment_methods/".$rdata["payload"]['id'];
+                        // print_r($this->requestURL);exit;
+                    } 
+                    
+                    // return $this->response->setJSON($this->requestURL);
+                    // exit;
+                    // $rdata["payload"]["suspend_on_invoice_expired"] = true;
+                    // $rdata["payload"]["only_charge_on_due_date"] = false;
+                    // $rdata["payload"]["only_on_charge_success"] = true;
+                } else if (preg_match_all('/^customers.*/', $rdata["call"]) && $rdata["method"] == "PUT") {
+                    session();
+                    if(isset($_SESSION['email'])) {
+                        // echo "<pre>";
+                        // print_r($_SESSION);
+                        // echo "</pre>";
+                        $args = [];
+                        $args["m"] = "GET";
+                        $this->requestURL = $this->baseApi . "customers";
+                        $args["pl"] = json_encode([
+                            "query" => $_SESSION['email'],
+                            "limit" => 1
+                        ]);
+                        $user = $this->doRequest($this->requestURL, $args);
+                        // var_dump($user);exit;
+                        $u = json_decode($user, true);
+                        unset($user);
+                        $user = [];
+                        if($u["totalItems"] > 0) {
+                            $user = $u['items'][0];
+                        }
+                        $args = [];
+                        $args["m"] = "PUT";
+                        $rdata["payload"]["default_payment_method_id"] = $rdata["payload"]['id'];
+                        $args["pl"] = json_encode($rdata["payload"]);
+                        
+                        $this->requestURL = $this->baseApi . "customers/" . $user['id'];
+                        $user = json_decode($this->doRequest($this->requestURL, $args),true);
+                        // print_r($user);exit;
+                        
+                        
+                        return $this->response->setJSON($user);
+                        
+                    }
                 } else {
                     echo "else";
                     print_r($rdata);
