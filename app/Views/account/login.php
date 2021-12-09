@@ -216,7 +216,7 @@
                             </div>
                             <h4 style="margin-bottom: 0">Código de verificação</h4>
                                     
-                            <form method="POST" class="verForm" action="">
+                            <form method="POST" data-form-ref="my-account" class="verForm" action="">
                                 
                                 <div class="row mt-10">
                                     <div class="col-md-6">
@@ -230,7 +230,7 @@
                                 
                                 <hr style="margin-bottom: 0" />
                                 <div class="response_area"></div>
-                                <button type="submit" class="d-flex align-items-center justify-content-center verifyBtn genric-btn success circle arrow mt-1"><span class="textPlace">Verificar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span></button>
+                                <button type="submit" data-form-ref="my-account" class="d-flex align-items-center justify-content-center verifyBtn genric-btn success circle arrow mt-1"><span class="textPlace">Verificar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span></button>
                                 <!-- <button class="genric-btn success circle arrow">Login<span class="lnr lnr-arrow-right"></span></button> -->
                             </form>
                         </div>

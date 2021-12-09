@@ -1092,7 +1092,8 @@ h3 {
 
 /* line 138, ../../Arafath/CL/january 2020/240. Animal/HTML/scss/_header.scss */
 .header-area .main-header-area .main-menu ul li a i {
-  font-size: 9px;
+  /* font-size: 9px; */
+  font-size: 22px;
 }
 
 @media (max-width: 767px) {

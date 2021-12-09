@@ -152,7 +152,7 @@ class Home extends BaseController
         if(isset($user["payment_methods"]) && 
         !empty($user["payment_methods"])) {
             foreach($user["payment_methods"] as $pm) {
-                if($pm["id"] == $dft_pmt || count($user["payment_methods"]) >= 1) {
+                if($pm["id"] == $dft_pmt) {
                     $user_default_payment = $pm;
                     break;
                 }
@@ -338,9 +338,31 @@ class Home extends BaseController
                     // exit;
                 } else if ($rdata["call"] == "subscriptions" && $rdata["method"] == "POST") {
                     $this->requestURL = $this->baseApi . $rdata["call"];
-                    $rdata["payload"]["suspend_on_invoice_expired"] = 1;
-                    $rdata["payload"]["only_charge_on_due_date"] = 0;
-                    $rdata["payload"]["only_on_charge_success"] = 1;
+                    // print_r($rdata);exit;
+                    $rdata["payload"]["suspend_on_invoice_expired"] = true;
+                    $rdata["payload"]["only_charge_on_due_date"] = true;
+                    $rdata["payload"]["only_on_charge_success"] = true;
+                    $args = [];
+                    $args["m"] = "POST";
+                    $args["pl"] = json_encode($rdata["payload"]);
+                    $rr = json_decode($this->doRequest($this->requestURL, $args),true);
+                    if(isset($rr["errors"])) {
+                        return $this->response->setJSON([
+                            "error" => true,
+                            "message" => "Erro ao criar assinatura!",
+                            "response_data" => $rr
+                        ]);
+                    } else {
+                        // $rdata["payload"]["two_step"] = true;
+                        // print_r($this->requestURL);
+                        return $this->response->setJSON([
+                            "error" => false,
+                            "message" => "Assinatura efetuada com sucesso!",
+                            "response_data" => $rr
+                        ]);
+                        // print_r($assinatura);
+                        exit;
+                    }
                 } else if (preg_match_all('/^subscriptions.*suspend$/', $rdata["call"]) && $rdata["method"] == "POST") {
                     $this->requestURL = $this->baseApi . "subscriptions/" . $rdata["payload"]['id'] ."/suspend";
                     // print_r($rdata);

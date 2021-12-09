@@ -49,7 +49,7 @@ class MyAccount extends BaseController
         $args["m"] = "GET";
         $args["pl"] = json_encode([
             "customer_id" => $uid, //"74AE1E1406354345AE23CCC30DAA5BD6",
-            // "status_filter" => "active"
+            "status_filter" => "suspended"
         ]);
         // if(in_array($rdata->method, ["POST", "PUT"]) && !isset($rdata->payload)) {
         //     throw new \Exception("invalid payload");
@@ -57,7 +57,24 @@ class MyAccount extends BaseController
         //     $args["pl"] = json_encode($rdata->payload);
         // }
         $r = $a->doRequest($this->requestURL, $args);
-        $assinaturas = json_decode($r, true)["items"];
+        $assinaturas_suspensas = json_decode($r, true)["items"];
+        
+        $args = [];
+        $this->requestURL = $a->baseApi . "subscriptions";
+        $args["m"] = "GET";
+        $args["pl"] = json_encode([
+            "customer_id" => $uid, //"74AE1E1406354345AE23CCC30DAA5BD6",
+            "status_filter" => "active"
+        ]);
+        // if(in_array($rdata->method, ["POST", "PUT"]) && !isset($rdata->payload)) {
+        //     throw new \Exception("invalid payload");
+        // } else if(in_array($rdata->method, ["POST", "PUT"]) && isset($rdata->payload)) {
+        //     $args["pl"] = json_encode($rdata->payload);
+        // }
+        $r = $a->doRequest($this->requestURL, $args);
+        $assinaturas_ativas = json_decode($r, true)["items"];
+        
+        $assinaturas = array_merge($assinaturas_ativas, $assinaturas_suspensas);
         // echo "<pre>";
         helper("number");
         foreach($assinaturas as $k=> $a) {
@@ -178,7 +195,7 @@ class MyAccount extends BaseController
                 "limit" => 1
             ]);
             $user = $a->doRequest($this->requestURL, $args);
-            // echo gettype(json_decode($user, true));exit;
+            // print_r(json_decode($user, true));exit;
             $u = json_decode($user, true);
             unset($user);
             $user = [];
@@ -193,16 +210,32 @@ class MyAccount extends BaseController
         $args["m"] = "GET";
         $args["pl"] = json_encode([
             "customer_id" => $uid, //"74AE1E1406354345AE23CCC30DAA5BD6",
-            // "status_filter" => "active"
+            "status_filter" => "suspended"
         ]);
-        // echo $uid;
         // if(in_array($rdata->method, ["POST", "PUT"]) && !isset($rdata->payload)) {
         //     throw new \Exception("invalid payload");
         // } else if(in_array($rdata->method, ["POST", "PUT"]) && isset($rdata->payload)) {
         //     $args["pl"] = json_encode($rdata->payload);
         // }
         $r = $a->doRequest($this->requestURL, $args);
-        $assinaturas = json_decode($r, true)["items"];
+        $assinaturas_suspensas = json_decode($r, true)["items"];
+        
+        $args = [];
+        $this->requestURL = $a->baseApi . "subscriptions";
+        $args["m"] = "GET";
+        $args["pl"] = json_encode([
+            "customer_id" => $uid, //"74AE1E1406354345AE23CCC30DAA5BD6",
+            "status_filter" => "active"
+        ]);
+        // if(in_array($rdata->method, ["POST", "PUT"]) && !isset($rdata->payload)) {
+        //     throw new \Exception("invalid payload");
+        // } else if(in_array($rdata->method, ["POST", "PUT"]) && isset($rdata->payload)) {
+        //     $args["pl"] = json_encode($rdata->payload);
+        // }
+        $r = $a->doRequest($this->requestURL, $args);
+        $assinaturas_ativas = json_decode($r, true)["items"];
+        
+        $assinaturas = array_merge($assinaturas_ativas, $assinaturas_suspensas);
         // echo "<pre>";
         // print_r($assinaturas);exit;
         helper("number");
@@ -245,7 +278,9 @@ class MyAccount extends BaseController
         //     $args["pl"] = json_encode($rdata->payload);
         // }
         $assinatura = json_decode($a->doRequest($this->requestURL, $args),true);
-        // print_r($assinatura);exit;
+        if(isset($assinatura["errors"])) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
         $args = [];
         $this->requestURL = $a->baseApi . "plans/identifier/".$assinatura["plan_identifier"];
         $args["m"] = "GET";

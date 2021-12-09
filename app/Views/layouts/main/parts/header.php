@@ -49,6 +49,13 @@
                                 <ul id="navigation">
                                     <li><a href="<?= base_url("/") ?>">Home</a></li>
                                     <li><a href="<?= base_url("/services") ?>">Serviços</a></li>
+                                    <?php if (!empty($user)) : ?>
+                                        <li>
+                                            <a href="<?= base_url("/minha-conta") ?>">
+                                                <i class="fa fa-user fa-2x"></i>
+                                            </a>
+                                        </li>
+                                    <?php endif ?>
                                 </ul>
                             </nav>
                         </div>

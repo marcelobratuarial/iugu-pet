@@ -571,6 +571,18 @@
                 $('#finish-form').on("submit", function(evt) {
                     evt.preventDefault()
                     var form = $(this);
+
+
+                    $("#cancelar-assinar-btn").addClass('disabled')
+                    $("#cancelar-assinar-btn").attr('disabled', true)
+
+                    $(this).addClass('disabled')
+                    $(this).attr('disabled', true)
+                    $(this).find(".textPlace").html('Processando')
+                    $(this).find(".iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                    
+                    var that = this
+                    
                     var url = '<?= base_url('/api') ?>';
                     var payload = {
                             'call': 'subscriptions',
@@ -595,48 +607,62 @@
                                         //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
                                         // } else if(response.error_code == 'NEED_VER') {
                                         // }
-                                        /*
+                                        
                                         var p = new Promise((resolve)=> {
-                                            $(form).find(".response_area").html(response.message)
+                                            var m = response.message
+                                            m += '<div>'+response.response_data.errors+'</div>'
+                                            $("#AssinarConfirm").find(".response_area").html(m)
                                             resolve("OK")
                                         })
                                         p.then((e)=> {
                                             console.log(e)
-                                            $(form).find(".response_area").slideDown(234);
+                                            $("#AssinarConfirm").find(".response_area").addClass("field_error").addClass("show");
                                         }).then((e) => {
                                             
+                                            setTimeout(() => {
+                                                
+                                                $("#AssinarConfirm").find(".response_area").removeClass("field_error").removeClass("show");
+                                                $("#AssinarConfirm").find(".response_area").html('')
+                                                $("#cancelar-assinar-btn").removeClass('disabled')
+                                                $("#cancelar-assinar-btn").removeAttr('disabled')
+
+                                                $(that).removeClass('disabled')
+                                                $(that).removeAttr('disabled')
+                                                $(that).find(".textPlace").html('Confirmar assinatura')
+                                                $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                
+                                            }, 4000);
                                             
-                                            if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
-                                                var verBox = $(".verBox")
-                                                // console.log($(".optChecked .verBox .custom-message"))
-                                                // console.log(response.custom_message)
-                                                
-                                                
-                                                if($(".optChecked").find(".verBox").length == 0) {
-                                                    $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
-                                                    
-                                                } else {
-                                                    console.log("Not")
-                                                }
-                                                var pp = new Promise((resolve) => {
-                                                    
-                                                    setTimeout(() => {
-                                                        $(form).find(".response_area").slideUp(432);
-                                                        $(form).slideUp(500);
-                                                        resolve()
-                                                    }, 4000);
-                                                })
-                                                pp.then(()=> {
-                                                    $(".optChecked .verBox .custom-message").html(response.custom_message)
-                                                    setTimeout(() => {
-                                                        $(".optChecked").find(".verBox").addClass("show")
-                                                    }, 500)    
-                                                    
-                                                })
-                                            }
-                                        }) */
+                                        }) 
                                         
                                         
+                                    } else {
+                                        var p = new Promise((resolve)=> {
+                                            var m = response.message
+                                            m   += '<div><hr style="margin-bottom: 0">' 
+                                                + '<a href="<?= base_url('minha-conta/assinatura') ?>/'+response.response_data.id+'" class="btn btn-primary">Detalhes</a>'
+                                                + ' <a href="<?= base_url('minha-conta') ?>" class="btn btn-primary">Minha conta</a>'
+                                                + '</div>'
+                                            $("#AssinarConfirm").find(".response_area").html(m)
+                                            resolve("OK")
+                                        })
+                                        p.then((e)=> {
+                                            console.log(e)
+                                            $("#cancelar-assinar-btn").slideUp()
+                                            $(that).slideUp()
+                                            $("#AssinarConfirm").find(".response_area").addClass("show");
+                                        }).then((e) => {
+                                            
+                                            setTimeout(() => {
+                                                
+                                                
+                                                // $(that).removeAttr('disabled')
+                                                // $(that).find(".textPlace").html('Confirmar assinatura')
+                                                // $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                
+                                            }, 4000);
+                                            
+                                        })
                                     }
                                     // lb.text(response)
                                     // $(".custom-control-label").text(text);
