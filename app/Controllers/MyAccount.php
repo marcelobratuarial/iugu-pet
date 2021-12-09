@@ -42,6 +42,9 @@ class MyAccount extends BaseController
                 $user = $u['items'][0];
             }
         }
+        if(empty($user)) {
+            return redirect()->to('minha-conta/login'); 
+        }
         $uid = $user["id"];
         // print_r($uid);exit;
         $args = [];

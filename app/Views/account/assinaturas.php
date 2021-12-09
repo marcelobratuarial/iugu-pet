@@ -55,6 +55,24 @@
                     </div>
                   </div>
                 <?php endforeach ?>
+              <?php else: ?>
+                <div class="row mt-3 mb-3">
+                    <div class="col-md-12">
+                        <hr class="w-100">
+                    </div>
+                </div>
+                <div class="row no-box-container">
+                    <div class="col-md-12">
+                        <div class=" d-flex flex-column align-items-center justify-content-center">
+                            <div class="alert alert-warning  d-flex flex-column align-items-center justify-content-center" role="alert">
+                                <h4 class="mb-3 mt-3 d-flex align-items-center justify-content-center"><span style="font-size: 2.2rem;" class="mr-2"><i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i></span> Você não tem nenhuma assinatura.</h4>
+                                <hr class="w-100">
+
+                                <a class="genric-btn primary-border circle " href="<?= base_url("/") ?>">Conheça nossos planos </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
               <?php endif; ?>
           </section>
           <hr />

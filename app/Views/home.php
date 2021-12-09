@@ -57,7 +57,7 @@
             </div>
         </div>
     </div>
-    <div class="service_area">
+    <div class="service_area" name="planos">
         <div class="container">
             <div class="row justify-content-center ">
                 <div class="col-lg-7 col-md-10">
