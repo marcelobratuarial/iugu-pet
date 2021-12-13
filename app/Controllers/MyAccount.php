@@ -106,7 +106,7 @@ class MyAccount extends BaseController
             !empty($user["payment_methods"])) {
             foreach($user["payment_methods"] as $k=> $pm) {
                 
-                if($pm["id"] == $dft_pmt || count($user["payment_methods"]) == 1) {
+                if($pm["id"] == $dft_pmt) {
                     $user["payment_methods"][$k]['default'] = true;
                     $user_default_payment = $pm;
                 } else {
@@ -170,7 +170,7 @@ class MyAccount extends BaseController
             !empty($user["payment_methods"])) {
             foreach($user["payment_methods"] as $k=> $pm) {
                 
-                if($pm["id"] == $dft_pmt || count($user["payment_methods"]) == 1) {
+                if($pm["id"] == $dft_pmt) {
                     $user["payment_methods"][$k]['default'] = true;
                     $user_default_payment = $pm;
                 } else {

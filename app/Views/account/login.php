@@ -157,7 +157,7 @@
                                         </div>
                                     </div>
                                     <div class="row mt-10"><hr></div>
-                                    <h4>Dados do Pet</h4>
+                                    <?php /* <h4>Dados do Pet</h4>
                                     <div class="row mt-10">
                                         <div class="col-8">
                                             <div style="position:relative">
@@ -169,7 +169,7 @@
                                                 <input type="text" name="pet_nasc" placeholder="Nascimento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nascimento'" class="single-input">
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */ ?>
                                     <div class="row mt-10">
                                         <div class="col-6">
                                             <div style="position:relative">

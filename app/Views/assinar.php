@@ -163,7 +163,7 @@
                                         <div class="row mt-10">
                                             <hr>
                                         </div>
-                                        <h4>Dados do Pet</h4>
+                                        <?php /* <h4>Dados do Pet</h4>
                                         <div class="row mt-10">
                                             <div class="col-8">
                                                 <div style="position:relative">
@@ -188,27 +188,27 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="boxPass">
+                                    </div> */ ?>
+                                        <div class="boxPass">
 
-                                        <h4>Criar senha</h4>
-                                        <div class="row mt-10">
-                                            <div class="col-6">
-                                                <div style="position:relative">
-                                                    <input type="password" name="password" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" class="single-input">
+                                            <h4>Criar senha</h4>
+                                            <div class="row mt-10">
+                                                <div class="col-6">
+                                                    <div style="position:relative">
+                                                        <input type="password" name="password" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" class="single-input">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div style="position:relative">
-                                                    <input type="password" name="confirmpassword" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" class="single-input">
+                                                <div class="col-6">
+                                                    <div style="position:relative">
+                                                        <input type="password" name="confirmpassword" placeholder="*****" onfocus="this.placeholder = ''" onblur="this.placeholder = '*****'" class="single-input">
+                                                    </div>
                                                 </div>
-                                            </div>
 
+                                            </div>
                                         </div>
-                                    </div>
-                                    <hr style="margin-bottom: 0" />
-                                    <div class="response_area"></div>
-                                    <button type="submit" class="d-flex align-items-center justify-content-center registerBtn genric-btn success circle arrow mt-1"><span class="textPlace">Continuar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span></button>
+                                        <hr style="margin-bottom: 0" />
+                                        <div class="response_area"></div>
+                                        <button type="submit" class="d-flex align-items-center justify-content-center registerBtn genric-btn success circle arrow mt-1"><span class="textPlace">Continuar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span></button>
                                 </form>
                             </div>
 
@@ -262,13 +262,34 @@
                         </ul>
 
 
-                        <hr>
-                        <ul>
+
+                        <?php if (empty($pets)) : ?>
+                            <div class="row mt-3 mb-3">
+                                <div class="col-md-12">
+                                    <hr class="w-100">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class=" d-flex flex-column align-items-center justify-content-center">
+                                        <div class="alert alert-warning  d-flex flex-column align-items-center justify-content-center" role="alert">
+                                            <h4 class="mb-3 mt-3 d-flex align-items-center justify-content-center"><span style="font-size: 2.2rem;" class="mr-2"><i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i></span> Você não tem nenhum Pet cadastrado.</h4>
+                                            <hr class="w-100">
+
+                                            <a class="genric-btn primary-border circle  add-new-pet-btn" href="">Cadastrar Pet <i class="fa fa-paw fa-1x"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <?php endif; ?>
+
+                        <?php /* <ul>
                             <?php foreach ($user["pet_data"] as $pd) : ?>
                                 <li><strong><?= $pd["display"] ?></strong>: <?= $pd["value"] ?></li>
                             <?php endforeach ?>
                         </ul>
-
+                        */ ?>
                         <?php
                         // print_r($user);
                         $hasCard = (is_array($payment) || count($user["payment_methods"]) > 0);
@@ -454,6 +475,31 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" data-backdrop="static" id="ActivateConfirm" tabindex="-1" role="dialog" aria-labelledby="ActivateConfirmTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Ativar assinatura</h5>
+                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button> -->
+                </div>
+                <div class="modal-body">
+                    Você deseja mesmo <strong>ATIVAR</strong> sua assinatura?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="genric-btn primary-border circle small" id="cancelar-ativacao-btn" data-dismiss="modal">Cancelar</button>
+
+                    <button type="button" data-ass-id="" class="genric-btn info-border circle small" id="confimar-ativacao-btn">
+                        <span class="textPlace">Confirmar ativação</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

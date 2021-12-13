@@ -301,30 +301,30 @@ class RegisterController extends BaseController
                     'required' => 'Obrigatório',
                 ]
             ],  
-            'pet_name'  => [
-                'rules' => 'required|min_length[1]|max_length[150]',
-                'errors' => [
-                    'required' => 'Obrigatório',
-                ]
-            ],  
-            'pet_nasc'  => [
-                'rules' => 'required|min_length[2]|max_length[150]',
-                'errors' => [
-                    'required' => 'Obrigatório',
-                ]
-            ],  
-            'pet_raca'  => [
-                'rules' => 'required|min_length[2]|max_length[150]',
-                'errors' => [
-                    'required' => 'Obrigatório',
-                ]
-            ],  
-            'pet_peso'  => [
-                'rules' => 'required|min_length[1]|max_length[150]',
-                'errors' => [
-                    'required' => 'Obrigatório',
-                ]
-            ],  
+            // 'pet_name'  => [
+            //     'rules' => 'required|min_length[1]|max_length[150]',
+            //     'errors' => [
+            //         'required' => 'Obrigatório',
+            //     ]
+            // ],  
+            // 'pet_nasc'  => [
+            //     'rules' => 'required|min_length[2]|max_length[150]',
+            //     'errors' => [
+            //         'required' => 'Obrigatório',
+            //     ]
+            // ],  
+            // 'pet_raca'  => [
+            //     'rules' => 'required|min_length[2]|max_length[150]',
+            //     'errors' => [
+            //         'required' => 'Obrigatório',
+            //     ]
+            // ],  
+            // 'pet_peso'  => [
+            //     'rules' => 'required|min_length[1]|max_length[150]',
+            //     'errors' => [
+            //         'required' => 'Obrigatório',
+            //     ]
+            // ],  
         ];
         // var_dump($this->validate($rules));
         // print_r($this->request->getPost());exit;
@@ -352,24 +352,24 @@ class RegisterController extends BaseController
                         "state" => $this->request->getVar('estado'),
                         "district" => $this->request->getVar('bairro'),
                         "complement" => $this->request->getVar('complemento'),
-                        "custom_variables" => [
-                            [
-                                "name" => "pet_name",
-                                "value" => $this->request->getVar('pet_name')
-                            ],
-                            [  
-                                "name" => "pet_nasc",
-                                "value" => $this->request->getVar('pet_nasc')
-                            ],
-                            [
-                                "name" => "pet_raca",
-                                "value" => $this->request->getVar('pet_raca')
-                            ],
-                            [
-                                "name" => "pet_peso",
-                                "value" => $this->request->getVar('pet_peso')
-                            ]
-                        ]
+                        // "custom_variables" => [
+                        //     [
+                        //         "name" => "pet_name",
+                        //         "value" => $this->request->getVar('pet_name')
+                        //     ],
+                        //     [  
+                        //         "name" => "pet_nasc",
+                        //         "value" => $this->request->getVar('pet_nasc')
+                        //     ],
+                        //     [
+                        //         "name" => "pet_raca",
+                        //         "value" => $this->request->getVar('pet_raca')
+                        //     ],
+                        //     [
+                        //         "name" => "pet_peso",
+                        //         "value" => $this->request->getVar('pet_peso')
+                        //     ]
+                        // ]
                     ];
                     // print_r($iuguData);exit;
                     $a = new Home();

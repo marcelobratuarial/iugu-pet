@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 use CodeIgniter\API\ResponseTrait;
-use App\Models\UserModel;
+use App\Models\PetModel;
 
 class Home extends BaseController
 {
@@ -141,6 +141,12 @@ class Home extends BaseController
         } else {
             $user = [];
         }
+
+        // print_r($user);exit;
+        $petModel = new PetModel();
+        $cid = $user["id"];
+        $pets = $petModel->where('cid', $cid)->findAll();
+
         $user_default_payment = NULL;
         $dft_pmt = NULL; 
         if(isset($user["default_payment_method_id"]) &&
@@ -161,41 +167,44 @@ class Home extends BaseController
         // print_r($user_default_payment);exit;
             // echo "</pre>";
         
-        if(isset($user["custom_variables"]) && !empty($user["custom_variables"])) {
-            $cf_refs = [
-                'pet_name' => [
-                    'display' => "Nome do Pet",
-                ],
-                'pet_peso' => [
-                    'display' => "Peso",
-                ],
-                'pet_raca' => [
-                    'display' => "Raça",
-                ],
-                'pet_nasc' => [
-                    'display' => "Nascimento",
-                ],
-            ];
-            $user["pet_data"] = [];
-            foreach($user["custom_variables"] as $v) {
-                $cf_refs[$v["name"]]["value"] = $v["value"];
-                // print_r($cf_refs);
-                $user["pet_data"][] = $cf_refs[$v["name"]];
-            }
-            $address = [];
-            $address["rua"] = '';
-            $address["rua"] .= (!empty($user["street"])) ? $user["street"] : '[Não informado]';
-            $address["rua"] .= (strlen($user["number"]) > 0) ? ', '.$user["number"] : '[S/N]';
-            $address["rua"] .= $user["complement"];
-            $address["bairro"] = '';
-            $address["bairro"] .= (!empty($user["district"])) ? $user["district"] : '[Não informado]';
-            $address["cidade"] = '';
-            $address["cidade"] .= (!empty($user["city"])) ? $user["city"] : '[Não informado]';
-            $address["estado"] = '';
-            $address["estado"] .= (!empty($user["state"])) ? $user["state"] : '[Não informado]';
-    
-            $user["address"] = $address;
-        }
+        // if(isset($user["custom_variables"]) && !empty($user["custom_variables"])) {
+        //     $cf_refs = [
+        //         'pet_name' => [
+        //             'display' => "Nome do Pet",
+        //         ],
+        //         'pet_peso' => [
+        //             'display' => "Peso",
+        //         ],
+        //         'pet_raca' => [
+        //             'display' => "Raça",
+        //         ],
+        //         'pet_nasc' => [
+        //             'display' => "Nascimento",
+        //         ],
+        //     ];
+        //     $user["pet_data"] = [];
+        //     foreach($user["custom_variables"] as $v) {
+        //         $cf_refs[$v["name"]]["value"] = $v["value"];
+        //         // print_r($cf_refs);
+        //         $user["pet_data"][] = $cf_refs[$v["name"]];
+        //     }
+            
+        // }
+
+        $address = [];
+        $address["rua"] = '';
+        $address["rua"] .= (!empty($user["street"])) ? $user["street"] : '[Não informado]';
+        $address["rua"] .= (strlen($user["number"]) > 0) ? ', '.$user["number"] : '[S/N]';
+        $address["rua"] .= $user["complement"];
+        $address["bairro"] = '';
+        $address["bairro"] .= (!empty($user["district"])) ? $user["district"] : '[Não informado]';
+        $address["cidade"] = '';
+        $address["cidade"] .= (!empty($user["city"])) ? $user["city"] : '[Não informado]';
+        $address["estado"] = '';
+        $address["estado"] .= (!empty($user["state"])) ? $user["state"] : '[Não informado]';
+
+        $user["address"] = $address;
+
         $items = file_get_contents(ROOTPATH."/content/estados.json");
         $estados = json_decode($items, false); 
         // $args__ = [];
@@ -216,7 +225,7 @@ class Home extends BaseController
         // echo "<pre>";
         // print_r(json_decode($user, true));;
         // print_r(json_decode($plano, true));exit;
-        return view('assinar', ["estados" => $estados, "plan" => json_decode($plano), "user" => $user, "payment"=>$user_default_payment]);
+        return view('assinar', ["estados" => $estados, "plan" => json_decode($plano), "user" => $user, "payment"=>$user_default_payment, "pets" => $pets]);
 
     }
 
