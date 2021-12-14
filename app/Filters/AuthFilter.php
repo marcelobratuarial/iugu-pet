@@ -30,7 +30,7 @@ class AuthFilter implements FilterInterface
         helper('cookie');
         // var_dump(get_cookie("jwtteste"));
         $token = get_cookie("jwtteste");
-        // echo $token;
+        // echo $token;exit;
         
         $key = getenv('JWT_SECRET');
         /* DEFAULT 
@@ -43,25 +43,50 @@ class AuthFilter implements FilterInterface
                 $token = $matches[1];
             }
         } */
- 
+        // var_dump($request->isAJAX());exit;
         // check if token is null or empty
         if(is_null($token) || empty($token)) {
-            $response = service('response');
-            return redirect()->to('minha-conta/login'); 
-            $response->setBody('Access denied2');
-            $response->setStatusCode(401);
-            return $response;
+            // echo "ee";exit;
+            if($request->isAJAX()) {
+                $response = service('response');
+                return $response->setJSON([
+                    "error" => true,
+                    'message' => "unauthorized"
+                ]);
+            } else {
+                $response = service('response');
+                return redirect()->to('minha-conta/login'); 
+            }
+            
+            // $response->setBody('Access denied2');
+            // $response->setStatusCode(401);
+            // return $response;
+        } else {
+            // echo "go on";exit;
         }
- 
+        // print_r($key);exit;
         try {
             $decoded = JWT::decode($token, $key, array("HS256"));
+            // print_r($decoded);exit;
         } catch (Exception $ex) {
             $response = service('response');
-            return redirect()->to('minha-conta/login'); 
+            if($request->isAJAX()) {
+                return $response->setJSON([
+                    "error" => true,
+                    'message' => "unauthorized",
+                    'data' => $ex
+                ]);
+            } else {
+                
+                return redirect()->to('minha-conta/login'); 
+            }
+            // print_r($ex);exit;
+            // $response = service('response');
+            // return redirect()->to('minha-conta/login'); 
             
-            $response->setBody('Access denied3');
-            $response->setStatusCode(401);
-            return $response;
+            // $response->setBody('Access denied3');
+            // $response->setStatusCode(401);
+            // return $response;
         }
     }
 

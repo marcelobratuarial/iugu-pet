@@ -114,6 +114,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="row mt-10">
                                             <div class="col-8">
                                                 <div style="position:relative">
@@ -187,8 +188,8 @@
                                                     <input type="text" name="pet_peso" placeholder="Peso KG" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Peso KG'" class="single-input">
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div> */ ?>
+                                        </div> */ ?>
+                                    </div>
                                         <div class="boxPass">
 
                                             <h4>Criar senha</h4>
@@ -262,28 +263,39 @@
                         </ul>
 
 
-
-                        <?php if (empty($pets)) : ?>
-                            <div class="row mt-3 mb-3">
+                        
+                        <?php $hasPets = !empty($pets) ?>
+                        <?php if (!$hasPets) : ?>
+                            
+                            <div class="row" id="no-pets-box">
                                 <div class="col-md-12">
                                     <hr class="w-100">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
                                     <div class=" d-flex flex-column align-items-center justify-content-center">
                                         <div class="alert alert-warning  d-flex flex-column align-items-center justify-content-center" role="alert">
                                             <h4 class="mb-3 mt-3 d-flex align-items-center justify-content-center"><span style="font-size: 2.2rem;" class="mr-2"><i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i></span> Você não tem nenhum Pet cadastrado.</h4>
                                             <hr class="w-100">
 
-                                            <a class="genric-btn primary-border circle  add-new-pet-btn" href="">Cadastrar Pet <i class="fa fa-paw fa-1x"></i></a>
+                                            <a data-toggle="modal" data-target="#AddPetModal" class="genric-btn primary-border circle  add-new-pet-btn" href="">Cadastrar Pet <i class="fa fa-paw fa-1x"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                         <?php endif; ?>
+                        <div <?= !$hasPets ? 'style="display: none"' : '' ?> id="pet-list-box">
+                            <hr>
+                            <ul class="list-group">
+                                <?php foreach($pets as $pet) : ?>
+                                <li data-petID="<?=$pet['id'] ?>" class="pet-item list-group-item d-flex justify-content-between align-items-center">
+                                    <h3 style="margin-bottom: 0"><?= $pet['pet_name'] ?></h3>
+                                </li>
+                                <?php endforeach ?>
+                            </ul>
 
+                            <a style="<?= !$hasPets ? 'display: none;' : '' ?>margin-top: 20px" data-toggle="modal" data-target="#AddPetModal" class="genric-btn info-border circle medium add-new-pet-btn" href="">Cadastrar Pet <i class="fa fa-paw fa-1x"></i></a>
+
+                        </div>
+                        
                         <?php /* <ul>
                             <?php foreach ($user["pet_data"] as $pd) : ?>
                                 <li><strong><?= $pd["display"] ?></strong>: <?= $pd["value"] ?></li>
@@ -386,9 +398,9 @@
                                     </div>
 
                                     <!-- <div class="token-area">
-                                    <label for="token">Token do Cartão de Crédito - Enviar para seu Servidor</label>
-                                    <input type="text" name="token" id="token" value="" readonly="true" size="64" style="text-align:center" />
-                                </div> -->
+                                        <label for="token">Token do Cartão de Crédito - Enviar para seu Servidor</label>
+                                        <input type="text" name="token" id="token" value="" readonly="true" size="64" style="text-align:center" />
+                                    </div> -->
 
                                     <div class="mt-4">
                                         <hr>
@@ -397,17 +409,15 @@
                                     <hr style="margin-bottom: 0" />
                                     <div class="response_area"></div>
                                 </form>
-
-
                             </div>
-
                         </div>
                     </div>
                 </div>
             <?php endif; ?>
 
         </div>
-        <div class="col">
+        
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
             <div class="service_area">
                 <div class="single_service">
                     <div class="service_thumb service_icon_bg_1 d-flex align-items-center justify-content-center">
@@ -422,12 +432,7 @@
                             <?php foreach ($plan->features as $feature) : ?>
                                 <li class="list-group-item"><?= $feature->name ?></li>
                             <?php endforeach ?>
-                            <!-- <li class="list-group-item">Transporte leva e traz</li>
-                            <li class="list-group-item">Hospedagem de animais</li>
-                            <li class="list-group-item">Consulta Veterinária</li>
-                            <li class="list-group-item">Envio de Ração</li>
-                            <li class="list-group-item">Assistencia Funeral</li>
-                            <li class="list-group-item">Mais...</li> -->
+                            
                         </ul>
 
                     </div>
@@ -459,6 +464,7 @@
 
 
                     <form id="finish-form" action="" method="post">
+                        <input type="hidden" id="h-pet-id" name="plan_id" value="">
                         <input type="hidden" id="h-plan-id" name="plan_id" value="<?= $plan->identifier ?>">
                         <input type="hidden" id="h-cid" name="cid" value="<?= isset($user["id"]) ? $user["id"] : NULL ?>">
                         <button type="submit" class="confirmar-assinar-btn genric-btn info circle">
@@ -481,23 +487,49 @@
 
 
     <!-- Modal -->
-    <div class="modal fade" data-backdrop="static" id="ActivateConfirm" tabindex="-1" role="dialog" aria-labelledby="ActivateConfirmTitle" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" id="AddPetModal" tabindex="-1" role="dialog" aria-labelledby="AddPetModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Ativar assinatura</h5>
-                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                        </button> -->
+                    <h5 class="modal-title" id="AddPetModalLongTitle">Cadastrar Pet</h5>
                 </div>
                 <div class="modal-body">
-                    Você deseja mesmo <strong>ATIVAR</strong> sua assinatura?
+                    <form action="" id="cadPetForm">
+                        <h4>Dados do Pet</h4>
+                        <div class="row mt-10">
+                            <div class="col-8">
+                                <div style="position:relative">
+                                    <input type="text" name="pet_name" placeholder="Nome"  class="single-input">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div style="position:relative">
+                                    <input type="text" id="pet_nasc" name="pet_nasc" placeholder="Nascimento"  class="single-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-10">
+                            <div class="col-6">
+                                <div style="position:relative">
+                                    <input type="text" name="pet_raca" placeholder="Raça"  class="single-input">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div style="position:relative">
+                                    <input type="text" name="pet_peso" placeholder="Peso KG" class="single-input">
+                                </div>
+                            </div>
+                        </div>
+                        <hr style="margin-bottom: 0" />
+                        <div class="response_area"></div>
+                    </form>
+                    
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="genric-btn primary-border circle small" id="cancelar-ativacao-btn" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="genric-btn primary-border circle small" id="cancelar-add-pet-btn" data-dismiss="modal">Cancelar</button>
 
-                    <button type="button" data-ass-id="" class="genric-btn info-border circle small" id="confimar-ativacao-btn">
-                        <span class="textPlace">Confirmar ativação</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
+                    <button type="button" data-ass-id="" class="genric-btn info-border circle small" id="save-pet-btn">
+                        <span class="textPlace">Salvar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
                     </button>
                 </div>
             </div>
@@ -511,8 +543,8 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="ResponseCustomLongTitle"></h5>
                     <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button> -->
+                    <span aria-hidden="true">&times;</span>
+                    </button> -->
                 </div>
                 <div class="modal-body">
 
@@ -523,8 +555,10 @@
             </div>
         </div>
     </div>
-    <?= $this->endSection() ?>
+</div>
 
-    <?= $this->section('footer') ?>
-    <?= $this->include('layouts/main/parts/footer') ?>
-    <?= $this->endSection() ?>
+<?= $this->endSection() ?>
+
+<?= $this->section('footer') ?>
+<?= $this->include('layouts/main/parts/footer') ?>
+<?= $this->endSection() ?>

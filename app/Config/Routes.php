@@ -47,6 +47,7 @@ $routes->get('/minha-conta/assinatura/(:any)', 'MyAccount::assinatura/$1', ['fil
 $routes->get('/minha-conta/cartao/(:any)', 'MyAccount::cartao/$1', ['filter' => 'authFilter']);
 $routes->get('/minha-conta/cartoes', 'MyAccount::cartoes', ['filter' => 'authFilter']);
 $routes->get('/minha-conta/meus-dados', 'MyAccount::account', ['filter' => 'authFilter']);
+$routes->post('/minha-conta/pet/save', 'MyAccount::savePet', ['filter' => 'authFilter']);
 
 $routes->post('/register', 'RegisterController::store');
 $routes->post('/check-cEmail', 'RegisterController::checkCustomerMail');

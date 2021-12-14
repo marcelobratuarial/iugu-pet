@@ -118,7 +118,8 @@ class Home extends BaseController
         //     $args["pl"] = json_encode($rdata->payload);
         // }
         $plano = $this->doRequest($this->requestURL, $args);
-        
+        $user_default_payment = NULL;
+        $pets = [];
         if(isset($_SESSION['email'])) {
             // echo "<pre>";
             // print_r($_SESSION);
@@ -138,32 +139,51 @@ class Home extends BaseController
             if($u["totalItems"] > 0) {
                 $user = $u['items'][0];
             }
+
+
+            $petModel = new PetModel();
+            $cid = (empty($user))? '' : $user["id"];
+            $pets = $petModel->where('cid', $cid)->findAll();
+
+            
+            $dft_pmt = NULL; 
+            if(isset($user["default_payment_method_id"]) &&
+            !empty($user["default_payment_method_id"])) {
+                $dft_pmt = $user["default_payment_method_id"];
+            }
+                // echo "<pre>";
+                // print_r($user);
+            if(isset($user["payment_methods"]) && 
+            !empty($user["payment_methods"])) {
+                foreach($user["payment_methods"] as $pm) {
+                    if($pm["id"] == $dft_pmt) {
+                        $user_default_payment = $pm;
+                        break;
+                    }
+                }
+            }
+            $address = [];
+            $address["rua"] = '';
+            $address["rua"] .= (!empty($user["street"])) ? $user["street"] : '[Não informado]';
+            $address["rua"] .= (strlen($user["number"]) > 0) ? ', '.$user["number"] : '[S/N]';
+            $address["rua"] .= $user["complement"];
+            $address["bairro"] = '';
+            $address["bairro"] .= (!empty($user["district"])) ? $user["district"] : '[Não informado]';
+            $address["cidade"] = '';
+            $address["cidade"] .= (!empty($user["city"])) ? $user["city"] : '[Não informado]';
+            $address["estado"] = '';
+            $address["estado"] .= (!empty($user["state"])) ? $user["state"] : '[Não informado]';
+
+            $user["address"] = $address;
+
+            
         } else {
             $user = [];
         }
-
+        $items = file_get_contents(ROOTPATH."/content/estados.json");
+        $estados = json_decode($items, false); 
         // print_r($user);exit;
-        $petModel = new PetModel();
-        $cid = $user["id"];
-        $pets = $petModel->where('cid', $cid)->findAll();
-
-        $user_default_payment = NULL;
-        $dft_pmt = NULL; 
-        if(isset($user["default_payment_method_id"]) &&
-        !empty($user["default_payment_method_id"])) {
-            $dft_pmt = $user["default_payment_method_id"];
-        }
-            // echo "<pre>";
-            // print_r($user);
-        if(isset($user["payment_methods"]) && 
-        !empty($user["payment_methods"])) {
-            foreach($user["payment_methods"] as $pm) {
-                if($pm["id"] == $dft_pmt) {
-                    $user_default_payment = $pm;
-                    break;
-                }
-            }
-        }
+        
         // print_r($user_default_payment);exit;
             // echo "</pre>";
         
@@ -191,22 +211,7 @@ class Home extends BaseController
             
         // }
 
-        $address = [];
-        $address["rua"] = '';
-        $address["rua"] .= (!empty($user["street"])) ? $user["street"] : '[Não informado]';
-        $address["rua"] .= (strlen($user["number"]) > 0) ? ', '.$user["number"] : '[S/N]';
-        $address["rua"] .= $user["complement"];
-        $address["bairro"] = '';
-        $address["bairro"] .= (!empty($user["district"])) ? $user["district"] : '[Não informado]';
-        $address["cidade"] = '';
-        $address["cidade"] .= (!empty($user["city"])) ? $user["city"] : '[Não informado]';
-        $address["estado"] = '';
-        $address["estado"] .= (!empty($user["state"])) ? $user["state"] : '[Não informado]';
-
-        $user["address"] = $address;
-
-        $items = file_get_contents(ROOTPATH."/content/estados.json");
-        $estados = json_decode($items, false); 
+        
         // $args__ = [];
         // $args__["m"] = "GET";
         // $args__["pl"] = json_encode([
@@ -363,7 +368,15 @@ class Home extends BaseController
                         ]);
                     } else {
                         // $rdata["payload"]["two_step"] = true;
-                        // print_r($this->requestURL);
+                        // print_r($rr);exit;
+                        $petModel = new PetModel();
+
+                        $d = [
+                            'aid' => $rr["id"]
+                        ];
+                        $petModel->update($rdata["pet_id"], $d);
+
+                        
                         return $this->response->setJSON([
                             "error" => false,
                             "message" => "Assinatura efetuada com sucesso!",

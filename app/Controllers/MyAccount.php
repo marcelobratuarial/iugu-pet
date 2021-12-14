@@ -3,7 +3,9 @@
 namespace App\Controllers;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\UserModel;
+use App\Models\PetModel;
 use App\Controllers\Home;
+use Exception;
 
 class MyAccount extends BaseController
 {
@@ -498,5 +500,51 @@ class MyAccount extends BaseController
         }
         // print_r($user);exit;
         return view('account/my-data', ["assinaturas" => $assinaturas, "user"=>$user]);
+    }
+
+    public function savePet() {
+        $PetModel = new PetModel();
+        $data = (array) $this->request->getPost();
+        if(empty($data)) {
+            $data = (array) $this->request->getJSON();
+        }
+        $session = session();
+        $session->get('email');
+        $args_ = [];
+        $args_["m"] = "GET";
+        $a = new Home();
+        $this->requestURL = $a->baseApi . "customers";
+        $args_["pl"] = json_encode([
+            "query" => $session->get('email'),
+            "limit" => 1
+        ]);
+        $user = $a->doRequest($this->requestURL, $args_);
+        // echo gettype(json_decode($user, true));exit;
+        $u = json_decode($user, true)["items"][0];
+        
+        if(!empty($u)) {
+            $data["cid"] = $u['id'];
+        }
+        $response = service('response');
+        try {
+            $saved = $PetModel->save($data);
+            
+            if($saved) {
+                $dbID = $PetModel->insertID();
+                $pet = $PetModel->find($dbID);
+                return $response->setJSON([
+                    "error" => false,
+                    'message' => "Seu Pet foi cadastrado com sucesso!",
+                    'pet_data' => $pet
+                ]);
+            }
+        } catch (Exception $ex) {
+            return $response->setJSON([
+                "error" => true,
+                'message' => "Erro ao salvar cadastro do seu Pet. Tente novamente. Se o erro persistir, entre em contato.",
+                'pl' => $ex->getMessage()
+            ]);
+        }
+        
     }
 }

@@ -9,10 +9,10 @@ class PetModel extends Model
     protected $primaryKey = 'id';
     protected $protectFields = [];
     protected $allowedFields = [
-      'name',
-      'nascimento',
-      'raca',
-      'peso',
+      'pet_name',
+      'pet_nasc',
+      'pet_raca',
+      'pet_peso',
       'cid', // CUSTOMER ID
       'aid', // ASSINATURA ID
     ];

@@ -590,7 +590,8 @@
                             'payload': {
                                 'plan_identifier': $("#h-plan-id").val(),
                                 'customer_id': $("#h-cid").val()
-                            }
+                            },
+                            'pet_id': $("#h-pet-id").val()
                         }
                         $.ajax({
                                 type: "POST",
@@ -2027,6 +2028,7 @@
                 });
             })
 
+            $("#pet_nasc").mask('00/00/0000');
             $("#cep").mask("99.999-999");
         })
         $('#datepicker').datepicker({
@@ -2046,6 +2048,281 @@
         var timepicker = $('#timepicker').timepicker({
             format: 'HH.MM'
         });
+
+
+
+
+
+        $(document).ready(function() {
+            $("#pet-list-box").on("click", '.pet-item', function(e) {
+                e.preventDefault()
+                $("#pet-list-box").find("span.check-mark").remove()
+                $(this).append('<span class="check-mark text-success"><i class="fa fa-check-square-o fa-2x"></i></span>')
+                console.log($(this).data("petid"))
+                $("#h-pet-id").val($(this).data("petid"))
+            })
+
+
+            var cadPetForm = function() {
+                $("#cadPetForm").validate({
+                    errorClass: "field_error",
+                    rules: {
+                        pet_name: {
+                            required: true,
+                            minlength : 2,
+                            maxlength : 10
+                        },
+                        pet_nasc: {
+                            required: true,
+                            minlength : 7,
+                            maxlength : 10
+                        },
+                        pet_raca: {
+                            required: true,
+                            minlength : 2,
+                            maxlength : 30
+                        },
+                        pet_peso: {
+                            required: true
+                        }
+                    },
+                    
+                    messages: {
+                        pet_name: "Obrigatório",
+                        pet_nasc: "Obrigatório",
+                        pet_raca: "Obrigatório",
+                        pet_peso: "Obrigatório",
+                    },
+                    ignore: [],
+                    errorElement: 'span',
+                    // wrapper: 'span',
+                    errorPlacement: function(error, element) {
+                        if($(element).parent('div').find('.dyn-response').length == 0) {
+
+                            $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i></div>").insertAfter(element)
+                            var t = $(element).parent('div').find(".dyn-response")
+                            if($(t).find("span").length == 0) {
+                                $("<span>"+$(error).html()+"</span>").appendTo($(t))
+                                t.addClass("show")
+                            }
+                        }
+                        
+                    },
+                    
+                    highlight: function(element, errorClass, validClass) {
+                        
+                        $(element).closest('div').find('.dyn-response').addClass('show')
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).closest('div').find('.dyn-response').removeClass('show').remove() //removeClass(errorClass).addClass(validClass);
+                        
+                        console.log($(element))
+                    }
+                })
+            }
+            cadPetForm()
+            $("#cadPetForm").on("submit", function(e) {
+                var form = $(this);
+                console.log(form)
+                e.preventDefault()
+                // Seu código para continuar a submissão
+                // Ex: form.submit();
+                $("#cancelar-add-pet-btn").addClass('disabled')
+                $("#cancelar-add-pet-btn").attr('disabled', true)
+                $("#save-pet-btn .textPlace").html('Aguarde')
+                $("#save-pet-btn .iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                
+                
+                console.log("teste")
+                if($("#cadPetForm").valid()) {
+                    console.log("valid")
+                    var url = '<?= base_url('/minha-conta/pet/save') ?>';
+                    // var lb = $(this).parent('div').find(".custom-control-label")
+                    var data = $(form).serializeArray()
+                    console.log(typeof data)
+                    console.log(data)
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        // fail: errPost,
+                        success: function (response) {
+                            console.log(response)
+                            if(!response.error) {
+                                
+                                var p = new Promise(function(resolve) {
+                                    $(form).find(".response_area").html(response.message)
+                                
+                                    setTimeout(() => {
+                                        $(form).find(".response_area").removeClass("field_error").addClass("show")
+                                    }, 100)    
+                                    var li = '<li data-petID="'+ response.pet_data.id +'" class="pet-item list-group-item d-flex justify-content-between align-items-center">'+
+                                    '<h3 style="margin-bottom: 0">'+ response.pet_data.pet_name + '</h3>' +
+                                    '<span class="check-mark text-success"><i class="fa fa-check-square-o fa-2x"></i></span>' +
+                                    '</li>'
+                                    $("#h-pet-id").val(response.pet_data.id)
+                                    setTimeout(() => {
+                                        resolve(li)
+                                    }, 3000);
+                                })
+                                p.then((li) => {
+                                    $("#pet-list-box").find("span.check-mark").remove()
+                                    $(li).appendTo("#pet-list-box ul")
+                                    $("#cadPetForm")[0].reset()
+                                    setTimeout(() => {
+                                        
+                                        $("#cancelar-add-pet-btn").removeClass('disabled')
+                                        $("#cancelar-add-pet-btn").removeAttr('disabled')
+                                        $("#save-pet-btn").removeClass('disabled')
+                                        $("#save-pet-btn").removeAttr('disabled')
+                                        $("#save-pet-btn .textPlace").html('Salvar')
+                                        $("#save-pet-btn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                        $("#no-pets-box").slideUp(100)
+                                        $("#pet-list-box").slideDown(200)
+                                        $("#pet-list-box .add-new-pet-btn").slideDown(100)
+                                        $('#AddPetModal').modal("hide")
+                                        $(form).find(".response_area").removeClass("field_error").removeClass("show")
+                                    
+                                    }, 100);
+                                   
+
+                                    // $("html").animate({
+                                    //     scrollTop: f
+                                    // }, 350);
+                                }).then(() => {
+                                    // $.each(response.logs, function(index, i) {
+                                    //     var tr = '<tr><th scope="row">'+ index +'</th>' +
+                                    //     '<td>'+ i.data + '</td>' +
+                                    //     '<td>' + i.description + '</td>' +
+                                    //     '<td>' + i.notes + '</td></tr>'
+                                    //     $(tr).appendTo("#logsBox tbody")
+                                    // })  
+                                    // $('.assinaturas').find(".badge").removeClass("badge-warning").addClass("badge-success").html("ATIVO")
+                                    // $('#ResponseCustom').modal("show")
+
+                                    // setTimeout(() => {
+                                    //     $(".checkoutPage .form-check-input").addClass("disabled")
+                                    //     $(".checkoutPage .form-check-input").attr("disabled", true)
+                                    //     $(".verBox").find("form:first input:first").focus()   
+                                    //     $(form).find(".registerBtn").removeClass('disabled')
+                                    //     $(form).find(".registerBtn").removeAttr('disabled')
+                                    //     $(form).find(".registerBtn .textPlace").html('Continuar')
+                                    //     $(form).find(".registerBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                
+                                    // }, 360);
+                                    
+                                })
+                                
+                            } else {
+                                $(form).find(".response_area").html(response.message)
+                                
+                                setTimeout(() => {
+                                    $(form).find(".response_area").addClass("field_error").addClass("show")
+                                }, 200)    
+                                setTimeout(() => {
+                                    $("#cancelar-add-pet-btn").removeClass('disabled')
+                                    $("#cancelar-add-pet-btn").removeAttr('disabled')
+                                    $("#save-pet-btn .textPlace").html('Salvar')
+                                    $("#save-pet-btn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                }, 200);
+                            } 
+                            
+                        },
+                        dataType:"json",
+                        // headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    });
+                } else {
+                    console.warn("invalid")
+                   
+                    setTimeout(() => {
+                        $("#cancelar-add-pet-btn").removeClass('disabled')
+                        $("#cancelar-add-pet-btn").removeAttr('disabled')
+                        $("#save-pet-btn .textPlace").html('Salvar')
+                        $("#save-pet-btn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                        
+                    }, 900);
+                }
+                return
+                // var url = '<?= base_url('/register') ?>';
+                // var lb = $(this).parent('div').find(".custom-control-label")
+                // var data = $(form).serializeArray()
+                // $.ajax({
+                //     type: "POST",
+                //     url: url,
+                //     data: data,
+                //     // fail: errPost,
+                //     success: function (response) {
+                //         console.log(response)
+                //         if(!response.error) {
+                            
+                //             var p = new Promise(function(resolve) {
+                //                 $(".optChecked .verBox").addClass("show")
+                //                 $(".optChecked .dataBox").addClass("hide")
+                //                 $(".optChecked .custom-message").html(response.custom_message)
+                //                 // $("html").animate({scrollTop: 340}, 350);
+                //                 setTimeout(() => {
+                //                     resolve("OK")
+                //                 }, 200);
+                //             })
+                //             p.then(() => {
+                //                 $(".dataBox.hide").slideUp(200)
+                //                 var ref1 = $(".bradcam_area").outerHeight(true)
+                //                 var ref2 = $("header").outerHeight(true)
+                //                 var diff = ref1 + ref2
+                //                 var ref = $(".verBox").offset().top
+                //                 var f = (ref + 180) - diff
+                                
+
+                //                 $("html").animate({
+                //                     scrollTop: f
+                //                 }, 350);
+                //             }).then(() => {
+                //                 setTimeout(() => {
+                //                     $(".checkoutPage .form-check-input").addClass("disabled")
+                //                     $(".checkoutPage .form-check-input").attr("disabled", true)
+                //                     $(".verBox").find("form:first input:first").focus()    
+                //                 }, 360);
+                                
+                //             })
+
+                //         }
+                //         if(response.error) {
+                //             if(response.error_code == 'REQ_FIELDS') {
+                //                 console.log(response.errors)
+                //                 $.each(response.errors, function(f,m) {
+                //                     console.log(f)
+                //                     console.log(m)
+                //                     var el = $(form).find("input[name='"+f+"']")
+                //                     $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i><span>"+m+"</span></div>").insertAfter(el)
+                //                     console.log(el)
+                //                     setTimeout(() => {
+                //                         $(".dyn-response").addClass("show")
+                //                     }, 700);
+                //                 })
+                //             }
+                //         }
+                //         // lb.text(response)
+                //         // $(".custom-control-label").text(text);
+                //         // $('#imgPreview').attr('src', '');
+                //         // $('#imgPreview').slideUp(200);
+                //         // $(".remove-image").slideUp(100);
+                //         // $('#noImageBox').slideDown(250);
+                //         // $("#upload-box").slideDown(500);
+                //     },
+                //     dataType: 'json',
+                //     // headers: {'X-Requested-With': 'XMLHttpRequest'}
+                // });
+                // if ($(this).is(":checked") ) {
+                //     // console
+                // }
+            })
+
+            $("#save-pet-btn").on("click", function(e) {
+                e.preventDefault()
+                $("#cadPetForm").submit()        
+                
+            })
+        })
     </script>
 </body>
 
