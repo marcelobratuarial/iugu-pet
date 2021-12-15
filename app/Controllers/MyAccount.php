@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 use CodeIgniter\API\ResponseTrait;
+use \Firebase\JWT\JWT;
 use App\Models\UserModel;
 use App\Models\PetModel;
 use App\Controllers\Home;
@@ -717,5 +718,109 @@ class MyAccount extends BaseController
             echo json_encode($response);
             exit;
         }
+    }
+
+    public function saveNewPass()
+    {
+        helper(['form']);
+        session();
+        $rules = [
+            'currentpassword'  => [
+                'rules' => [
+                    'required'
+                ],
+                'errors' => [
+                    'required' => 'Senha atual obrigatória.'
+                ]
+            ],
+            'password'  => [
+                'rules' => [
+                    'required',
+                    'min_length[8]',
+                    'max_length[50]'
+                ],
+                'errors' => [
+                    'required' => 'Senha obrigatória.',
+                    'min_length' => 'Senha muito curta. Min: 8',
+                    'max_length' => 'Senha muito longa. Max : 50',
+                ]
+            ],
+            'confirmpassword'  => [
+                'rules' => [
+                    'matches[password]'
+                ],
+                'errors' => [
+                    'matches' => 'Senha de confirmação deve ser idêntica.'
+                ]
+            ],
+        ];
+        $model = new UserModel();
+        $response = service('response');
+        if(isset($_SESSION['email'])) {
+            $this->dbUser = $model->where("email", $_SESSION['email'])->first();
+        } else {
+            return redirect()->to('/login');
+        }
+        // var_dump($this->validate($rules));
+        // print_r($this->request->getPost());exit;
+        $pass = $this->dbUser['password'];
+        // echo $pass;
+        // echo "<hr>";
+        $password = $this->request->getVar('currentpassword');
+        // echo $password;
+        $pwd_verify = password_verify($password, $pass);
+        if($pwd_verify){
+            if ($this->validate($rules)) {
+            
+                
+                
+
+                $data = [
+                    'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT)
+                ];
+                
+               
+                if ($model->update($this->dbUser['id'], $data)) {
+                    return $response->setJSON([
+                        "error" => false,
+                        'message' => "Sua senha foi atualizada com sucesso!",
+                    ]);
+
+                    
+                } else {
+                    return $response->setJSON([
+                        "error" => true,
+                        'message' => "Erro ao atualizar senha!",
+                    ]);
+                    exit;
+                }
+               
+                
+    
+                // return redirect()->to('/login');
+            } else {
+                $validation = $this->validator;
+                
+                $errors = $validation->getErrors();
+                $response = [
+                    "error" => true,
+                    "error_code" => "REQ_FIELDS",
+                    "message" => "Verifique os campos obrigatórios",
+                    "errors" => $errors
+                ];
+                
+    
+                echo json_encode($response);
+                exit;
+            }
+        } else {
+            return $response->setJSON([
+                "error" => true,
+                'message' => "Erro ao atualizar senha!",
+            ]);
+            exit;
+        }
+        exit;
+        
     }
 }

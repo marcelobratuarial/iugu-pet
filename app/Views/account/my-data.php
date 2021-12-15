@@ -160,7 +160,7 @@
                             <div class="col-6">
                                 <div style="position:relative">
                                     <label for="password">Nova senha</label>
-                                    <input id="password type="password" name="password" placeholder="*****" class="single-input">
+                                    <input id="password" type="password" name="password" placeholder="*****" class="single-input">
                                 </div>
                             </div>
                             <div class="col-6">
@@ -174,7 +174,7 @@
                     </div>
                     <hr style="margin-bottom: 0" />
                     <div class="response_area"></div>
-                    <button type="submit" class="d-flex align-items-center justify-content-center registerBtn genric-btn success circle arrow mt-1"><span class="textPlace">Continuar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span></button>
+                    <button type="submit" class="d-flex align-items-center justify-content-center changePassFormBtn genric-btn success circle arrow mt-1"><span class="textPlace">Atualizar senha</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span></button>
                 </form>
             </section>
         </div>

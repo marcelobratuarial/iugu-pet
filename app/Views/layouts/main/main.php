@@ -2492,15 +2492,6 @@
                     rules: {
                         // simple rule, converted to {required:true}
                         name: "required",
-                        password: {
-                            required: true,
-                            minlength : 5,
-                        },
-                        confirmpassword : {
-                            required: true,
-                            minlength : 5,
-                            equalTo: "#registerForm input[name=password]"
-                        },
                         // compound rule
                         email: {
                             required: true,
@@ -2671,6 +2662,229 @@
                         $(form).find(".editarFormBtn").removeAttr('disabled')
                         $(form).find(".editarFormBtn .textPlace").html('Continuar')
                         $(form).find(".editarFormBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                
+                    }, 900);
+                }
+                return
+                
+            })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+            var changePassForm = function() {
+                $("#changePassForm").validate({
+                    errorClass: "field_error",
+                    rules: {
+                        // simple rule, converted to {required:true}
+                        currentpassword: {
+                            required: true,
+                            minlength : 5,
+                        },
+                        password: {
+                            required: true,
+                            minlength : 5,
+                        },
+                        confirmpassword : {
+                            required: true,
+                            minlength : 5,
+                            equalTo: "#changePassForm input[name=password]"
+                        },
+                        
+                    },
+                    
+                    messages: {
+                        password: "Obrigatório",
+                        confirmpassword: "Obrigatório",
+                    },
+                    ignore: [],
+                    errorElement: 'span',
+                    // wrapper: 'span',
+                    errorPlacement: function(error, element) {
+                        if($(element).parent('div').find('.dyn-response').length == 0) {
+
+                            $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i></div>").insertAfter(element)
+                            var t = $(element).parent('div').find(".dyn-response")
+                            if($(t).find("span").length == 0) {
+                                $("<span>"+$(error).html()+"</span>").appendTo($(t))
+                                t.addClass("show")
+                            }
+                        }
+                        // $(error).attr('style', '')
+                        // console.log($(error).html())
+                        
+                    },
+                    // invalidHandler: function(event, validator) {
+                    // },
+                    // submitHandler: function() { 
+                        
+                    // },
+
+                    highlight: function(element, errorClass, validClass) {
+                        // $(element).addClass(errorClass).removeClass(validClass);
+                        // $(element.form).find("label[for=" + element.id + "]")
+                        // .addClass(errorClass);
+                        // console.log(element)
+                        $(element).closest('div').find('.dyn-response').addClass('show')
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).closest('div').find('.dyn-response').removeClass('show').remove() //removeClass(errorClass).addClass(validClass);
+                        // $(element.form).find("label[for=" + element.id + "]")
+                        // .removeClass(errorClass);
+                        console.log($(element))
+                    }
+                })
+            }
+            changePassForm()
+            $("#changePassForm").on("submit", function(e) {
+                var form = $(this);
+                e.preventDefault()
+                // Seu código para continuar a submissão
+                // Ex: form.submit();
+                $(form).find(".changePassFormBtn").addClass('disabled')
+                $(form).find(".changePassFormBtn").attr('disabled', true)
+                $(form).find(".changePassFormBtn .textPlace").html('Aguarde')
+                $(form).find(".changePassFormBtn .iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                
+                
+                console.log("teste")
+                if($("#changePassForm").valid()) {
+                    console.log("valid")
+                    var url = '<?= base_url('/minha-conta/user/np/save') ?>';
+                    // var lb = $(this).parent('div').find(".custom-control-label")
+                    var data = $(form).serializeArray()
+                    console.log(typeof data)
+                    console.log(data)
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        // fail: errPost,
+                        success: function (response) {
+                            console.log(response)
+                            if(!response.error) {
+                                
+                                var p = new Promise(function(resolve) {
+                                    $("#changePassForm").find(".response_area").html("Senha atualizada com sucesso!");
+                                    $("#changePassForm").find(".response_area").removeClass('field_error').addClass("show");
+                                    // $("html").animate({scrollTop: 340}, 350);
+                                    setTimeout(() => {
+                                        resolve("OK")
+                                    }, 200);
+                                })
+                                p.then(() => {
+                                    $(".dataBox.hide").slideUp(200)
+                                    var ref1 = $(".bradcam_area").outerHeight(true)
+                                    var ref2 = $("header").outerHeight(true)
+                                    var diff = ref1 + ref2
+                                    var ref = $("#changePassForm").offset().top
+                                    var f = (ref + 180) - diff
+                                    
+
+                                    $("html").animate({
+                                        scrollTop: f
+                                    }, 350);
+                                }).then(() => {
+                                   
+                                    setTimeout(() => {
+                                        $(form).find(".changePassFormBtn").removeClass('disabled')
+                                        $(form).find(".changePassFormBtn").removeAttr('disabled')
+                                        $(form).find(".changePassFormBtn .textPlace").html('Atualizar senha')
+                                        $(form).find(".changePassFormBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                        $("#changePassForm")[0].reset()
+                                        $("#changePassForm").find(".response_area").html("");
+                                        $("#changePassForm").find(".response_area").removeClass('field_error').removeClass("show");
+                                    }, 2000);
+                                    
+                                })
+                                
+                            } else {
+                                if(response.error_code == 'REQ_FIELDS') {
+                                    // console.log(response.errors)
+                                    $.each(response.errors, function(f,m) {
+                                        // console.log(f)
+                                        // console.log(m)
+                                        var el = $(form).find("input[name='"+f+"']")
+                                        if($(el).parent().find(".dyn-response").length == 0) {
+                                            $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i><span>"+m+"</span></div>").insertAfter(el)
+                                        }                                                
+                                        // console.log(el)
+                                        setTimeout(() => {
+                                            $(".dyn-response").addClass("show")
+                                        }, 400);
+                                    })
+                                    
+                                    setTimeout(() => {
+                                        $(form).find(".changePassFormBtn").removeClass('disabled')
+                                        $(form).find(".changePassFormBtn").removeAttr('disabled')
+                                        $(form).find(".changePassFormBtn .textPlace").html('Atualizar senha')
+                                        $(form).find(".changePassFormBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                
+                                    }, 200);
+                                } else {
+                                    var p = new Promise(function(resolve) {
+                                        $("#changePassForm").find(".response_area").html("Erro ao atualizar senha!");
+                                        $("#changePassForm").find(".response_area").addClass('field_error').addClass("show");
+                                        // $("html").animate({scrollTop: 340}, 350);
+                                        setTimeout(() => {
+                                            resolve("OK")
+                                        }, 200);
+                                    })
+                                    p.then(() => {
+                                        
+                                        var ref1 = $(".bradcam_area").outerHeight(true)
+                                        var ref2 = $("header").outerHeight(true)
+                                        var diff = ref1 + ref2
+                                        var ref = $("#changePassForm").offset().top
+                                        var f = (ref + 180) - diff
+                                        
+
+                                        $("html").animate({
+                                            scrollTop: f
+                                        }, 350);
+                                    }).then(() => {
+                                    
+                                        setTimeout(() => {
+                                            $(form).find(".changePassFormBtn").removeClass('disabled')
+                                            $(form).find(".changePassFormBtn").removeAttr('disabled')
+                                            $(form).find(".changePassFormBtn .textPlace").html('Atualizar senha')
+                                            $(form).find(".changePassFormBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                            $("#changePassForm")
+                                            $("#changePassForm").find(".response_area").html("");
+                                            $("#changePassForm").find(".response_area").removeClass('field_error').removeClass("show");
+                                        }, 2000);
+                                        
+                                    })
+                                }
+                                
+                            } 
+                            
+                        },
+                        dataType:"json",
+                        // headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    });
+                } else {
+                    console.warn("invalid")
+                    setTimeout(() => {
+                        $(form).find(".changePassFormBtn").removeClass('disabled')
+                        $(form).find(".changePassFormBtn").removeAttr('disabled')
+                        $(form).find(".changePassFormBtn .textPlace").html('Atualizar senha')
+                        $(form).find(".changePassFormBtn .iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
                 
                     }, 900);
                 }

@@ -49,6 +49,7 @@ $routes->get('/minha-conta/cartoes', 'MyAccount::cartoes', ['filter' => 'authFil
 $routes->get('/minha-conta/meus-dados', 'MyAccount::account', ['filter' => 'authFilter']);
 $routes->post('/minha-conta/pet/save', 'MyAccount::savePet', ['filter' => 'authFilter']);
 $routes->post('/minha-conta/user/save', 'MyAccount::saveMyData', ['filter' => 'authFilter']);
+$routes->post('/minha-conta/user/np/save', 'MyAccount::saveNewPass', ['filter' => 'authFilter']);
 
 $routes->post('/register', 'RegisterController::store');
 $routes->post('/check-cEmail', 'RegisterController::checkCustomerMail');
