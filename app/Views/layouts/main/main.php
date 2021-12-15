@@ -568,23 +568,119 @@
                         // console
                     }
                 })
+
+
+                var finishForm = function() {
+                    $("#finish-form").validate({
+                        errorClass: "field_error",
+                        rules: {
+                            // simple rule, converted to {required:true}
+                            h_pet_id: {
+                                required: true,
+                                minlength : 1,
+                                maxlength: 10
+                            },
+                            h_plan_id: {
+                                required: true,
+                                minlength : 2,
+                                maxlength : 32,
+                            },
+                            h_cid : {
+                                required: true,
+                                minlength: 10,
+                                maxlength: 64
+                            }
+                        },
+                        
+                        messages: {
+                            h_pet_id: "Obrigatório",
+                            h_plan_id: "Obrigatório",
+                            h_cid: "Obrigatório"
+                        },
+                        ignore: [],
+                        errorElement: 'span',
+                        // wrapper: 'span',
+                        errorPlacement: function(error, element) {
+                            if($(element).attr("name") == 'h_pet_id') {
+                                console.log("petid")
+                                if($("#pet-list-box").find('.dyn-response').length == 0) {
+
+                                    $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i></div>").appendTo($("#pet-list-box"))
+                                    var t = $("#pet-list-box").find(".dyn-response")
+                                    if($(t).find("span").length == 0) {
+                                        $("<span>"+$(error).html()+"</span>").appendTo($(t))
+                                        t.addClass("show")
+                                    }
+                                }
+                            } else if($(element).attr("name") == 'h_plan_id') {
+                                console.log("planid")
+                            } else if($(element).attr("name") == 'h_cid') {
+                                console.log("cid")
+                            } else {
+                                if($(element).parent('div').find('.dyn-response').length == 0) {
+
+                                    $("<div class='dyn-response'><i class='fa fa-exclamation' aria-hidden='true'></i></div>").insertAfter(element)
+                                    var t = $(element).parent('div').find(".dyn-response")
+                                    if($(t).find("span").length == 0) {
+                                        $("<span>"+$(error).html()+"</span>").appendTo($(t))
+                                        t.addClass("show")
+                                    }
+                                }
+                            }
+                            
+                            
+                            // $(error).attr('style', '')
+                            // console.log("errorPlacement",$(element).attr("name"))
+                            
+                        },
+                        // invalidHandler: function(event, validator) {
+                        // },
+                        // submitHandler: function() { 
+                            
+                        // },
+
+                        highlight: function(element, errorClass, validClass) {
+                            // $(element).addClass(errorClass).removeClass(validClass);
+                            // $(element.form).find("label[for=" + element.id + "]")
+                            // .addClass(errorClass);
+                            // console.log("highlight", $(element).attr("name"))
+                            $(element).closest('div').find('.dyn-response').addClass('show')
+                        },
+                        unhighlight: function(element, errorClass, validClass) {
+                            if($(element).attr("name") == 'h_pet_id') {
+                                console.log("petid")
+                                $("#pet-list-box").find(".dyn-response").removeClass('show').remove()
+                                
+                                
+                            } else {
+
+                                $(element).closest('div').find('.dyn-response').removeClass('show').remove() //removeClass(errorClass).addClass(validClass);
+                            }
+                            // $(element.form).find("label[for=" + element.id + "]")
+                            // .removeClass(errorClass);
+                            // console.log("unhilight", $(element).attr("name"))
+                        }
+                    })
+                }
+                finishForm()
                 $('#finish-form').on("submit", function(evt) {
                     evt.preventDefault()
                     var form = $(this);
 
+                    if($("#finish-form").valid()) {
 
-                    $("#cancelar-assinar-btn").addClass('disabled')
-                    $("#cancelar-assinar-btn").attr('disabled', true)
+                        $("#cancelar-assinar-btn").addClass('disabled')
+                        $("#cancelar-assinar-btn").attr('disabled', true)
 
-                    $(this).addClass('disabled')
-                    $(this).attr('disabled', true)
-                    $(this).find(".textPlace").html('Processando')
-                    $(this).find(".iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
-                    
-                    var that = this
-                    
-                    var url = '<?= base_url('/api') ?>';
-                    var payload = {
+                        $(this).addClass('disabled')
+                        $(this).attr('disabled', true)
+                        $(this).find(".textPlace").html('Processando')
+                        $(this).find(".iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                        
+                        var that = this
+                        
+                        var url = '<?= base_url('/api') ?>';
+                        var payload = {
                             'call': 'subscriptions',
                             'method': 'POST',
                             'payload': {
@@ -594,88 +690,80 @@
                             'pet_id': $("#h-pet-id").val()
                         }
                         $.ajax({
-                                type: "POST",
-                                url: url,
-                                data: payload,
-                                fail: function(r){
-                                    console.log(r)
-                                },
-                                success: function (response) {
-                                    console.log(response)
-                                    console.log(typeof response.error)
-                                    if(response.error) {
-                                        // if(response.error_code == 'UNAUTH' || response.error_code == 'UNAUTH_NE' ) {
-                                        //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
-                                        // } else if(response.error_code == 'NEED_VER') {
-                                        // }
+                            type: "POST",
+                            url: url,
+                            data: payload,
+                            fail: function(r){
+                                console.log(r)
+                            },
+                            success: function (response) {
+                                console.log(response)
+                                console.log(typeof response.error)
+                                if(response.error) {
+                                    
+                                    
+                                    var p = new Promise((resolve)=> {
+                                        var m = response.message
+                                        m += '<div>'+response.response_data.errors+'</div>'
+                                        $("#AssinarConfirm").find(".response_area").html(m)
+                                        resolve("OK")
+                                    })
+                                    p.then((e)=> {
+                                        console.log(e)
+                                        $("#AssinarConfirm").find(".response_area").addClass("field_error").addClass("show");
+                                    }).then((e) => {
                                         
-                                        var p = new Promise((resolve)=> {
-                                            var m = response.message
-                                            m += '<div>'+response.response_data.errors+'</div>'
-                                            $("#AssinarConfirm").find(".response_area").html(m)
-                                            resolve("OK")
-                                        })
-                                        p.then((e)=> {
-                                            console.log(e)
-                                            $("#AssinarConfirm").find(".response_area").addClass("field_error").addClass("show");
-                                        }).then((e) => {
+                                        setTimeout(() => {
                                             
-                                            setTimeout(() => {
-                                                
-                                                $("#AssinarConfirm").find(".response_area").removeClass("field_error").removeClass("show");
-                                                $("#AssinarConfirm").find(".response_area").html('')
-                                                $("#cancelar-assinar-btn").removeClass('disabled')
-                                                $("#cancelar-assinar-btn").removeAttr('disabled')
+                                            $("#AssinarConfirm").find(".response_area").removeClass("field_error").removeClass("show");
+                                            $("#AssinarConfirm").find(".response_area").html('')
+                                            $("#cancelar-assinar-btn").removeClass('disabled')
+                                            $("#cancelar-assinar-btn").removeAttr('disabled')
 
-                                                $(that).removeClass('disabled')
-                                                $(that).removeAttr('disabled')
-                                                $(that).find(".textPlace").html('Confirmar assinatura')
-                                                $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
-                                
-                                            }, 4000);
-                                            
-                                        }) 
+                                            $(that).removeClass('disabled')
+                                            $(that).removeAttr('disabled')
+                                            $(that).find(".textPlace").html('Confirmar assinatura')
+                                            $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                            
+                                        }, 4000);
                                         
+                                    }) 
+                                    
+                                    
+                                } else {
+                                    var p = new Promise((resolve)=> {
+                                        var m = response.message
+                                        m   += '<div><hr style="margin-bottom: 0">' 
+                                            + '<a href="<?= base_url('minha-conta/assinatura') ?>/'+response.response_data.id+'" class="btn btn-primary">Detalhes</a>'
+                                            + ' <a href="<?= base_url('minha-conta') ?>" class="btn btn-primary">Minha conta</a>'
+                                            + '</div>'
+                                        $("#AssinarConfirm").find(".response_area").html(m)
+                                        resolve("OK")
+                                    })
+                                    p.then((e)=> {
+                                        console.log(e)
+                                        $("#cancelar-assinar-btn").slideUp()
+                                        $(that).slideUp()
+                                        $("#AssinarConfirm").find(".response_area").addClass("show");
+                                    }).then((e) => {
                                         
-                                    } else {
-                                        var p = new Promise((resolve)=> {
-                                            var m = response.message
-                                            m   += '<div><hr style="margin-bottom: 0">' 
-                                                + '<a href="<?= base_url('minha-conta/assinatura') ?>/'+response.response_data.id+'" class="btn btn-primary">Detalhes</a>'
-                                                + ' <a href="<?= base_url('minha-conta') ?>" class="btn btn-primary">Minha conta</a>'
-                                                + '</div>'
-                                            $("#AssinarConfirm").find(".response_area").html(m)
-                                            resolve("OK")
-                                        })
-                                        p.then((e)=> {
-                                            console.log(e)
-                                            $("#cancelar-assinar-btn").slideUp()
-                                            $(that).slideUp()
-                                            $("#AssinarConfirm").find(".response_area").addClass("show");
-                                        }).then((e) => {
+                                        setTimeout(() => {
                                             
-                                            setTimeout(() => {
-                                                
-                                                
-                                                // $(that).removeAttr('disabled')
-                                                // $(that).find(".textPlace").html('Confirmar assinatura')
-                                                // $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                            
+                                            // $(that).removeAttr('disabled')
+                                            // $(that).find(".textPlace").html('Confirmar assinatura')
+                                            // $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                            
+                                        }, 4000);
+                                        
+                                    })
+                                }
                                 
-                                            }, 4000);
-                                            
-                                        })
-                                    }
-                                    // lb.text(response)
-                                    // $(".custom-control-label").text(text);
-                                    // $('#imgPreview').attr('src', '');
-                                    // $('#imgPreview').slideUp(200);
-                                    // $(".remove-image").slideUp(100);
-                                    // $('#noImageBox').slideDown(250);
-                                    // $("#upload-box").slideDown(500);
-                                },
-                                dataType: 'json',
-                                headers: {'X-Requested-With': 'XMLHttpRequest'}
-                            });
+                            },
+                            dataType: 'json',
+                            headers: {'X-Requested-With': 'XMLHttpRequest'}
+                        });
+                    }
                 });
                 $('#payment-form').on("submit", function(evt) {
                     evt.preventDefault()
@@ -775,65 +863,111 @@
                                             
                                             
                                         } else {
-                                            var p = new Promise((resolve)=> {
-                                                $(form).find(".response_area").html(response.message)
-                                                $("#defaultCard").find(".form-check-label h3").html(response.response_data.data.display_number)
-                                                $("#defaultCard").find(".defCard .def-card-brand").html(response.response_data.data.brand)
-                                                $("#defaultCard").find(".defCard .def-card-name").html('<strong>'+response.response_data.data.holder_name+'</strong>')
-                                                $("#defaultCard").find(".manageCardLink .cardCount").html(response.response_data.cardCount)
+                                            var ref = $(form).data("ref")
+
+                                            if(ref == 'cartoes') {
+                                                console.log(ref)
                                                 
-                                                resolve("OK")
-                                            })
-                                            p.then((e)=> {
-                                                console.log(e)
-                                                $(form).find(".response_area").slideDown(234);
-                                            }).then((e) => {
-                                                $(".manageCardLink").slideDown(100);
-                                                setTimeout(() => {
-                                                    $(form).find(".response_area").slideUp(432);
-                                                    $("#payment-form")[0].reset()
-                                                    $("#pdefault").trigger("click")
-                                                    $("#defaultCard").slideDown(500);
+
+                                                var p = new Promise((resolve)=> {
+                                                    $(form).find(".response_area").html(response.message)
+                                                    var cnt = $(".cartoes").find("table tbody tr").length + 1
+                                                    var v = response.response_data.data.brand
+                                                    $(".cartoes").find("table tbody tr td span").remove()
+                                                    var tr = '<tr>' +
+                                                        '<th scope="row">'+cnt+'</th>' +
+                                                        '<td><img src="<?=base_url("assets/img/brands/") ?>/'+v.toLowerCase()+'.png" width="80" style="margin-right: 20px; object-fit: cover; width: 80px" >'+v+'</td>' +
+                                                        '<td>' +response.response_data.data.display_number+ '<span class="badge badge-primary">Padrão</span><br><strong>' + response.response_data.data.holder_name + '</strong></td>' + 
+                                                        '<td><a href="<?= base_url('minha-conta/cartao/') ?>/'+response.response_data.id+'" class="genric-btn info-border circle small">Detalhes</a></td>' +
+                                                        '</tr>'
+                                                    $(tr).appendTo($(".cartoes").find("table tbody"))
+
                                                     
-                                                }, 2000);
+                                                    resolve("OK")
+                                                })
+                                                p.then((e)=> {
+                                                    console.log(e)
+                                                    $(form).find(".response_area").addClass("show");
+                                                }).then((e) => {
+                                                    
+                                                    setTimeout(() => {
+                                                        $(form).find(".response_area").removeClass("show");
+                                                        $("#payment-form")[0].reset()
+                                                        $(".AddCartaoArea").slideUp(200);
+                                                        $(".add-new-card-btn").slideDown(300)
+                                                    }, 2000);
+                                                    
+                                                }).then(() => {
+                                                    setTimeout(() => {
+                                                        $(form).find(".saveCardBtn").removeClass('disabled')
+                                                        $(form).find(".saveCardBtn").removeAttr('disabled')
+                                                        $(form).find(".saveCardBtn .textPlace").html('Salvar cartão')
+                                                        $(form).find(".saveCardBtn .iconPlace").html('<i class="fa fa-check-circle fa-1x"></i>')
                                                 
-                                                // if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
-                                                //     var verBox = $(".verBox")
-                                                //     // console.log($(".optChecked .verBox .custom-message"))
-                                                //     // console.log(response.custom_message)
+                                                    }, 900);
+                                                })
+                                            } else {
+                                                var p = new Promise((resolve)=> {
+                                                    $(form).find(".response_area").html(response.message)
+                                                    $("#defaultCard").find(".form-check-label h3").html(response.response_data.data.display_number)
+                                                    $("#defaultCard").find(".defCard .def-card-brand").html(response.response_data.data.brand)
+                                                    $("#defaultCard").find(".defCard .def-card-name").html('<strong>'+response.response_data.data.holder_name+'</strong>')
+                                                    $("#defaultCard").find(".manageCardLink .cardCount").html(response.response_data.cardCount)
                                                     
+                                                    resolve("OK")
+                                                })
+                                                p.then((e)=> {
+                                                    console.log(e)
+                                                    $(form).find(".response_area").slideDown(234);
+                                                }).then((e) => {
+                                                    $(".manageCardLink").slideDown(100);
+                                                    setTimeout(() => {
+                                                        $(form).find(".response_area").slideUp(432);
+                                                        $("#payment-form")[0].reset()
+                                                        $("#pdefault").trigger("click")
+                                                        $("#defaultCard").slideDown(500);
+                                                        
+                                                    }, 2000);
                                                     
-                                                //     if($(".optChecked").find(".verBox").length == 0) {
-                                                //         $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
+                                                    // if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
+                                                    //     var verBox = $(".verBox")
+                                                    //     // console.log($(".optChecked .verBox .custom-message"))
+                                                    //     // console.log(response.custom_message)
                                                         
-                                                //     } else {
-                                                //         console.log("Not")
-                                                //     }
-                                                //     var pp = new Promise((resolve) => {
                                                         
-                                                //         setTimeout(() => {
-                                                //             $(form).find(".response_area").slideUp(432);
-                                                //             $(form).slideUp(500);
-                                                //             resolve()
-                                                //         }, 4000);
-                                                //     })
-                                                //     pp.then(()=> {
-                                                //         $(".optChecked .verBox .custom-message").html(response.custom_message)
-                                                //         setTimeout(() => {
-                                                //             $(".optChecked").find(".verBox").addClass("show")
-                                                //         }, 500)    
-                                                        
-                                                //     })
-                                                // }
-                                            }).then(() => {
-                                                setTimeout(() => {
-                                                    $(form).find(".saveCardBtn").removeClass('disabled')
-                                                    $(form).find(".saveCardBtn").removeAttr('disabled')
-                                                    $(form).find(".saveCardBtn .textPlace").html('Salvar cartão')
-                                                    $(form).find(".saveCardBtn .iconPlace").html('<i class="fa fa-check-circle fa-1x"></i>')
+                                                    //     if($(".optChecked").find(".verBox").length == 0) {
+                                                    //         $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
+                                                            
+                                                    //     } else {
+                                                    //         console.log("Not")
+                                                    //     }
+                                                    //     var pp = new Promise((resolve) => {
+                                                            
+                                                    //         setTimeout(() => {
+                                                    //             $(form).find(".response_area").slideUp(432);
+                                                    //             $(form).slideUp(500);
+                                                    //             resolve()
+                                                    //         }, 4000);
+                                                    //     })
+                                                    //     pp.then(()=> {
+                                                    //         $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                                    //         setTimeout(() => {
+                                                    //             $(".optChecked").find(".verBox").addClass("show")
+                                                    //         }, 500)    
+                                                            
+                                                    //     })
+                                                    // }
+                                                }).then(() => {
+                                                    setTimeout(() => {
+                                                        $(form).find(".saveCardBtn").removeClass('disabled')
+                                                        $(form).find(".saveCardBtn").removeAttr('disabled')
+                                                        $(form).find(".saveCardBtn .textPlace").html('Salvar cartão')
+                                                        $(form).find(".saveCardBtn .iconPlace").html('<i class="fa fa-check-circle fa-1x"></i>')
+                                                
+                                                    }, 900);
+                                                })
+                                            }
                                             
-                                                }, 900);
-                                            })
                                         }
                                         // lb.text(response)
                                         // $(".custom-control-label").text(text);
@@ -960,19 +1094,44 @@
                 // })
                 $(".add-new-card-btn").on("click", function(e) {
                     e.preventDefault()
-                    var p = new Promise((resolve) => {
-                        $(".no-box-container").fadeOut(250)
-                        setTimeout(() => {
-                            resolve("OK")
-                        }, 200);
-                    })
 
-                    p.then(()=> {
-                        $(".optPayment.addCardArea").fadeIn(250)
-                        $("#addCard").trigger("click")        
-                    }).then(() => {
-                        payFormValidade()
-                    })
+                    var ref = $(this).data("ref")
+
+                    if(ref == 'cartoes') {
+                        console.log(ref)
+                        var ref1 = $(".bradcam_area").outerHeight(true)
+                        var ref2 = $("header").outerHeight(true)
+                        var diff = ref1 + ref2
+                        var ref = $(this).offset().top
+                        var f = (ref + 180) - diff
+                        // console.log(ref1)
+                        // console.log(ref2)
+                        // console.log(diff)
+                        // console.log(ref)
+                        // console.log(f)
+                        var s = 0
+                        $(this).slideUp(220)
+                        
+                        $("html").animate({
+                            scrollTop: f - s
+                        }, 350);
+                        $(".AddCartaoArea").fadeIn(320)
+                    } else {
+                        var p = new Promise((resolve) => {
+                        $(".no-box-container").fadeOut(250)
+                            setTimeout(() => {
+                                resolve("OK")
+                            }, 200);
+                        })
+
+                        p.then(()=> {
+                            $(".optPayment.addCardArea").fadeIn(250)
+                            $("#addCard").trigger("click")        
+                        }).then(() => {
+                            payFormValidade()
+                        })
+                    }
+                    
                     
                 })
                 $(".suspender-assinatura-btn").on("click", function(e) {
@@ -2060,6 +2219,7 @@
                 $(this).append('<span class="check-mark text-success"><i class="fa fa-check-square-o fa-2x"></i></span>')
                 console.log($(this).data("petid"))
                 $("#h-pet-id").val($(this).data("petid"))
+                $("#finish-form").valid()
             })
 
 

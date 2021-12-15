@@ -471,7 +471,7 @@ class RegisterController extends BaseController
         $config['SMTPTimeout'] = '20';
         $config['protocol'] = 'smtp';
         // $config['CRLF'] = "\r\n";
-        $config['newline'] = "\r\n";
+        // $config['newline'] = "\r\n";
         $config['SMTPHost'] = $_SERVER['SMTP_HOST'];
         $config['SMTPUser'] = $_SERVER['SMTP_USER'];
         $config['SMTPPass'] = $_SERVER['SMTP_PASS'];
@@ -480,7 +480,7 @@ class RegisterController extends BaseController
         $email->initialize($config);
 
         $email->setSubject('Confirmação de cadastro');
-        $email->setFrom('contato@brasilbeneficios.club', "Site");
+        $email->setFrom('marcelodmdo@gmail.com', "Site");
         $email->setTo(is_array($u) ? $u["email"] : $this->request->getVar('email'), is_array($u) ? $u["name"] : $this->request->getVar('name'));
         $email->setCC('marcelo.denis@agenciabrasildigital.com.br, marcelodmdo@gmail.com');
 
@@ -495,6 +495,7 @@ class RegisterController extends BaseController
         
         try {
             $s = $email->send();
+            // print_r($email->printDebugger());exit;
             if($s) {
                 unset($nu);
 
@@ -555,7 +556,8 @@ class RegisterController extends BaseController
                 $model->save($nu);
                 $err = json_encode([
                     "message" => "Email não enviado",
-                    "error_code" => "VER_CODE_NOT_SENT"
+                    "error_code" => "VER_CODE_NOT_SENT",
+                    'e'=> $s
                 ]);
                 throw new \Exception($err);
             }
@@ -581,6 +583,7 @@ class RegisterController extends BaseController
                 
             }
             return [
+                'e' => $er['e'],
                 'message' => $er['message'],
                 'error' => true,
                 'error_code' => $er['error_code']

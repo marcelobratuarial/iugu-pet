@@ -282,7 +282,7 @@
                             </div>
 
                         <?php endif; ?>
-                        <div <?= !$hasPets ? 'style="display: none"' : '' ?> id="pet-list-box">
+                        <div style="<?= !$hasPets ? 'display: none;' : '' ?>position:relative;" id="pet-list-box">
                             <hr>
                             <ul class="list-group">
                                 <?php foreach($pets as $pet) : ?>
@@ -464,9 +464,9 @@
 
 
                     <form id="finish-form" action="" method="post">
-                        <input type="hidden" id="h-pet-id" name="plan_id" value="">
-                        <input type="hidden" id="h-plan-id" name="plan_id" value="<?= $plan->identifier ?>">
-                        <input type="hidden" id="h-cid" name="cid" value="<?= isset($user["id"]) ? $user["id"] : NULL ?>">
+                        <input type="hidden" id="h-pet-id" name="h_pet_id" value="">
+                        <input type="hidden" id="h-plan-id" name="h_plan_id" value="<?= $plan->identifier ?>">
+                        <input type="hidden" id="h-cid" name="h_cid" value="<?= isset($user["id"]) ? $user["id"] : NULL ?>">
                         <button type="submit" class="confirmar-assinar-btn genric-btn info circle">
                             <span class="textPlace">Confirmar assinatura</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
                         </button>
