@@ -169,7 +169,7 @@
                                                 <input type="text" name="pet_nasc" placeholder="Nascimento" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nascimento'" class="single-input">
                                             </div>
                                         </div>
-                                    </div> */ ?>
+                                    </div> 
                                     <div class="row mt-10">
                                         <div class="col-6">
                                             <div style="position:relative">
@@ -181,7 +181,7 @@
                                                 <input type="text" name="pet_peso" placeholder="Peso KG" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Peso KG'" class="single-input">
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>*/ ?>
                                 </div>
                                 <div class="boxPass">
                                     

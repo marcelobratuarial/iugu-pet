@@ -13,7 +13,8 @@ class MyAccount extends BaseController
     private $payload;
     public $requestURL;
     protected $k;
-    
+    private $dbUser;
+
     public function __construct () {
         
         $this->requestURL = "";
@@ -498,8 +499,10 @@ class MyAccount extends BaseController
             $assinaturas[$k]['periodo'] = $periodo;
             // number_to_currency($a['price_cents'])
         }
+        $items = file_get_contents(ROOTPATH."/content/estados.json");
+        $estados = json_decode($items, false);
         // print_r($user);exit;
-        return view('account/my-data', ["assinaturas" => $assinaturas, "user"=>$user]);
+        return view('account/my-data', ["assinaturas" => $assinaturas, "user"=>$user, "estados" => $estados]);
     }
 
     public function savePet() {
@@ -546,5 +549,173 @@ class MyAccount extends BaseController
             ]);
         }
         
+    }
+
+    public function saveMyData()
+    {
+        helper(['form']);
+        session();
+        $rules = [
+            'name'  => [
+                'rules' => 'required|min_length[2]|max_length[50]',
+                'errors' => [
+                    'required' => 'Obrigatório',
+                ]
+            ],
+            'email' => [
+                'rules' => [
+                    'required',
+                    'min_length[4]',
+                    'max_length[100]',
+                    'valid_email',
+                ],
+                
+            ],
+            'cep'  => [
+                'rules' => 'required|min_length[8]|max_length[10]',
+                'errors' => [
+                    'required' => 'Obrigatório.',
+                ]
+            ],
+            'address'  => [
+                'rules' => 'required|min_length[2]|max_length[50]',
+                'errors' => [
+                    'required' => 'Obrigatório.',
+                ]
+            ],
+            'number'  => [
+                'rules' => 'required|max_length[50]',
+                'errors' => [
+                    'required' => 'Obrigatório',
+                ]
+            ],  
+            'bairro'  => [
+                'rules' => 'required|min_length[2]|max_length[50]',
+                'errors' => [
+                    'required' => 'Obrigatório',
+                ]
+            ],  
+            'cidade'  => [
+                'rules' => 'required|min_length[2]|max_length[150]',
+                'errors' => [
+                    'required' => 'Obrigatório',
+                ]
+            ],  
+            'estado'  => [
+                'rules' => 'required|min_length[2]|max_length[150]',
+                'errors' => [
+                    'required' => 'Obrigatório',
+                ]
+            ],  
+        ];
+        // var_dump($this->validate($rules));
+        // print_r($this->request->getPost());exit;
+        if ($this->validate($rules)) {
+            $model = new UserModel();
+            if(isset($_SESSION['email'])) {
+                $this->dbUser = $model->where("email", $_SESSION['email'])->first();
+            } else {
+                return redirect()->to('/login');
+            }
+            
+
+            $data = [
+                'name'     => $this->request->getVar('name'),
+                'email'    => $this->request->getVar('email'),
+            ];
+            
+            try {
+                if ($model->update($this->dbUser['id'], $data)) {
+                   
+                    $a = new Home();
+                    $args = [];
+                    $args["m"] = "GET";
+                    $this->requestURL = $a->baseApi . "customers";
+                    $args["pl"] = json_encode([
+                        "query" => $_SESSION['email'],
+                        "limit" => 1
+                    ]);
+                    $user = $a->doRequest($this->requestURL, $args);
+                    
+                    $u = json_decode($user, true);
+                    unset($user);
+                    $user = [];
+                    if($u["totalItems"] > 0) {
+                        $user = $u['items'][0];
+                    }
+                    $cep = str_replace('.', '', $this->request->getVar('cep')) ;
+                    $cep = str_replace('-', '', $cep) ;
+                    
+                    
+                    $iuguData = [
+                        // "email" => $this->request->getVar('email'),
+                        "name" => $this->request->getVar('name'),
+                        "number" => $this->request->getVar('number'),
+                        "zip_code" => $cep,
+                        "street" => $this->request->getVar('address'),
+                        "city" => $this->request->getVar('cidade'),
+                        "state" => $this->request->getVar('estado'),
+                        "district" => $this->request->getVar('bairro'),
+                        "complement" => $this->request->getVar('complemento'),
+                        "customer_id" => $user["id"]
+                    ];
+                    // print_r($iuguData);exit;
+                    $a = new Home();
+                    $args = [];
+                    $args["m"] = "PUT";
+                    $this->requestURL = $a->baseApi . "customers/".$user["id"];
+                    $args["pl"] = json_encode($iuguData);
+                    
+
+                    
+                    
+                        $r = $a->doRequest($this->requestURL, $args);
+                        $rr = json_decode($r, true);
+                        if(isset($rr["errors"])) {
+                            
+                            echo json_encode($rr);
+                           
+                            throw new \Exception($rr);
+                        } else {
+                            return $this->response->setJSON($rr);
+                           
+                        }
+                    
+                    
+                    
+
+                    
+                } else {
+                    $rr = json_encode([
+                        'error' => true,
+                        'message' => "Erro ao gravar atualizações.",
+                        'error_code' => "USER_DATA_UPDATE_FAIL"
+                    ]);
+                    throw new \Exception($rr, 100000001);
+                    exit;
+                }
+            } catch (\Exception $e) {
+                print_r($e->getMessage());
+                exit;
+                //throw $th;
+            }
+            
+
+            // return redirect()->to('/login');
+        } else {
+            $validation = $this->validator;
+            
+            $errors = $validation->getErrors();
+            $response = [
+                "error" => true,
+                "error_code" => "REQ_FIELDS",
+                "message" => "Verifique os campos obrigatórios",
+                "errors" => $errors
+            ];
+            
+
+            echo json_encode($response);
+            exit;
+        }
     }
 }
