@@ -242,7 +242,7 @@ class RegisterController extends BaseController
                     'is_unique[customers.email]',
                 ],
                 'errors' => [
-                    'is_unique' => 'Já existe um cadastro com o email informado.',
+                    'is_unique' => 'Já existe um cadastro com o email informado. Tente efetuar login.',
                 ]
             ],
             'password'  => [
