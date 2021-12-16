@@ -304,7 +304,7 @@
                         */ ?>
                         <?php
                         // print_r($user);
-                        $hasCard = (is_array($payment) || count($user["payment_methods"]) > 0);
+                        $hasCard = (is_array($payment) && count($user["payment_methods"]) > 0);
 
                         ?>
                         <div id="defaultCard" <?= ($hasCard) ? '"' : 'style="display: none"' ?> class="row optPayment optPaymentChecked pt-5">
