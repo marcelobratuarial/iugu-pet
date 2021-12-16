@@ -733,9 +733,11 @@
                                 } else {
                                     var p = new Promise((resolve)=> {
                                         var m = response.message
-                                        m   += '<div><hr style="margin-bottom: 0">' 
-                                            + '<a href="<?= base_url('minha-conta/assinatura') ?>/'+response.response_data.id+'" class="btn btn-primary">Detalhes</a>'
-                                            + ' <a href="<?= base_url('minha-conta') ?>" class="btn btn-primary">Minha conta</a>'
+                                        m   += '<hr style="margin: 20px auto"><div class="">' 
+                                            + '<a href="<?= base_url('minha-conta/assinatura') ?>/'+response.response_data.id+'" class=" genric-btn info circle">'
+                                            +'<span class="textPlace">Detalhes</span> <span class="ml-3 iconPlace"><i class="fa fa-info-circle fa-1x"></i></span></a>'
+                                            + ' <a href="<?= base_url('minha-conta') ?>" class="genric-btn success circle">'
+                                            +'<span class="textPlace">Minha conta</span> <span class="ml-3 iconPlace"><i class="fa fa-user-o fa-1x"></i></span></a>'
                                             + '</div>'
                                         $("#AssinarConfirm").find(".response_area").html(m)
                                         resolve("OK")
@@ -2889,6 +2891,27 @@
                     }, 900);
                 }
                 return
+                
+            })
+
+
+
+            $(".credit_card_expiration").mask("99/99");
+            $(".confp1, .confp2").mask("999");
+            $(".confp1, .confp2").on("keyup", function(){
+                var code = $(this).val().length;
+                console.log(code)
+                console.log($(this).val().length)
+                if($(this).val().length < 3) {
+                    return false
+                } else {
+                    if($(this).attr("name") == "confp1" && $(this).val().length == 3) {
+                        $(".confp2").focus()
+                    }
+                    if($(this).attr("name") == "confp2" && $(this).val().length == 0) {
+                        $(".confp1").focus()
+                    }
+                }
                 
             })
         })
