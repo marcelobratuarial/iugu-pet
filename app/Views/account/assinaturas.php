@@ -48,6 +48,10 @@
                       <?php endif; ?>
                       <div class="card-header"><?= $ass['plan_name'] ?></div>
                       <div class="card-body text-success">
+                        <?php if(isset($ass["pet"])) : ?>
+                          <h4 class="card-title"><?= $ass["pet"]['pet_name'] ?></h4>
+                          <hr>
+                        <?php endif; ?>
                         <h5 class="card-title"><?= $ass["periodo"] ?></h5>
                         <p class="card-text"><?= $ass["real"] ?></p>
                         <a href="<?= base_url('minha-conta/assinatura/'.$ass["id"]) ?>" class="btn btn-primary">Detalhes</a>

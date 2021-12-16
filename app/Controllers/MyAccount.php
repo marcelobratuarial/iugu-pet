@@ -50,6 +50,17 @@ class MyAccount extends BaseController
             return redirect()->to('minha-conta/login'); 
         }
         $uid = $user["id"];
+        $petModel = new PetModel();
+        $pets = $petModel
+            ->where("cid", $uid)
+            ->findAll();
+        $petsIdx = [];
+        foreach($pets as $pet) {
+            if(!empty($pet["aid"])) {
+                $petsIdx[$pet["aid"]] = $pet;
+            }
+        }
+        // print_r($petsIdx);exit;
         // print_r($uid);exit;
         $args = [];
         $this->requestURL = $a->baseApi . "subscriptions";
@@ -93,6 +104,9 @@ class MyAccount extends BaseController
             $periodo = $date->format('d/m/Y') . ' ~ ' . $expi->format('d/m/Y');
             // echo $periodo;
             $assinaturas[$k]['periodo'] = $periodo;
+            if(isset($petsIdx[$a['id']])) {
+                $assinaturas[$k]['pet'] = $petsIdx[$a['id']];
+            }
             // number_to_currency($a['price_cents'])
         }
 
@@ -212,6 +226,20 @@ class MyAccount extends BaseController
         }
         // print_r($user);exit;
         $uid = $user["id"];
+
+        $petModel = new PetModel();
+        $pets = $petModel
+            ->where("cid", $uid)
+            ->findAll();
+        $petsIdx = [];
+        foreach($pets as $pet) {
+            if(!empty($pet["aid"])) {
+                $petsIdx[$pet["aid"]] = $pet;
+            }
+        }
+        // print_r($petsIdx);exit;
+
+
         $args = [];
         $this->requestURL = $a->baseApi . "subscriptions";
         $args["m"] = "GET";
@@ -255,9 +283,12 @@ class MyAccount extends BaseController
             $periodo = $date->format('d/m/Y') . ' ~ ' . $expi->format('d/m/Y');
             // echo $periodo;
             $assinaturas[$k]['periodo'] = $periodo;
+            if(isset($petsIdx[$a['id']])) {
+                $assinaturas[$k]['pet'] = $petsIdx[$a['id']];
+            }
             // number_to_currency($a['price_cents'])
         }
-        // print_r($user);exit;
+        // print_r($assinaturas);exit;
         return view('account/assinaturas', ["assinaturas" => $assinaturas, "user"=>$user]);
     }
     public function login() {
@@ -272,7 +303,34 @@ class MyAccount extends BaseController
         // // parent::Controller();
         session();
         // echo "<pre>";print_r($a->get("name"));exit;
-        
+        if(isset($_SESSION['email'])) {
+            // echo "<pre>";
+            // print_r($_SESSION);
+            // echo "</pre>";
+            $args = [];
+            $args["m"] = "GET";
+            $this->requestURL = $a->baseApi . "customers";
+            $args["pl"] = json_encode([
+                "query" => $_SESSION['email'],
+                "limit" => 1
+            ]);
+            $user = $a->doRequest($this->requestURL, $args);
+            // echo gettype(json_decode($user, true));exit;
+            $u = json_decode($user, true);
+            unset($user);
+            $user = [];
+            if($u["totalItems"] > 0) {
+                $user = $u['items'][0];
+            }
+        } else {
+            $user = [];
+        }
+        $petModel = new PetModel();
+        $petAssinatura = $petModel
+            ->where("cid", $user['id'])
+            ->where("aid", $id)
+            ->first();
+        // print_r($petAssinatura);exit;
         $args = [];
         $this->requestURL = $a->baseApi . "subscriptions/".$id;
         $args["m"] = "GET";
@@ -297,6 +355,8 @@ class MyAccount extends BaseController
         
         $plano = $a->doRequest($this->requestURL, $args);
         $assinatura["plano"] = json_decode($plano, true);
+        $assinatura["pet"] = $petAssinatura;
+        // print_r($assinatura);
         foreach($assinatura['recent_invoices'] as $i=> $ri): 
             // print_r($ri);
             if(is_numeric($ri['total'])) {
@@ -332,28 +392,7 @@ class MyAccount extends BaseController
         $periodo = $date->format('d/m/Y') . ' ~ ' . $expi->format('d/m/Y');
         // echo $periodo;
         $assinatura['periodo'] = $periodo;
-        if(isset($_SESSION['email'])) {
-            // echo "<pre>";
-            // print_r($_SESSION);
-            // echo "</pre>";
-            $args = [];
-            $args["m"] = "GET";
-            $this->requestURL = $a->baseApi . "customers";
-            $args["pl"] = json_encode([
-                "query" => $_SESSION['email'],
-                "limit" => 1
-            ]);
-            $user = $a->doRequest($this->requestURL, $args);
-            // echo gettype(json_decode($user, true));exit;
-            $u = json_decode($user, true);
-            unset($user);
-            $user = [];
-            if($u["totalItems"] > 0) {
-                $user = $u['items'][0];
-            }
-        } else {
-            $user = [];
-        }
+        
         
         
         return view('account/assinatura', ["assinatura" => $assinatura,true, "user" => $user]);

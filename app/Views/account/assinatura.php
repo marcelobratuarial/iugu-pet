@@ -47,12 +47,19 @@
                       <span style="position: absolute; top: 5px; right: 10px" class="badge badge-pill badge-warning">SUSPENSO</span>
                     <?php endif; ?>
                     <h4 class="card-header">Detalhes da assinatura</h4>
-                    <?php //print_r($assinatura);exit; ?>
+                    <?php //print_r($assinatura['pet']);exit; ?>
                     <div class="card-body text-success">
                       <div class="row">
                         <div class="col-md-6">
                           <h3><?= $assinatura['plan_name'] ?></h3>
                           <h5 class="card-title"><?= $assinatura["periodo"] ?></h5>
+                          <hr>
+                          <?php if(!empty($assinatura['pet'])) : ?>
+                          
+                                <h3><?= $assinatura['pet']["pet_name"]; ?></h3>
+                          <?php else : ?>
+                            Nenhum Pet vinculado
+                          <?php endif; ?>
                         </div>
                         <div class="col-md-6">
                           <?php if(!empty($assinatura['plano']['features'])) : ?>
