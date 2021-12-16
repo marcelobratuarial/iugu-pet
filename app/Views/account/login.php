@@ -219,10 +219,10 @@
                             <form method="POST" data-form-ref="my-account" class="verForm" action="">
                                 
                                 <div class="row mt-10">
-                                    <div class="col-md-6">
+                                    <div class="col-6">
                                         <input type="text" name="confp1" required class="confp1 single-input">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-6">
                                         <input type="text" name="confp2" required class="confp2 single-input">
                                     </div>
                                     
