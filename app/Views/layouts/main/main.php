@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="<?= base_url("assets/css/gijgo.css") ?>">
     <link rel="stylesheet" href="<?= base_url("assets/css/animate.css") ?>">
     <link rel="stylesheet" href="<?= base_url("assets/css/slicknav.css") ?>">
-    <link rel="stylesheet" href="<?= base_url("assets/css/style.css") ?>">
+    <link rel="stylesheet" href="<?= base_url("assets/css/style.css?".time()) ?>">
 
     <?= $this->renderSection('cCss') ?>
 
