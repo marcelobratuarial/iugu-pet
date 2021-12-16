@@ -7,6 +7,7 @@ use App\Models\UserModel;
 use App\Models\PetModel;
 use App\Controllers\Home;
 use Exception;
+use CodeIgniter\I18n\Time;
 
 class MyAccount extends BaseController
 {
@@ -291,6 +292,105 @@ class MyAccount extends BaseController
         // print_r($assinaturas);exit;
         return view('account/assinaturas', ["assinaturas" => $assinaturas, "user"=>$user]);
     }
+    public function pets()
+    {
+        session();
+        $a = new Home();
+        // echo "你好";exit;
+        if(isset($_SESSION['email'])) {
+            // echo "<pre>";
+            // print_r($_SESSION);
+            // echo "</pre>";
+            $args = [];
+            $args["m"] = "GET";
+            $this->requestURL = $a->baseApi . "customers";
+            $args["pl"] = json_encode([
+                "query" => $_SESSION['email'],
+                "limit" => 1
+            ]);
+            $user = $a->doRequest($this->requestURL, $args);
+            // print_r(json_decode($user, true));exit;
+            $u = json_decode($user, true);
+            unset($user);
+            $user = [];
+            if($u["totalItems"] > 0) {
+                $user = $u['items'][0];
+            }
+        }
+        // print_r($user);exit;
+        $uid = $user["id"];
+
+        $petModel = new PetModel();
+        $pets = $petModel
+            ->where("cid", $uid)
+            ->findAll();
+        
+        // print_r($petsIdx);exit;
+
+
+        $args = [];
+        $this->requestURL = $a->baseApi . "subscriptions";
+        $args["m"] = "GET";
+        $args["pl"] = json_encode([
+            "customer_id" => $uid, //"74AE1E1406354345AE23CCC30DAA5BD6",
+            "status_filter" => "suspended"
+        ]);
+        // if(in_array($rdata->method, ["POST", "PUT"]) && !isset($rdata->payload)) {
+        //     throw new \Exception("invalid payload");
+        // } else if(in_array($rdata->method, ["POST", "PUT"]) && isset($rdata->payload)) {
+        //     $args["pl"] = json_encode($rdata->payload);
+        // }
+        $r = $a->doRequest($this->requestURL, $args);
+        $assinaturas_suspensas = json_decode($r, true)["items"];
+        
+        $args = [];
+        $this->requestURL = $a->baseApi . "subscriptions";
+        $args["m"] = "GET";
+        $args["pl"] = json_encode([
+            "customer_id" => $uid, //"74AE1E1406354345AE23CCC30DAA5BD6",
+            "status_filter" => "active"
+        ]);
+        // if(in_array($rdata->method, ["POST", "PUT"]) && !isset($rdata->payload)) {
+        //     throw new \Exception("invalid payload");
+        // } else if(in_array($rdata->method, ["POST", "PUT"]) && isset($rdata->payload)) {
+        //     $args["pl"] = json_encode($rdata->payload);
+        // }
+        $r = $a->doRequest($this->requestURL, $args);
+        $assinaturas_ativas = json_decode($r, true)["items"];
+        
+        $assinaturas = array_merge($assinaturas_ativas, $assinaturas_suspensas);
+        // echo "<pre>";
+        // print_r($assinaturas);exit;
+        helper("number");
+        foreach($assinaturas as $k=> $a) {
+            
+            $decimal = number_format(($a['price_cents'] /100), 2, '.', ' ');
+            $assinaturas[$k]['decimal'] = $decimal;
+            $assinaturas[$k]['real'] = number_to_currency($decimal, $a['currency'], null, 2);
+            $date = date_create($a['cycled_at']);
+            $expi = date_create($a['expires_at']);
+            $periodo = $date->format('d/m/Y') . ' ~ ' . $expi->format('d/m/Y');
+            // echo $periodo;
+            $assinaturas[$k]['periodo'] = $periodo;
+            $today = Time::createFromDate();
+            $expi2 = Time::createFromFormat('d/m/Y', $expi->format('d/m/Y'));
+            $assinaturas[$k]['isValid'] = $today->isBefore($expi2);
+            // $assinaturas[$k]['time2'] = Time::createFromFormat('d/m/Y', $date->format('d/m/Y'));
+            // number_to_currency($a['price_cents'])
+        }
+        $assinaturasIdx = [];
+        foreach($assinaturas as $ass) {
+            $assinaturasIdx[$ass["id"]] = $ass;
+        }
+
+        foreach($pets as $i=> $pet) {
+            if(!empty($pet["aid"]) && isset($assinaturasIdx[$pet["aid"]])) {
+                $pets[$i]["assinatura"] = $assinaturasIdx[$pet["aid"]];
+            } 
+        }
+        // print_r($pets);exit;
+        return view('account/pets', ["pets" => $pets, "user"=>$user]);
+    }
     public function login() {
         $items = file_get_contents(ROOTPATH."/content/estados.json");
         $estados = json_decode($items, false); 
@@ -396,6 +496,72 @@ class MyAccount extends BaseController
         
         
         return view('account/assinatura', ["assinatura" => $assinatura,true, "user" => $user]);
+
+    }
+    public function pet($id)
+    {
+        helper("number");
+        $a = new Home();
+        // // parent::Controller();
+        session();
+        // echo "<pre>";print_r($a->get("name"));exit;
+        if(isset($_SESSION['email'])) {
+            // echo "<pre>";
+            // print_r($_SESSION);
+            // echo "</pre>";
+            $args = [];
+            $args["m"] = "GET";
+            $this->requestURL = $a->baseApi . "customers";
+            $args["pl"] = json_encode([
+                "query" => $_SESSION['email'],
+                "limit" => 1
+            ]);
+            $user = $a->doRequest($this->requestURL, $args);
+            // echo gettype(json_decode($user, true));exit;
+            $u = json_decode($user, true);
+            unset($user);
+            $user = [];
+            if($u["totalItems"] > 0) {
+                $user = $u['items'][0];
+            }
+        } else {
+            $user = [];
+        }
+        $petModel = new PetModel();
+        $petAssinatura = $petModel
+            ->where("cid", $user['id'])
+            ->where("id", $id)
+            ->first();
+        if(!empty($petAssinatura['aid'])) {
+            $args = [];
+            $this->requestURL = $a->baseApi . "subscriptions/".$petAssinatura['aid'];
+            $args["m"] = "GET";
+            $args["pl"] = json_encode([
+                'id' => $petAssinatura['aid']
+            ]);
+            // print_r($args);exit;
+            $assinatura = json_decode($a->doRequest($this->requestURL, $args),true);
+            // print_r($assinatura);exit;
+            if(isset($assinatura["errors"])) {
+                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            }
+            $args = [];
+            $this->requestURL = $a->baseApi . "plans/identifier/".$assinatura["plan_identifier"];
+            $args["m"] = "GET";
+            $args["pl"] = json_encode([
+                "identifier" => $assinatura["plan_identifier"]
+            ]);
+            
+            $plano = $a->doRequest($this->requestURL, $args);
+            $assinatura["plano"] = json_decode($plano, true);
+            $petAssinatura["assinatura"] = $assinatura;
+        }
+        
+        
+        
+        
+        
+        return view('account/pet', ["pet" => $petAssinatura,true, "user" => $user]);
 
     }
     public function cartao($id)
@@ -811,28 +977,40 @@ class MyAccount extends BaseController
         if($pwd_verify){
             if ($this->validate($rules)) {
             
-                
-                
-
                 $data = [
                     'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT)
                 ];
                 
-               
-                if ($model->update($this->dbUser['id'], $data)) {
-                    return $response->setJSON([
-                        "error" => false,
-                        'message' => "Sua senha foi atualizada com sucesso!",
-                    ]);
-
+                try {
+                    if ($model->update($this->dbUser['id'], $data)) {
+                        return $response->setJSON([
+                            "error" => false,
+                            'message' => "Sua senha foi atualizada com sucesso!",
+                        ]);
+    
+                        
+                    } else {
+                        $rr = json_encode([
+                            'error' => true,
+                            'message' => "Erro ao salvar dados.",
+                            'error_code' => "DB_STORE_ERROR"
+                        ]);
+                        throw new \Exception($rr, 100000000);
+                        exit;
+                    }
+                } catch (\Exception $e) {
+                    // print_r($e->getMessage());
                     
-                } else {
                     return $response->setJSON([
                         "error" => true,
                         'message' => "Erro ao atualizar senha!",
+                        'e' => $e->getMessage(),
+                        'ec' => $e->getCode(),
                     ]);
                     exit;
+                
                 }
+                
                
                 
     
@@ -855,7 +1033,7 @@ class MyAccount extends BaseController
         } else {
             return $response->setJSON([
                 "error" => true,
-                'message' => "Erro ao atualizar senha!",
+                'message' => "Erro ao atualizar senha! Senha atual inválida.",
             ]);
             exit;
         }

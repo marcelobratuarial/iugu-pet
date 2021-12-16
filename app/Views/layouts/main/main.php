@@ -2782,7 +2782,7 @@
                             if(!response.error) {
                                 
                                 var p = new Promise(function(resolve) {
-                                    $("#changePassForm").find(".response_area").html("Senha atualizada com sucesso!");
+                                    $("#changePassForm").find(".response_area").html(response.message);
                                     $("#changePassForm").find(".response_area").removeClass('field_error').addClass("show");
                                     // $("html").animate({scrollTop: 340}, 350);
                                     setTimeout(() => {
@@ -2840,7 +2840,7 @@
                                     }, 200);
                                 } else {
                                     var p = new Promise(function(resolve) {
-                                        $("#changePassForm").find(".response_area").html("Erro ao atualizar senha!");
+                                        $("#changePassForm").find(".response_area").html(response.message);
                                         $("#changePassForm").find(".response_area").addClass('field_error').addClass("show");
                                         // $("html").animate({scrollTop: 340}, 350);
                                         setTimeout(() => {

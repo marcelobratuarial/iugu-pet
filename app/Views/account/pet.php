@@ -25,7 +25,7 @@
             <div class="col-lg-12">
                 <div class="bradcam_text text-center">
                     <h3>Minha conta</h3>
-                    <h4 class="text-white">Gerenciar cartão</h4>
+                    <h4 class="text-white">Gerenciar assinatura</h4>
                 </div>
             </div>
         </div>
@@ -35,44 +35,33 @@
 <div class="container">
     <div class="row ">
         <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-9">
-          <section style="margin: 40px auto; position:relative" class="cartoes">
-            <?php // print_r($cartao);
-            if(isset($cartao) && !empty($cartao)) : ?>
+          <section style="margin: 40px auto; position:relative" class="assinaturas">
+            <?php // print_r($pet);
+            if(isset($pet) && !empty($pet)) : ?>
               <div class="row">
                 <div class="col-md-12">
                   <div class="card border-success mb-3" style="display: relative">
                     
-                    <span style="<?= (!$cartao["default"]) ? 'display:none;' : '' ?>position: absolute; top: 5px; right: 10px" class="badge badge-pill badge-success" id="definir-cartao-padrao-badge">PADRÃO</span>
-                  
-                    <a style="<?= ($cartao["default"]) ? 'display:none;' : '' ?>position: absolute; top: 5px; right: 10px"  href="#" style="" data-toggle="modal" data-target="#DefinirCartaoPadraoConfirm" class="definir-cartao-padrao-btn genric-btn info-border small circle">Definir como cartão padrão</a>
-                    
-                    <h4 class="card-header">Detalhes do cartão</h4>
-                    <?php //print_r($assinatura);exit; ?>
+                    <h4 class="card-header">Detalhes da pet</h4>
+                    <?php print_r($pet); ?>
                     <div class="card-body text-success">
                       <div class="row">
-                        <div class="col-md-4">
-                          <img src="<?=base_url("assets/img/brands/". strtolower($cartao['data']['brand']).".png") ?>" width="200" style="margin-right: 20px; object-fit: cover; width: 200px" >
+                        <div class="col-md-6">
+                          
                         </div>
-                        <div class="col-md-8">
-                          <?php if(strlen($cartao['description']) > 0) : ?>
-                          <h5><small>DESCRIÇÃO</small></h5>
-                          <p><?= $cartao['description'] ?></p>
-                          <hr>
-                          <?php endif; ?>
-                          <h4><?= $cartao["data"]["display_number"] ?></h4>
-                          <h4><?= $cartao["data"]["holder_name"] ?></h4>
-                          <h5><?= $cartao["data"]["month"] ?>/<?= $cartao["data"]["year"] ?></h5>
+                        <div class="col-md-6">
+                          
                         </div>
                       </div>
                       
                     </div>
                     <div class="card-footer">
                       
+                      
+                    
                     </div>
                   </div>
-                  <a href="#" style="" data-toggle="modal" data-target="#RemoveCardConfirm" class="remover-cartao-btn genric-btn danger-border circle">Remover cartão</a>
                 </div>
-              </div>
               <?php endif; ?>
           </section>
           <hr />
@@ -94,47 +83,23 @@
 <?= $this->section('footer') ?>
 
 <!-- Modal -->
-<div class="modal fade" data-backdrop="static" id="RemoveCardConfirm" tabindex="-1" role="dialog" aria-labelledby="RemoveCardConfirmTitle" aria-hidden="true">
+<div class="modal fade" data-backdrop="static" id="SuspendConfirm" tabindex="-1" role="dialog" aria-labelledby="SuspendConfirmTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="RemoveCardConfirmLongTitle">Remover cartão</h5>
+        <h5 class="modal-title" id="SuspendConfirmLongTitle">Suspender assinatura</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
       </div>
       <div class="modal-body">
-        Você deseja mesmo <strong>REMOVER</strong> este cartão?
+        Você deseja mesmo <strong>SUPENDER</strong> sua assinatura?
       </div>
       <div class="modal-footer">
-        <button type="button" class="genric-btn primary-border circle small" id="cancelar-remover-cartao-btn" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="genric-btn primary-border circle small" id="cancelar-suspensao-btn" data-dismiss="modal">Cancelar</button>
         
-        <button type="button" data-card-id="<?= $cartao["id"] ?>" class="genric-btn danger-border circle small" id="confimar-remover-cartao-btn">
-        <span class="textPlace">Remover</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" data-backdrop="static" id="DefinirCartaoPadraoConfirm" tabindex="-1" role="dialog" aria-labelledby="DefinirCartaoPadraoConfirmTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="DefinirCartaoPadraoConfirmLongTitle">Definir cartão padrão</h5>
-        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button> -->
-      </div>
-      <div class="modal-body">
-        Você deseja mesmo definir este cartão como padrão?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="genric-btn primary-border circle small" id="cancelar-definir-cartao-padrao-btn" data-dismiss="modal">Cancelar</button>
-        
-        <button type="button" data-card-id="<?= $cartao["id"] ?>" class="genric-btn info-border circle small" id="confimar-definir-cartao-padrao-btn">
-        <span class="textPlace">Definir padrão</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
+        <button type="button" data-ass-id="" class="genric-btn danger-border circle small" id="confimar-suspensao-btn">
+        <span class="textPlace">Confirmar suspensão</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
         </button>
       </div>
     </div>
@@ -156,7 +121,7 @@
       <div class="modal-footer">
         <button type="button" class="genric-btn primary-border circle small" id="cancelar-ativacao-btn" data-dismiss="modal">Cancelar</button>
         
-        <button type="button" data-ass-id="<?= $cartao["id"] ?>" class="genric-btn info-border circle small" id="confimar-ativacao-btn">
+        <button type="button" data-ass-id="" class="genric-btn info-border circle small" id="confimar-ativacao-btn">
         <span class="textPlace">Confirmar ativação</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
         </button>
       </div>
