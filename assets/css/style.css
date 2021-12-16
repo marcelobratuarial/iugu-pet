@@ -6817,3 +6817,17 @@ h6 {
 .pet-item {
   cursor: pointer !important;
 }
+.pet-com-assinatura::before {
+  position: absolute;
+  content: 'Contém assinatura';
+  right: 20px;
+  top: 10px;
+  font-size: .7rem;
+}
+.pet-com-assinatura {
+  cursor: pointer !important;
+  background-color: #ddd;
+}
+.pet-com-assinatura h3 {
+  color: #666;
+}

@@ -286,7 +286,7 @@
                             <hr>
                             <ul class="list-group">
                                 <?php foreach($pets as $pet) : ?>
-                                <li data-petID="<?=$pet['id'] ?>" class="pet-item list-group-item d-flex justify-content-between align-items-center">
+                                <li data-petID="<?=$pet['id'] ?>" class="<?= empty($pet['aid']) ? 'pet-item' : 'pet-com-assinatura' ?> list-group-item d-flex justify-content-between align-items-center">
                                     <h3 style="margin-bottom: 0"><?= $pet['pet_name'] ?></h3>
                                 </li>
                                 <?php endforeach ?>
