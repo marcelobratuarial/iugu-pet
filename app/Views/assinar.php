@@ -459,7 +459,7 @@
                         Cadastre ou selecione um Pet!
                     </div>
                     <?php //var_dump($hasCard); ?>
-                    <div id="resumo-cartao" <?= (!$hasCard) ? 'class="error-resumo"' : '' ?>>
+                    <div id="resumo-cartao" <?= (isset($hasCard) && !$hasCard) ? 'class="error-resumo"' : '' ?>>
                         <?php if(isset($hasCard) && isset($payment)) : ?>
                         <h3 style="margin-bottom: 0"><?= ($hasCard) ? $payment["data"]["display_number"] : '' ?></h3>
                         <span class="def-card-brand"><?= ($hasCard) ? $payment["data"]["brand"] : '' ?></span><br>
