@@ -6831,3 +6831,37 @@ h6 {
 .pet-com-assinatura h3 {
   color: #666;
 }
+
+#resumo-pet, #resumo-plano, #resumo-cartao {
+  padding: 14px 20px;
+  background-color: #e7f6ff;
+  border: solid 1px rgb(108, 154, 255);
+  margin-bottom: 30px;
+  border-radius: 6px 0 6px 0;
+  position: relative;
+}
+#resumo-pet.error-resumo, #resumo-cartao.error-resumo {
+  background-color: #ffd6d6;
+  border: solid 1px rgb(253, 183, 183);
+}
+#resumo-cartao::after {
+  position: absolute;
+  content: 'CARTÃO';
+  right: 20px;
+  top: 8px;
+  font-size: .7rem;
+}
+#resumo-plano::after {
+  position: absolute;
+  content: 'PLANO';
+  right: 20px;
+  top: 8px;
+  font-size: .7rem;
+}
+#resumo-pet::after {
+  position: absolute;
+  content: 'PET';
+  right: 20px;
+  top: 8px;
+  font-size: .7rem;
+}

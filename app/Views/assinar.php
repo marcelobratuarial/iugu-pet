@@ -286,7 +286,7 @@
                             <hr>
                             <ul class="list-group">
                                 <?php foreach($pets as $pet) : ?>
-                                <li data-petID="<?=$pet['id'] ?>" id="petID-<?= $pet["id"] ?>" class="<?= empty($pet['aid']) ? 'pet-item' : 'pet-com-assinatura' ?> list-group-item d-flex justify-content-between align-items-center">
+                                <li data-petID="<?=$pet['id'] ?>" data-petname="<?= $pet['pet_name'] ?>" id="petID-<?= $pet["id"] ?>" class="<?= empty($pet['aid']) ? 'pet-item' : 'pet-com-assinatura' ?> list-group-item d-flex justify-content-between align-items-center">
                                     <h3 style="margin-bottom: 0"><?= $pet['pet_name'] ?></h3>
                                 </li>
                                 <?php endforeach ?>
@@ -449,15 +449,25 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="AssinarConfirmLongTitle">Confirmar assinatura de plano</h5>
-                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button> -->
+                    <h5 class="modal-title" id="AssinarConfirmLongTitle">Resumo do pedido</h5>
+                    
                 </div>
                 <div class="modal-body">
-                    <h4>Quase pronto!</h4>
-                    <div class="defaultCard"></div>
-                    <div class="selectedPlan"></div>
+
+                    <div id="resumo-plano"><h3><?=$plan->name ?></h3></div>
+                    <div id="resumo-pet" class="error-resumo">
+                        Cadastre ou selecione um Pet!
+                    </div>
+                    <?php //var_dump($hasCard); ?>
+                    <div id="resumo-cartao" <?= (!$hasCard) ? 'class="error-resumo"' : '' ?>>
+                        <?php if(isset($hasCard) && isset($payment)) : ?>
+                        <h3 style="margin-bottom: 0"><?= ($hasCard) ? $payment["data"]["display_number"] : '' ?></h3>
+                        <span class="def-card-brand"><?= ($hasCard) ? $payment["data"]["brand"] : '' ?></span><br>
+                        <span class="def-card-name"><?= ($hasCard) ? '<strong>' . $payment["data"]["holder_name"] . '</strong>' : '' ?></span>
+                        <?php else: ?>
+                            Adicione ou selecione uma forma de pagamento!
+                        <?php endif; ?>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="genric-btn primary-border circle small" id="cancelar-assinar-btn" data-dismiss="modal">Cancelar</button>

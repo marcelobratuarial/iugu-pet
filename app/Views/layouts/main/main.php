@@ -667,17 +667,18 @@
                     evt.preventDefault()
                     var form = $(this);
 
+                    $("#cancelar-assinar-btn").addClass('disabled')
+                    $("#cancelar-assinar-btn").attr('disabled', true)
+
+                    $(this).addClass('disabled')
+                    $(this).attr('disabled', true)
+                    $(this).find(".textPlace").html('Processando')
+                    $(this).find(".iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                    var that = this
                     if($("#finish-form").valid()) {
 
-                        $("#cancelar-assinar-btn").addClass('disabled')
-                        $("#cancelar-assinar-btn").attr('disabled', true)
-
-                        $(this).addClass('disabled')
-                        $(this).attr('disabled', true)
-                        $(this).find(".textPlace").html('Processando')
-                        $(this).find(".iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
                         
-                        var that = this
+                       
                         
                         var url = '<?= base_url('/api') ?>';
                         var payload = {
@@ -777,6 +778,20 @@
                             dataType: 'json',
                             headers: {'X-Requested-With': 'XMLHttpRequest'}
                         });
+                    } else {
+                        setTimeout(() => {
+                                            
+                            $("#AssinarConfirm").find(".response_area").removeClass("field_error").removeClass("show");
+                            $("#AssinarConfirm").find(".response_area").html('')
+                            $("#cancelar-assinar-btn").removeClass('disabled')
+                            $("#cancelar-assinar-btn").removeAttr('disabled')
+
+                            $(that).removeClass('disabled')
+                            $(that).removeAttr('disabled')
+                            $(that).find(".textPlace").html('Confirmar assinatura')
+                            $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+            
+                        }, 2000);
                     }
                 });
                 $('#payment-form').on("submit", function(evt) {
@@ -896,7 +911,6 @@
                                                         '</tr>'
                                                     $(tr).appendTo($(".cartoes").find("table tbody"))
 
-                                                    
                                                     resolve("OK")
                                                 })
                                                 p.then((e)=> {
@@ -928,6 +942,11 @@
                                                     $("#defaultCard").find(".defCard .def-card-name").html('<strong>'+response.response_data.data.holder_name+'</strong>')
                                                     $("#defaultCard").find(".manageCardLink .cardCount").html(response.response_data.cardCount)
                                                     
+                                                    var htmlResumo = '<h3 style="margin-bottom: 0">' +response.response_data.data.display_number+ '</h3>'
+                                                    + '<span class="def-card-brand">'+response.response_data.data.brand+'</span><br>'
+                                                    + '<span class="def-card-name">' + response.response_data.data.holder_name + '</span>'
+                                                    $("#resumo-cartao").removeClass("error-resumo")
+                                                    $("#resumo-cartao").html(htmlResumo)
                                                     resolve("OK")
                                                 })
                                                 p.then((e)=> {
@@ -2233,6 +2252,9 @@
                 $(this).append('<span class="check-mark text-success"><i class="fa fa-check-square-o fa-2x"></i></span>')
                 console.log($(this).data("petid"))
                 $("#h-pet-id").val($(this).data("petid"))
+                $("#resumo-pet").removeClass("error-resumo")
+                $("#resumo-pet").html('<h3 style="margin-bottom: 0">'+ $(this).data("petname") + '</h3>')
+                                    
                 $("#finish-form").valid()
             })
 
@@ -2336,6 +2358,8 @@
                                     '<span class="check-mark text-success"><i class="fa fa-check-square-o fa-2x"></i></span>' +
                                     '</li>'
                                     $("#h-pet-id").val(response.pet_data.id)
+                                    $("#resumo-pet").removeClass("error-resumo")
+                                    $("#resumo-pet").html('<h3 style="margin-bottom: 0">'+ response.pet_data.pet_name + '</h3>')
                                     setTimeout(() => {
                                         resolve(li)
                                     }, 3000);
@@ -2428,7 +2452,7 @@
                     });
                 } else {
                     console.warn("invalid")
-                   
+                    $("#resumo-pet").html('')
                     setTimeout(() => {
                         $("#cancelar-add-pet-btn").removeClass('disabled')
                         $("#cancelar-add-pet-btn").removeAttr('disabled')
