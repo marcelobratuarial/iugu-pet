@@ -2497,6 +2497,154 @@
                 
             })
 
+            $('#RemoverPetConfirm').on('hidden.bs.modal', function (e) {
+                $("#RemoverPetConfirm #confimar-remover-pet-btn").data("pet-id", "")
+            })
+            $(".remover-pet-btn").on("click", function(e) {
+                console.log("remove")
+                console.log($(this).data("pet-id"))
+                e.preventDefault()
+                $("#RemoverPetConfirm #confimar-remover-pet-btn").data("pet-id", $(this).data("pet-id"))
+                $('#RemoverPetConfirm').modal("show")
+                // return
+                // var p = new Promise((resolve) => {
+                //     $(".no-box-container").fadeOut(250)
+                //     setTimeout(() => {
+                //         resolve("OK")
+                //     }, 200);
+                // })
+
+                // p.then(()=> {
+                //     $(".optPayment.addCardArea").fadeIn(250)
+                //     $("#addCard").trigger("click")        
+                // }).then(() => {
+                //     payFormValidade()
+                // })
+                
+            })
+            $("#confimar-remover-pet-btn").on("click", function(e) {
+                console.log("fdsafda")
+                e.preventDefault()
+                // return false
+                $("#cancelar-suspensao-btn").addClass('disabled')
+                $("#cancelar-suspensao-btn").attr('disabled', true)
+
+                $(this).addClass('disabled')
+                $(this).attr('disabled', true)
+                $(this).find(".textPlace").html('Processando')
+                $(this).find(".iconPlace").html('<i class="fa fa-circle-o-notch fa-spin fa-1x"></i>')
+                var url = '<?= base_url('/minha-conta/pet/remover') ?>';
+                var that = this
+                var payload = {
+                        'payload': {
+                            'id': $(this).data("pet-id")
+                        }
+                    }
+                    console.log(payload)
+                    
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: payload,
+                        fail: function(r){
+                            console.log(r)
+                        },
+                        success: function (response) {
+                            console.log(response)
+                            console.log(typeof response.error)
+                            $("#ResponseCustom #ResponseCustomLongTitle").html("Sucesso!")
+                            $("#ResponseCustom .modal-body").html("Pet removido com sucesso!")
+                            
+
+                            
+                            $('.assinaturas').find(".badge").removeClass("badge-success").addClass("badge-warning").html("SUSPENSO")
+                            $("#cancelar-remover-pet-btn").removeClass('disabled')
+                            $("#cancelar-remover-pet-btn").removeAttr('disabled')
+                            
+                            $(that).removeClass('disabled')
+                            $("#box-pet-id-"+response.pet_data.id).fadeOut(500)
+                            setTimeout(() => {
+                                $("#box-pet-id-"+response.pet_data.id).remove()
+                            }, 700);
+                            $(that).removeAttr('disabled')
+                            $(that).find(".textPlace").html('Remover Pet')
+                            $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                            $('#RemoverPetConfirm').modal("hide")
+                            $('#ResponseCustom').modal("show")
+                            if(response.error) {
+                                // if(response.error_code == 'UNAUTH' || response.error_code == 'UNAUTH_NE' ) {
+                                //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
+                                // } else if(response.error_code == 'NEED_VER') {
+                                // }
+                                /*
+                                var p = new Promise((resolve)=> {
+                                    $(form).find(".response_area").html(response.message)
+                                    resolve("OK")
+                                })
+                                p.then((e)=> {
+                                    console.log(e)
+                                    $(form).find(".response_area").slideDown(234);
+                                }).then((e) => {
+                                    
+                                    
+                                    if(response.error_code == 'NEED_VER' || response.error_code == 'NEED_VER_EXP') {
+                                        var verBox = $(".verBox")
+                                        // console.log($(".optChecked .verBox .custom-message"))
+                                        // console.log(response.custom_message)
+                                        
+                                        
+                                        if($(".optChecked").find(".verBox").length == 0) {
+                                            $(verBox).clone().attr('id', 'verLForm').appendTo(".optChecked > div");
+                                            
+                                        } else {
+                                            console.log("Not")
+                                        }
+                                        var pp = new Promise((resolve) => {
+                                            
+                                            setTimeout(() => {
+                                                $(form).find(".response_area").slideUp(432);
+                                                $(form).slideUp(500);
+                                                resolve()
+                                            }, 4000);
+                                        })
+                                        pp.then(()=> {
+                                            $(".optChecked .verBox .custom-message").html(response.custom_message)
+                                            setTimeout(() => {
+                                                $(".optChecked").find(".verBox").addClass("show")
+                                            }, 500)    
+                                            
+                                        })
+                                    }
+                                }) */
+                                
+                                
+                            }
+                            // lb.text(response)
+                            // $(".custom-control-label").text(text);
+                            // $('#imgPreview').attr('src', '');
+                            // $('#imgPreview').slideUp(200);
+                            // $(".remove-image").slideUp(100);
+                            // $('#noImageBox').slideDown(250);
+                            // $("#upload-box").slideDown(500);
+                        },
+                        dataType: 'json',
+                        headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    });
+                // var p = new Promise((resolve) => {
+                //     $(".no-box-container").fadeOut(250)
+                //     setTimeout(() => {
+                //         resolve("OK")
+                //     }, 200);
+                // })
+
+                // p.then(()=> {
+                //     $(".optPayment.addCardArea").fadeIn(250)
+                //     $("#addCard").trigger("click")        
+                // }).then(() => {
+                //     payFormValidade()
+                // })
+                
+            })
 
 
 

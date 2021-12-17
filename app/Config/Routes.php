@@ -50,6 +50,7 @@ $routes->get('/minha-conta/pet/(:any)', 'MyAccount::pet/$1', ['filter' => 'authF
 $routes->get('/minha-conta/meus-pets', 'MyAccount::pets', ['filter' => 'authFilter']);
 $routes->get('/minha-conta/meus-dados', 'MyAccount::account', ['filter' => 'authFilter']);
 $routes->post('/minha-conta/pet/save', 'MyAccount::savePet', ['filter' => 'authFilter']);
+$routes->post('/minha-conta/pet/remover', 'MyAccount::removePet', ['filter' => 'authFilter']);
 $routes->post('/minha-conta/user/save', 'MyAccount::saveMyData', ['filter' => 'authFilter']);
 $routes->post('/minha-conta/user/np/save', 'MyAccount::saveNewPass', ['filter' => 'authFilter']);
 

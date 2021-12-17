@@ -757,6 +757,56 @@ class MyAccount extends BaseController
         
     }
 
+    public function removePet() {
+        $PetModel = new PetModel();
+        $data = (array) $this->request->getPost();
+        if(empty($data)) {
+            $data = (array) $this->request->getJSON();
+        }
+        $session = session();
+        $session->get('email');
+        $args_ = [];
+        $args_["m"] = "GET";
+        $a = new Home();
+        $this->requestURL = $a->baseApi . "customers";
+        $args_["pl"] = json_encode([
+            "query" => $session->get('email'),
+            "limit" => 1
+        ]);
+        $user = $a->doRequest($this->requestURL, $args_);
+        $u = json_decode($user, true)["items"][0];
+        // print_r($u);exit;
+        
+        if(!empty($u)) {
+            // $data["cid"] = $u['id'];
+            // print_r($data);exit;
+            $pet = $PetModel->where("cid", $u["id"])->where("id", $data["payload"]["id"])->first();
+            if(!is_null($pet)) {
+                
+                $response = service('response');
+                try {
+                    $deleted = $PetModel->delete($pet["id"]);
+                    
+                    if($deleted) {
+                        return $response->setJSON([
+                            "error" => false,
+                            'message' => "Seu Pet foi removido com sucesso!",
+                            'pet_data' => $pet
+                        ]);
+                    }
+                } catch (Exception $ex) {
+                    return $response->setJSON([
+                        "error" => true,
+                        'message' => "Erro ao remover seu Pet. Tente novamente. Se o erro persistir, entre em contato.",
+                        'pl' => $ex->getMessage()
+                    ]);
+                }
+                
+            }
+        }
+        
+        
+    }
     public function saveMyData()
     {
         helper(['form']);
