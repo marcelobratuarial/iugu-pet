@@ -532,6 +532,8 @@ class MyAccount extends BaseController
             ->where("cid", $user['id'])
             ->where("id", $id)
             ->first();
+        $nasc = date_create($petAssinatura['pet_nasc']);
+        $petAssinatura['pet_nasc'] = $nasc->format('d/m/Y');
         if(!empty($petAssinatura['aid'])) {
             $args = [];
             $this->requestURL = $a->baseApi . "subscriptions/".$petAssinatura['aid'];
@@ -570,7 +572,7 @@ class MyAccount extends BaseController
         
         
         
-        return view('account/pet', ["pet" => $petAssinatura,true, "user" => $user]);
+        return view('account/pet', ["pet" => $petAssinatura, "user" => $user]);
 
     }
     public function cartao($id)
@@ -726,6 +728,10 @@ class MyAccount extends BaseController
         if(empty($data)) {
             $data = (array) $this->request->getJSON();
         }
+        list($dia, $mes, $ano) = explode("/", $data['pet_nasc']);
+        $dbNasc = $ano . '-' . $mes . '-' . $dia;
+        $data["pet_nasc"] = $dbNasc;
+        // print_r($data);exit;
         $session = session();
         $session->get('email');
         $args_ = [];

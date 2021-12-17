@@ -33,13 +33,16 @@
 </div>
 
 <div class="container">
-    <div class="row checkoutPage">
+    <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-9">
             <section style="margin: 40px auto">
                 <h3>Meus pets</h3>
+                <hr class="w-100">
+
+                <a data-toggle="modal" data-target="#AddPetModal" class="genric-btn primary-border circle  add-new-pet-btn" href="">Cadastrar Pet <i class="fa fa-paw fa-1x"></i></a>
                 <hr style="width: 100%">
                 <?php if (isset($pets) && !empty($pets)) : ?>
-                    <div class="row">
+                    <div class="row" id="pets">
                         <?php foreach ($pets as $pet) : ?>
                             <div class="col-md-6" id="box-pet-id-<?= $pet["id"] ?>">
                                 <div class="card border-success mb-3" style="position:relative">
@@ -110,6 +113,56 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" data-backdrop="static" id="AddPetModal" tabindex="-1" role="dialog" aria-labelledby="AddPetModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="AddPetModalLongTitle">Cadastrar Pet</h5>
+            </div>
+            <div class="modal-body">
+                <form action="" id="cadPetForm">
+                    <h4>Dados do Pet</h4>
+                    <div class="row mt-10">
+                        <div class="col-8">
+                            <div style="position:relative">
+                                <input type="text" name="pet_name" placeholder="Nome"  class="single-input">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div style="position:relative">
+                                <input type="text" id="pet_nasc" name="pet_nasc" placeholder="Nascimento"  class="single-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-10">
+                        <div class="col-6">
+                            <div style="position:relative">
+                                <input type="text" name="pet_raca" placeholder="Raça"  class="single-input">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div style="position:relative">
+                                <input type="text" name="pet_peso" placeholder="Peso KG" class="single-input">
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="margin-bottom: 0" />
+                    <div class="response_area"></div>
+                </form>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="genric-btn primary-border circle small" id="cancelar-add-pet-btn" data-dismiss="modal">Cancelar</button>
+
+                <button type="button" data-ass-id="" data-ref="pet-list" class="genric-btn info-border circle small" id="save-pet-btn">
+                    <span class="textPlace">Salvar</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal -->

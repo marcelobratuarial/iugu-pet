@@ -2299,6 +2299,7 @@
                 var form = $(this);
                 console.log(form)
                 e.preventDefault()
+                
                 // Seu código para continuar a submissão
                 // Ex: form.submit();
                 $("#cancelar-add-pet-btn").addClass('disabled')
@@ -2357,6 +2358,26 @@
                                         $('#AddPetModal').modal("hide")
                                         $(form).find(".response_area").removeClass("field_error").removeClass("show")
                                     
+                                        if($('#AddPetModal').find('#save-pet-btn').data("ref") == 'pet-list') {
+                                            var h = '<div style="display: none" class="col-md-6" id="box-pet-id-'+response.pet_data.id+'">'
+                                                + '<div class="card border-success mb-3" style="position:relative">'
+                                                + '<span style="position: absolute; top: 5px; right: 10px" class="badge badge-pill badge-info">SEM ASSINATURA</span>'
+                                                + '<div class="card-header"><h3>'+response.pet_data.pet_name+'</h3></div>'
+                                                + '<div class="card-body text-success">'
+                                                + '<div class="d-flex flex-column justify-content-center align-items-center">'
+                                                + '<a href="'+base_url+'/minha-conta/pet/'+response.pet_data.id+'" class="genric-btn info small circle">Detalhes do Pet</a>'
+                                                + '</div>'
+                                                + '</div>'
+                                                + '<div class="card-footer" style="text-align: right">'
+                                                + '<a href="'+base_url+'/minha-conta/pet/'+response.pet_data.id+'" data-pet-id="'+response.pet_data.id+'" class="remover-pet-btn genric-btn danger small circle">Remover Pet</a>'
+                                                + '</div>'
+                                                + '</div>'
+                                                + '</div>'
+                                            $(h).prependTo("#pets")
+                                            setTimeout(() => {
+                                                $("#box-pet-id-"+response.pet_data.id).fadeIn("300")
+                                            }, 1000);
+                                        }
                                     }, 100);
                                    
 
@@ -2500,7 +2521,7 @@
             $('#RemoverPetConfirm').on('hidden.bs.modal', function (e) {
                 $("#RemoverPetConfirm #confimar-remover-pet-btn").data("pet-id", "")
             })
-            $(".remover-pet-btn").on("click", function(e) {
+            $("#pets").on("click", ".remover-pet-btn", function(e) {
                 console.log("remove")
                 console.log($(this).data("pet-id"))
                 e.preventDefault()
@@ -3070,6 +3091,10 @@
                 
             })
         })
+
+
+
+        var base_url = "<?= base_url() ?>"
     </script>
 </body>
 
