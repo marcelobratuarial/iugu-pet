@@ -2506,20 +2506,7 @@
                 e.preventDefault()
                 $("#RemoverPetConfirm #confimar-remover-pet-btn").data("pet-id", $(this).data("pet-id"))
                 $('#RemoverPetConfirm').modal("show")
-                // return
-                // var p = new Promise((resolve) => {
-                //     $(".no-box-container").fadeOut(250)
-                //     setTimeout(() => {
-                //         resolve("OK")
-                //     }, 200);
-                // })
-
-                // p.then(()=> {
-                //     $(".optPayment.addCardArea").fadeIn(250)
-                //     $("#addCard").trigger("click")        
-                // }).then(() => {
-                //     payFormValidade()
-                // })
+                
                 
             })
             $("#confimar-remover-pet-btn").on("click", function(e) {
@@ -2571,6 +2558,14 @@
                             $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
                             $('#RemoverPetConfirm').modal("hide")
                             $('#ResponseCustom').modal("show")
+                            
+                            if($(that).data("ref") == 'pet-details') {
+                                setTimeout(() => {
+                                    // console.log('<?= base_url('minha-conta/cartoes') ?>')
+                                    window.location.href = "<?= base_url('minha-conta/meus-pets') ?>"
+                                }, 2500);
+                            }
+                            
                             if(response.error) {
                                 // if(response.error_code == 'UNAUTH' || response.error_code == 'UNAUTH_NE' ) {
                                 //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")

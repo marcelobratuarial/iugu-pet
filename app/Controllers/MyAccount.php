@@ -551,6 +551,15 @@ class MyAccount extends BaseController
             $args["pl"] = json_encode([
                 "identifier" => $assinatura["plan_identifier"]
             ]);
+            $date = date_create($assinatura['cycled_at']);
+            $expi = date_create($assinatura['expires_at']);
+            $periodo = $date->format('d/m/Y') . ' ~ ' . $expi->format('d/m/Y');
+            // echo $periodo;
+            $assinatura['periodo'] = $periodo;
+
+            $today = Time::createFromDate();
+            $expi2 = Time::createFromFormat('d/m/Y', $expi->format('d/m/Y'));
+            $assinatura['isValid'] = $today->isBefore($expi2);
             
             $plano = $a->doRequest($this->requestURL, $args);
             $assinatura["plano"] = json_decode($plano, true);

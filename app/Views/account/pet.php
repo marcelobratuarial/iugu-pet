@@ -39,24 +39,43 @@
             <?php // print_r($pet);
             if(isset($pet) && !empty($pet)) : ?>
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12" id="box-pet-id-<?= $pet["id"] ?>">
                   <div class="card border-success mb-3" style="display: relative">
                     
-                    <h4 class="card-header">Detalhes da pet</h4>
-                    <?php print_r($pet); ?>
+                    <h4 class="card-header">Detalhes do Pet</h4>
+                    <?php //print_r($pet); ?>
                     <div class="card-body text-success">
                       <div class="row">
                         <div class="col-md-6">
-                          
+                          <h3><?= $pet["pet_name"] ?></h3>
+                          <h4><?= $pet["pet_nasc"] ?></h4>
+                          <h4><?= $pet["pet_raca"] ?></h4>
+                          <h4><?= $pet["pet_peso"] ?>kg</h4>
                         </div>
                         <div class="col-md-6">
-                          
+                        <?php if(isset($pet["assinatura"])) : ?>
+                          <h3><?= $pet["assinatura"]['plan_name'] ?></h3>
+                          <?php if(!empty($pet['assinatura']['features'])) : ?>
+                          <ul class="list-group list-group-flush">
+                              <?php foreach ($pet['assinatura']['features'] as $feature) : ?>
+                                  <li class="list-group-item"><?= $feature["name"] ?></li>
+                              <?php endforeach ?>
+                          </ul>
+                          <?php else : ?>
+                            Nenhum recurso no <?= $pet['assinatura']['plan_name'] ?>
+                          <?php endif; ?>
+                          <hr style="width: 80%">
+                          <a href="<?= base_url('minha-conta/assinatura/' . $pet["assinatura"]['id']) ?>" class="genric-btn info small circle">Assinatura</a>
+
+                        <?php endif; ?>
                         </div>
                       </div>
                       
                     </div>
                     <div class="card-footer">
-                      
+                    <?php if((!isset($pet["assinatura"])) || (isset($pet["assinatura"]) && !$pet["assinatura"]['isValid'])) : ?>
+                        <a href="<?= base_url('minha-conta/pet/' . $pet["id"]) ?>" data-pet-id="<?= $pet["id"] ?>" class="remover-pet-btn genric-btn danger small circle">Remover Pet</a>
+                    <?php endif; ?>
                       
                     
                     </div>
@@ -82,47 +101,25 @@
 
 <?= $this->section('footer') ?>
 
+
 <!-- Modal -->
-<div class="modal fade" data-backdrop="static" id="SuspendConfirm" tabindex="-1" role="dialog" aria-labelledby="SuspendConfirmTitle" aria-hidden="true">
+<div class="modal fade" data-backdrop="static" id="RemoverPetConfirm" tabindex="-1" role="dialog" aria-labelledby="RemoverPetConfirmTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="SuspendConfirmLongTitle">Suspender assinatura</h5>
+        <h5 class="modal-title" id="RemoverPetConfirmLongTitle">Remover Pet</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
       </div>
       <div class="modal-body">
-        Você deseja mesmo <strong>SUPENDER</strong> sua assinatura?
+        Você deseja mesmo <strong>REMOVER</strong> este pet?
       </div>
       <div class="modal-footer">
-        <button type="button" class="genric-btn primary-border circle small" id="cancelar-suspensao-btn" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="genric-btn primary-border circle small" id="cancelar-remover-pet-btn" data-dismiss="modal">Cancelar</button>
         
-        <button type="button" data-ass-id="" class="genric-btn danger-border circle small" id="confimar-suspensao-btn">
-        <span class="textPlace">Confirmar suspensão</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal -->
-<div class="modal fade" data-backdrop="static" id="ActivateConfirm" tabindex="-1" role="dialog" aria-labelledby="ActivateConfirmTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Ativar assinatura</h5>
-        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button> -->
-      </div>
-      <div class="modal-body">
-        Você deseja mesmo <strong>ATIVAR</strong> sua assinatura?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="genric-btn primary-border circle small" id="cancelar-ativacao-btn" data-dismiss="modal">Cancelar</button>
-        
-        <button type="button" data-ass-id="" class="genric-btn info-border circle small" id="confimar-ativacao-btn">
-        <span class="textPlace">Confirmar ativação</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
+        <button type="button" data-pet-id="" data-ref="pet-details" class="genric-btn danger-border circle small" id="confimar-remover-pet-btn">
+        <span class="textPlace">Remover</span> <span class="ml-3 iconPlace"><i class="fa fa-chevron-right fa-1x"></i></span>
         </button>
       </div>
     </div>
@@ -131,22 +128,22 @@
 
 <!-- Modal -->
 <div class="modal fade" data-backdrop="static" id="ResponseCustom" tabindex="-1" role="dialog" aria-labelledby="ResponseCustomTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="ResponseCustomLongTitle"></h5>
-        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button> -->
-      </div>
-      <div class="modal-body">
-        
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="genric-btn primary-border circle small" data-dismiss="modal">OK</button>
-      </div>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ResponseCustomLongTitle"></h5>
+                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button> -->
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="genric-btn primary-border circle small" data-dismiss="modal">OK</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 <?= $this->include('layouts/main/parts/footer') ?>
 <?= $this->endSection() ?>
