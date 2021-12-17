@@ -38,7 +38,7 @@
                 <div class="row align-items-center">
                     <div class="col-xl-3 col-lg-3">
                         <div class="logo">
-                            <a href="index.html">
+                            <a href="<?= base_url("/") ?>">
                                 <img src="<?= base_url("assets/img/logo.png") ?>" alt="" style="width: 150px;">
                             </a>
                         </div>
