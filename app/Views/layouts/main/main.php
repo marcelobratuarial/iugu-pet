@@ -2353,7 +2353,7 @@
                                     setTimeout(() => {
                                         $(form).find(".response_area").removeClass("field_error").addClass("show")
                                     }, 100)    
-                                    var li = '<li data-petID="'+ response.pet_data.id +'" id="petID-'+response.pet_data.id+'" class="pet-item list-group-item d-flex justify-content-between align-items-center">'+
+                                    var li = '<li data-petID="'+ response.pet_data.id +'" data-petname="'+ response.pet_data.pet_name +'" id="petID-'+response.pet_data.id+'" class="pet-item list-group-item d-flex justify-content-between align-items-center">'+
                                     '<h3 style="margin-bottom: 0">'+ response.pet_data.pet_name + '</h3>' +
                                     '<span class="check-mark text-success"><i class="fa fa-check-square-o fa-2x"></i></span>' +
                                     '</li>'
