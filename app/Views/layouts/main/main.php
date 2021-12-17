@@ -2521,7 +2521,7 @@
             $('#RemoverPetConfirm').on('hidden.bs.modal', function (e) {
                 $("#RemoverPetConfirm #confimar-remover-pet-btn").data("pet-id", "")
             })
-            $("#pets").on("click", ".remover-pet-btn", function(e) {
+            $("#pets, #pet-details").on("click", ".remover-pet-btn", function(e) {
                 console.log("remove")
                 console.log($(this).data("pet-id"))
                 e.preventDefault()

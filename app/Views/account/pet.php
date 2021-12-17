@@ -35,7 +35,7 @@
 <div class="container">
     <div class="row ">
         <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-9">
-          <section style="margin: 40px auto; position:relative" class="assinaturas">
+          <section style="margin: 40px auto; position:relative" id="pet-details">
             <?php // print_r($pet);
             if(isset($pet) && !empty($pet)) : ?>
               <div class="row">
