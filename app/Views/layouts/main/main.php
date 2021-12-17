@@ -732,6 +732,7 @@
                                     
                                 } else {
                                     var p = new Promise((resolve)=> {
+
                                         var m = response.message
                                         m   += '<hr style="margin: 20px auto"><div class="">' 
                                             + '<a href="<?= base_url('minha-conta/assinatura') ?>/'+response.response_data.id+'" class=" genric-btn info circle">'
@@ -739,22 +740,33 @@
                                             + ' <a href="<?= base_url('minha-conta') ?>" class="genric-btn success circle">'
                                             +'<span class="textPlace">Minha conta</span> <span class="ml-3 iconPlace"><i class="fa fa-user-o fa-1x"></i></span></a>'
                                             + '</div>'
-                                        $("#AssinarConfirm").find(".response_area").html(m)
+                                            $("#ResponseCustom #ResponseCustomLongTitle").html("Sucesso!")
+                                            $("#ResponseCustom .modal-body").html(m)
+                                            $('#AssinarConfirm').modal("hide")
+                                            $('#ResponseCustom').modal("show")
                                         resolve("OK")
                                     })
                                     p.then((e)=> {
                                         console.log(e)
-                                        $("#cancelar-assinar-btn").slideUp()
-                                        $(that).slideUp()
-                                        $("#AssinarConfirm").find(".response_area").addClass("show");
+                                        $("#petID-"+$("#h-pet-id").val()).addClass("pet-com-assinatura").removeClass("pet-item")
+                                        $("#petID-"+$("#h-pet-id").val()).find("span").remove()
+                                        $("#h-pet-id").val('')
+                                        // $("#cancelar-assinar-btn").slideUp()
+                                        // $(that).slideUp()
+                                        // $("#AssinarConfirm").find(".response_area").addClass("show");
                                     }).then((e) => {
                                         
                                         setTimeout(() => {
                                             
-                                            
-                                            // $(that).removeAttr('disabled')
-                                            // $(that).find(".textPlace").html('Confirmar assinatura')
-                                            // $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
+                                            $("#AssinarConfirm").find(".response_area").removeClass("field_error").removeClass("show");
+                                            $("#AssinarConfirm").find(".response_area").html('')
+                                            $("#cancelar-assinar-btn").removeClass('disabled')
+                                            $("#cancelar-assinar-btn").removeAttr('disabled')
+
+                                            $(that).removeClass('disabled')
+                                            $(that).removeAttr('disabled')
+                                            $(that).find(".textPlace").html('Confirmar assinatura')
+                                            $(that).find(".iconPlace").html('<i class="fa fa-chevron-right fa-1x"></i>')
                             
                                         }, 4000);
                                         
@@ -2318,7 +2330,7 @@
                                     setTimeout(() => {
                                         $(form).find(".response_area").removeClass("field_error").addClass("show")
                                     }, 100)    
-                                    var li = '<li data-petID="'+ response.pet_data.id +'" class="pet-item list-group-item d-flex justify-content-between align-items-center">'+
+                                    var li = '<li data-petID="'+ response.pet_data.id +'" id="petID-'+response.pet_data.id+'" class="pet-item list-group-item d-flex justify-content-between align-items-center">'+
                                     '<h3 style="margin-bottom: 0">'+ response.pet_data.pet_name + '</h3>' +
                                     '<span class="check-mark text-success"><i class="fa fa-check-square-o fa-2x"></i></span>' +
                                     '</li>'
