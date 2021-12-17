@@ -2452,7 +2452,8 @@
                     });
                 } else {
                     console.warn("invalid")
-                    $("#resumo-pet").html('')
+                    $("#resumo-pet").addClass("error-resumo")
+                    $("#resumo-pet").html('Cadastre ou selecione um Pet!')
                     setTimeout(() => {
                         $("#cancelar-add-pet-btn").removeClass('disabled')
                         $("#cancelar-add-pet-btn").removeAttr('disabled')
