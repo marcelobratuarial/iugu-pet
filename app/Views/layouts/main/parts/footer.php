@@ -12,7 +12,7 @@
                                 <li>(31) 2510 8536</li>
                                 <li>0800 600 28 51</li>
                                 <li><a href="#">meupet@gmail.com</a></li>
-                                <li><a href="www.brasilbeneficios.club" target="_Blank">www.brasilbeneficios.club</a></li>
+                                <li><a href="https://brasilbeneficios.club" target="_Blank">www.brasilbeneficios.club</a></li>
                             </ul>
                         </div>
                     </div>
