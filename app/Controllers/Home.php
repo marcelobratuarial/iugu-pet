@@ -38,8 +38,33 @@ class Home extends BaseController
         $r = $this->doRequest($this->requestURL, $args);
         $planos = json_decode($r, true)["items"];
         // echo "<pre>";
+
+        session();
+        // echo "<pre>";print_r($a->get("name"));exit;
+        if(isset($_SESSION['email'])) {
+            // echo "<pre>";
+            // print_r($_SESSION);
+            // echo "</pre>";
+            $args = [];
+            $args["m"] = "GET";
+            $this->requestURL = $this->baseApi . "customers";
+            $args["pl"] = json_encode([
+                "query" => $_SESSION['email'],
+                "limit" => 1
+            ]);
+            $user = $this->doRequest($this->requestURL, $args);
+            // echo gettype(json_decode($user, true));exit;
+            $u = json_decode($user, true);
+            unset($user);
+            $user = [];
+            if($u["totalItems"] > 0) {
+                $user = $u['items'][0];
+            }
+        } else {
+            $user = [];
+        }
         // print_r(json_decode($r, true));exit;
-        return view('home', ["plans" => $planos]);
+        return view('home', ["plans" => $planos, "user" => $user]);
     }
     public function mailTeste() {
         $conf = [
@@ -238,8 +263,31 @@ class Home extends BaseController
     {
         // echo base64_encode($this->k);exit;
         
-        
-        return view('services');
+        session();
+        // echo "<pre>";print_r($a->get("name"));exit;
+        if(isset($_SESSION['email'])) {
+            // echo "<pre>";
+            // print_r($_SESSION);
+            // echo "</pre>";
+            $args = [];
+            $args["m"] = "GET";
+            $this->requestURL = $this->baseApi . "customers";
+            $args["pl"] = json_encode([
+                "query" => $_SESSION['email'],
+                "limit" => 1
+            ]);
+            $user = $this->doRequest($this->requestURL, $args);
+            // echo gettype(json_decode($user, true));exit;
+            $u = json_decode($user, true);
+            unset($user);
+            $user = [];
+            if($u["totalItems"] > 0) {
+                $user = $u['items'][0];
+            }
+        } else {
+            $user = [];
+        }
+        return view('services', ['user' => $user]);
     }
 
     public function doRequest($url, $args) {
