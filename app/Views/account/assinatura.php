@@ -62,9 +62,9 @@
                           <?php endif; ?>
                         </div>
                         <div class="col-md-6">
-                          <?php if(!empty($assinatura['plano']['features'])) : ?>
+                          <?php if(!empty($assinatura['features'])) : ?>
                           <ul class="list-group list-group-flush">
-                              <?php foreach ($assinatura['plano']['features'] as $feature) : ?>
+                              <?php foreach ($assinatura['features'] as $feature) : ?>
                                   <li class="list-group-item"><?= $feature["name"] ?></li>
                               <?php endforeach ?>
                           </ul>
