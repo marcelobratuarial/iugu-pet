@@ -139,6 +139,7 @@
             // });
             $( "#estados" ).on("change", function(e) {
                 // $( "#cidades" ).find("option").not(":first").remove()
+                // $( "#estados" ).niceSelect('update');
                 var v = $("#registerForm").validate()
                 v.element("#estados")
                 // const UF = $(this).find("option:selected").val()
@@ -261,7 +262,7 @@
                         $(element).closest('div').find('.dyn-response').removeClass('show').remove() //removeClass(errorClass).addClass(validClass);
                         // $(element.form).find("label[for=" + element.id + "]")
                         // .removeClass(errorClass);
-                        console.log($(element))
+                        // console.log($(element))
                     }
                 })
             }
@@ -531,7 +532,7 @@
                             $(element).closest('div').find('.dyn-response').removeClass('show').remove() //removeClass(errorClass).addClass(validClass);
                             // $(element.form).find("label[for=" + element.id + "]")
                             // .removeClass(errorClass);
-                            console.log($(element))
+                            // console.log($(element))
                         }
                     })
                 }
@@ -648,7 +649,7 @@
                         },
                         unhighlight: function(element, errorClass, validClass) {
                             if($(element).attr("name") == 'h_pet_id') {
-                                console.log("petid")
+                                // console.log("petid")
                                 $("#pet-list-box").find(".dyn-response").removeClass('show').remove()
                                 
                                 
@@ -2139,23 +2140,27 @@
                 
                     },
                     success: function (response) {
+                        console.log(typeof response.messagem == 'string')
                         console.log(response)
-                        console.log(typeof response.error)
-                        if(response.message) {
+                        console.log(typeof response.mensagem)
+                        var m = (typeof response.mensagem == 'string')
+                        
+                        if(m) {
                             // if(response.error_code == 'UNAUTH' || response.error_code == 'UNAUTH_NE' ) {
                             //     $(".response_area").html("Autenticação negada. Verifique usuário e senha.")
                             // } else if(response.error_code == 'NEED_VER') {
                             // }
+                            console.log("sem api")
                             $("#cep").addClass("invalid-cep")   
-                            $("#estados").val('') //.trigger("change")
-                            $( "#estados" ).niceSelect('update');
+                            // $("#estados").val('') //.trigger("change")
+                            // $( "#estados" ).niceSelect('update');
                             
-                            $("#address").val('')// $(".optChecked").find(".response_area").html(response.message)
-                            $("#number").val('')// $(".optChecked").find(".response_area").html(response.message)
-                            $("#complemento").val('')// $(".optChecked").find(".response_area").html(response.message)
-                            $("#cidade").val('')// $(".optChecked").find(".response_area").html(response.message)
-                            $("#bairro").val('')// $(".optChecked").find(".response_area").html(response.message)
-                            $("#address").val('')
+                            // $("#address").val('')// $(".optChecked").find(".response_area").html(response.message)
+                            // $("#number").val('')// $(".optChecked").find(".response_area").html(response.message)
+                            // $("#complemento").val('')// $(".optChecked").find(".response_area").html(response.message)
+                            // $("#cidade").val('')// $(".optChecked").find(".response_area").html(response.message)
+                            // $("#bairro").val('')// $(".optChecked").find(".response_area").html(response.message)
+                            // $("#address").val('')
                             setTimeout(() => {
                                 $("#cep").removeClass("invalid-cep")   
                                 
@@ -2312,7 +2317,7 @@
                     unhighlight: function(element, errorClass, validClass) {
                         $(element).closest('div').find('.dyn-response').removeClass('show').remove() //removeClass(errorClass).addClass(validClass);
                         
-                        console.log($(element))
+                        // console.log($(element))
                     }
                 })
             }
@@ -2762,7 +2767,7 @@
                         $(element).closest('div').find('.dyn-response').removeClass('show').remove() //removeClass(errorClass).addClass(validClass);
                         // $(element.form).find("label[for=" + element.id + "]")
                         // .removeClass(errorClass);
-                        console.log($(element))
+                        // console.log($(element))
                     }
                 })
             }
@@ -2949,7 +2954,7 @@
                         $(element).closest('div').find('.dyn-response').removeClass('show').remove() //removeClass(errorClass).addClass(validClass);
                         // $(element.form).find("label[for=" + element.id + "]")
                         // .removeClass(errorClass);
-                        console.log($(element))
+                        // console.log($(element))
                     }
                 })
             }
